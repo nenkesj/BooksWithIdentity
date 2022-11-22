@@ -12,7 +12,7 @@
         <form asp-action="CreateSummary">
         <div class="summmast">
             <h4>Create Summary</h4>
-            @Html.ActionLink("Return to Book", "Index", "Book", new { NodeID = @Model.Summary.NodeId }, new { @class = "btn btn-default" })
+            @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.Summary.NodeId }, new { @class = "btn btn-info" })
             @Html.Hidden("NodeID", @Model.Summary.NodeId)
             <input type="submit" value="Submit" class="btn btn-primary" /> <label>Save</label> @Html.CheckBox("save", false)
         </div>

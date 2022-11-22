@@ -156,6 +156,7 @@ code {
     max-width: 20%;
     max-height: 700px;
     overflow: auto;
+    margin: 0 0 0 5px;
 }
 
 .summresult {
@@ -171,6 +172,7 @@ code {
     max-width: 40%;
     max-height: 700px;
     overflow: auto;
+    margin: 0 5px 0 0;
 }
 /* 20em (320px and up) Wide Mobile Phones Protrait Mode
 ----------------------------------- */
