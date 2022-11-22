@@ -1,8 +1,24 @@
-﻿@{
+﻿@model IQueryable<Node>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<h6 class="bg-secondary text-white text-center m-2 p-2">Books</h6>
+<div class="m-2">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th></th><th>Book</th><th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model ?? Enumerable.Empty<Node>()) {
+                <partial name="_BookRowPartial" model="p" />
+            }
+        </tbody>
+    </table>
 </div>

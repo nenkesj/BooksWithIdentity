@@ -1,0 +1,74 @@
+﻿@model Books.Models.BookIndexViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Node : @Model.Node.NodeId</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => @Model.Node.ParentNodeId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => @Model.Node.TreeLevel)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.Heading)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => @Model.Node.Heading)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.NodeText)
+        </dt>
+        <dd class="col-sm-10">
+            <partial name="BookContent" model="@Model" />
+            <!--Html.DisplayFor(model => Model.Node.NodeText)-->
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.Tree)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => @Model.Node.Tree.Heading)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => @Model.Node.Type)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => @Model.Node.Type.Label)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Home">Home</a>
+    <a asp-action="Edit" asp-route-id="@Model.Node.NodeId">Edit</a>
+    <a asp-action="New" asp-controller="Admin" asp-route-id="@Model.Node.NodeId">New</a>
+    <a asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model.Node.NodeId">NewChild</a>
+    @if (@Model.HasChildren)
+    {
+        <a asp-action="Down" asp-route-id="@Model.Node.NodeId">Down</a>
+    }
+    @if (@Model.HasParent)
+    {
+        <a asp-action="Up" asp-route-id="@Model.Node.NodeId">Up</a>
+    }
+    @foreach (var n in Model.Siblings)
+    {
+        if (n.TreeLevel != 1)
+        {
+            var classfields = "btn btn-block btn-default btn-sm" + (n.Heading == ViewBag.SelectedNodeHeading ? " btn-primary" : "");
+            <br />
+            <a asp-action="Details" asp-route-id="@n.NodeId" class="@classfields">@n.Heading</a>
+        }
+    }
+</div>

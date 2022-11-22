@@ -1,0 +1,59 @@
+﻿@model HowTo_DBLibrary.Node
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Node</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="NodeId" />
+            <div class="form-group">
+                <label asp-for="TreeId" class="control-label"></label>
+                <select asp-for="TreeId" class="form-control" asp-items="ViewBag.TreeId"></select>
+                <span asp-validation-for="TreeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TypeId" class="control-label"></label>
+                <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParentNodeId" class="control-label"></label>
+                <input asp-for="ParentNodeId" class="form-control" />
+                <span asp-validation-for="ParentNodeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TreeLevel" class="control-label"></label>
+                <input asp-for="TreeLevel" class="form-control" />
+                <span asp-validation-for="TreeLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Heading" class="control-label"></label>
+                <input asp-for="Heading" class="form-control" />
+                <span asp-validation-for="Heading" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NodeText" class="control-label"></label>
+                <input asp-for="NodeText" class="form-control" />
+                <span asp-validation-for="NodeText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Details" asp-route-id="@Model.NodeId">Back to Details</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,38 @@
+﻿@model HowTo_DBLibrary.Summary
+
+@{
+    ViewData["Title"] = "Admin: Edit " + @Model.SummaryId;
+}
+<div class="contain">
+    <h1>Edit Summary</h1>
+
+    <h4>Node : @Model.NodeId</h4>
+    <hr />
+    <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model.SummaryId">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="SummaryId" />
+        <input type="hidden" asp-for="NodeId" />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <h4><label asp-for="Summary1" class="control-label"></label></h4>
+                    <textarea class="form-control" asp-for="Summary1" rows="20"></textarea>
+                    <span asp-validation-for="Summary1" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </form>
+    <div>
+        <a asp-action="Details" asp-controller="Books" asp-route-id="@Model.NodeId">Back to Details</a>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+    </div>
+

@@ -1,21 +1,27 @@
 ﻿using Books.Models;
+using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System.Diagnostics;
 
 namespace Books.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private IBookRepository? _repository;
+        private readonly ILogger<HomeController>? _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IBookRepository repo, ILogger<HomeController> logger)
         {
+            _repository = repo;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_repository.Nodes
+                .Where(p => p.TreeLevel == 1)
+                .OrderBy(p => p.Heading));
         }
 
         public IActionResult Privacy()

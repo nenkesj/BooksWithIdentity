@@ -1,0 +1,69 @@
+﻿@model HowTo_DBLibrary.Picture
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Picture</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PictureId" />
+            <div class="form-group">
+                <label asp-for="NodeId" class="control-label"></label>
+                <select asp-for="NodeId" class="form-control" asp-items="ViewBag.NodeId"></select>
+                <span asp-validation-for="NodeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TypeId" class="control-label"></label>
+                <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Picture1" class="control-label"></label>
+                <input asp-for="Picture1" class="form-control" />
+                <span asp-validation-for="Picture1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PictureSize" class="control-label"></label>
+                <input asp-for="PictureSize" class="form-control" />
+                <span asp-validation-for="PictureSize" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayAt" class="control-label"></label>
+                <input asp-for="DisplayAt" class="form-control" />
+                <span asp-validation-for="DisplayAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayStopAt" class="control-label"></label>
+                <input asp-for="DisplayStopAt" class="form-control" />
+                <span asp-validation-for="DisplayStopAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InfoId" class="control-label"></label>
+                <input asp-for="InfoId" class="form-control" />
+                <span asp-validation-for="InfoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

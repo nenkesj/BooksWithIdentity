@@ -1,0 +1,11 @@
+﻿@model Node
+<tr>
+    <td>
+        <a class="btn btn-sm btn-info text-white" asp-action="Details"
+           asp-controller="Books" asp-route-id="@Model.NodeId">
+            View
+        </a>
+    </td>
+    <td>@Model?.Heading</td>
+    <td>@Model?.NodeText</td>
+</tr>

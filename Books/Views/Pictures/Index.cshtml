@@ -1,0 +1,78 @@
+﻿@model IEnumerable<HowTo_DBLibrary.Picture>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Picture1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PictureSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayStopAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InfoId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Node)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Picture1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PictureSize)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayStopAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InfoId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Node.Heading)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type.Category)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PictureId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.PictureId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PictureId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

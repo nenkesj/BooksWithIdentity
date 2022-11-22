@@ -1,7 +1,9 @@
 using Books.Data;
+using Books.Models;
 using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 IConfigurationRoot _configuration;
 var configBuilder = new ConfigurationBuilder()
@@ -28,6 +30,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IBookRepository, EFBookRepository>();
 
 var app = builder.Build();
 

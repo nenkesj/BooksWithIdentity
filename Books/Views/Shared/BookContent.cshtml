@@ -1,0 +1,395 @@
+﻿@model Books.Models.BookIndexViewModel
+@using System.Collections.Generic
+@using System.Web
+@using Microsoft.AspNetCore.Html
+@using Books.Infrastructure
+
+@foreach (string p in Model.Paragraphs)
+{
+    bool itsATable = false;
+    if (@p.Length > 0)
+    {
+        if (@p.Substring(0, 1) == "£") { itsATable = true; }
+    }
+    bool itsAnOrderedList = false;
+    if (@p.Length > 0)
+    {
+        if (@p.Substring(0, 1) == "¤") { itsAnOrderedList = true; }
+    }
+    bool itsAnUnorderedList = false;
+    if (@p.Length > 0)
+    {
+        if (@p.Substring(0, 1) == "¥") { itsAnUnorderedList = true; }
+    }
+    bool itsAnAllCapitalsHeading = false;
+    if (@p.Length > 0)
+    {
+        if (@p.Substring(0, 1) == "Ÿ") { itsAnAllCapitalsHeading = true; }
+    }
+    bool itsCode = false;
+    if (@p.Length > 0 && !itsATable && !itsAnOrderedList && !itsAnUnorderedList && !itsAnAllCapitalsHeading)
+    {
+        if (@p.Substring(0, 1) == "§") { itsCode = true; }
+    }
+    bool itsGotHtml = false;
+    if (@p.Count<char>(x => x == '<') > 1 && @p.Contains('>') && @p.Contains("</"))
+    {
+        itsGotHtml = true;
+    }
+    if (@p.Contains("<hr")) { itsGotHtml = true; }
+    bool itsATableHeading = false;
+    bool itsAFigureHeading = false;
+    bool itsAListingHeading = false;
+    bool itsAHeading = false;
+    string tmp = " ";
+
+    // It is quite common for a figure heading to be preceded of followed by some text describing the figure e.g.
+    //
+    // Figure 3.20 shows an ....
+    // followed by
+    // Figure 3.20 This is a picture of ...
+    //
+    // This happens so often that if in this case Figure 3.20 is followed by the word "shows" "illustrates" or "summarizes"
+    // We will treat the paragraph as normal and not like a Figure Heading
+
+    if (@p.Contains(" "))
+    {
+        if (p.Length > p.IndexOf(" "))
+        {
+            tmp = p.Substring(p.IndexOf(" ") + 1);
+            if (tmp.Contains(" ") && tmp.Length > 6)
+            {
+                if (tmp.Length > tmp.IndexOf(" ") + 6) { tmp = tmp.Substring(tmp.IndexOf(" ") + 1, 5); }
+            }
+        }
+    }
+    
+    if (@p.Length > 2)
+    {
+        if (@p.Substring(0, 3).ToLower() == "tab" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa")) { itsATableHeading = true; }
+    }
+    if (@p.Length > 2)
+    {
+        if (@p.Substring(0, 3).ToLower() == "fig" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa")) { itsAFigureHeading = true; }
+    }
+    if (@p.Length > 4)
+    {
+        if (@p.Substring(0, 5).ToLower() == "error" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa")) { itsAFigureHeading = true; }
+    }
+    if (@p.Length > 5)
+    {
+        if (@p.Substring(0, 6).ToLower() == "script" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+    }
+    if (@p.Length > 6)
+    {
+        if (@p.Substring(0, 7).ToLower() == "listing" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+        if (@p.Substring(0, 7).ToLower() == "example" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+        if (@p.Substring(0, 7).ToLower() == "exercis" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+    }
+    if (itsAFigureHeading || itsAListingHeading || itsATableHeading)
+    {
+        itsAHeading = true;
+    }
+    bool itsAFigPict = false;
+    bool itsATabPict = false;
+    if (@Model.PicturePointer < @Model.NoOfPictures)
+    {
+        if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Length > 2)
+        {
+            if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Substring(0, 3).ToLower() == "fig") { itsAFigPict = true; }
+            if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Substring(0, 3).ToLower() == "tab") { itsATabPict = true; }
+            if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Substring(0, 3).ToLower() == "err") { itsAFigPict = true; }
+        }
+        if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Length > 4)
+        {
+            if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Substring(0, 5).ToLower() == "cover") { itsAFigPict = true; }
+        }
+    }
+
+    if (itsATable || itsAnOrderedList || itsAnUnorderedList || itsAnAllCapitalsHeading || itsCode)
+    {
+        if (itsCode)
+        {
+            <pre>@p.Substring(1)</pre>
+        }
+        if (itsAnAllCapitalsHeading)
+        {
+            <h4 style="clear:left">@p.Substring(1)</h4>
+        }
+        if (itsAnUnorderedList)
+        {
+            string[] listElements = @p.Substring(1).Split('¥');
+            <ul style="clear:left">
+                @foreach (string listElement in listElements)
+                {
+                    if (listElement.Count<char>(x => x == '<') > 1 && listElement.Contains('>') && listElement.Contains("</"))
+                    {
+                        //@Html.ContainsHtml("<li>" + @listElement + "</li>")
+                        var txt = new HtmlString(@listElement);
+                        <li>@txt</li>
+                    }
+                    else
+                    {
+                        <li>@listElement</li>
+                    }
+                }
+            </ul>
+        }
+        if (itsAnOrderedList)
+        {
+            string[] listElements = @p.Substring(1).Split('¤');
+            string startAt = "1";
+            if (listElements[0].IndexOf(" ") > 1)
+                startAt = listElements[0].Substring(0, listElements[0].IndexOf(" ") - 1);
+            <ol style="clear:left" start="@startAt">
+                @foreach (string listElement in listElements)
+                {
+                    if (listElement.Count<char>(x => x == '<') > 1 && listElement.Contains(">") && listElement.Contains("</"))
+                    {
+                        if (listElement.IndexOf(" ") > 1)
+                        {
+                            //@Html.ContainsHtml("<li>" + @listElement.Substring(listElement.IndexOf(" ")) + "</li>")
+                            var txt = new HtmlString(@listElement.Substring(listElement.IndexOf(" ")));
+                            <li>@txt</li>
+                        }
+                        else
+                        {
+                            //@Html.ContainsHtml("<li>" + @listElement + "</li>")
+
+                            var txt = new HtmlString(@listElement);
+                            <li>@txt</li>
+                        }
+                    }
+                    else
+                    {
+                        if (listElement.IndexOf(" ") > 1)
+                        {
+                            <li>@listElement.Substring(listElement.IndexOf(" "))</li>
+                        }
+                        else
+                        {
+                            <li>@listElement</li>
+                        }
+                    }
+                }
+            </ol>
+        }
+        if (itsATable)
+        {
+            string[] rows = @p.Substring(1).Split('£');
+            int Cols = rows[0].Split((Char)9).Count();
+            <table style="clear:left" class="table table-striped table-condensed table-bordered">
+                @for (int i = 0; i < rows.Count(); i++)
+                {
+                    string[] cells = rows[i].Split((Char)9);
+                    int cellsCount = cells.Count();
+                    if (i == 0)
+                    {
+                        <tr>
+                            @foreach (string cell in cells)
+                            {
+                                <th>@cell</th>
+                            }
+                            @if (cellsCount < Cols)
+                            {
+                                for (int j = cellsCount; j < Cols; j++)
+                                {
+                                    <th></th>
+                                }
+                            }
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            @foreach (string cell in cells)
+                            {
+                                if (@cell.Count<char>(x => x == '<') > 1 && @cell.Contains(">") && @cell.Contains("</"))
+                                {
+                                    //<td>@Html.ContainsHtml(@cell)</td>
+                                    var txt = new HtmlString(@cell);
+                                    <td>@txt</td>
+                                }
+                                else
+                                {
+                                    <td>@cell</td>
+                                }
+                            }
+                            @if (cellsCount < Cols)
+                            {
+                                for (int j = cellsCount; j < Cols; j++)
+                                {
+                                    <td></td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </table>
+        }
+    };
+    if (!itsATable && !itsAnOrderedList && !itsAnUnorderedList && !itsCode && !itsAnAllCapitalsHeading)
+    {
+        if (@Model.HasPicture)
+        {
+            if (((@Model.HasNoFigPara && itsAFigPict) || (@Model.HasNoTabPara && itsATabPict)) && (@Model.PicturePointer < @Model.NoOfPictures) && !@Model.PictureFixed && @Model.DisplayPictures && @Model.ShowingDetails)
+            {
+                //@Html.ActionLink("Index", "Picture", new { NodeID = @Model.Node.NodeId, pictureptr = @Model.PicturePointer });
+                <figure>
+                    @if (@Model.Node.TreeLevel == 1)
+                    {
+                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                    }
+                    else
+                    {
+                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                    }
+                </figure>
+                Model.PicturePointer++;
+            }
+        }
+        if (itsGotHtml && itsAHeading)
+        {
+            //<p style="clear:left"><strong>@Html.ContainsHtml(@p)</strong></p>
+            var txt = new HtmlString(@p);
+            <p style="clear:left"><strong>@txt</strong></p>
+        }
+        if (itsGotHtml && !itsAHeading)
+        {
+            //<p>@Html.ContainsHtml(@p)</p>
+            var txt = new HtmlString(@p);
+            <p>@txt</p>
+        }
+        if (!itsGotHtml && itsAHeading)
+        {
+            <p style="clear:left"><strong>@p</strong></p>
+        }
+        if (!itsGotHtml && !itsAHeading)
+        {
+            <p>@p</p>
+        }
+
+        string FigType;
+        string FigNo, ParaNo;
+        string FigNoAlt;
+        string Title;
+        int afterFigNo, afterFigNoAlt, paraLength, FigNoIndex;
+
+        if (Model.HasPicture)
+        {
+            //if (((itsATableHeading && itsATabPict) || itsAFigureHeading && itsAFigPict) && @Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures)
+            if (((itsATableHeading && itsATabPict) || itsAFigureHeading && itsAFigPict) && @Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures)
+            {
+                // This is to prevent "Fig 1.1 This illustrate ... " being inserted where "Fig 1.10 This illustrates..." should go
+                ParaNo = "  ";
+                if (@p.Contains(" ")) { ParaNo = @p.Substring(@p.IndexOf(" ") + 1); }
+                // So now ParaNo is
+                // "Fig 1.1 This illustrate ... " is now "1.1 This illustrates..." 
+                // "Fig 1.10 This illustrate ... " is now "1.10 This illustrates..." 
+                //if (@p.Contains(".")) { ParaNo = @p.Substring(@p.IndexOf(".") + 1); }
+                //if (@p.Contains("-")) { ParaNo = @p.Substring(@p.IndexOf("-") + 1); }
+                if (ParaNo.Contains(" ")) { ParaNo = ParaNo.Substring(0, ParaNo.IndexOf(" ")); }
+                // So now ParaNo is
+                // "1.1 This illustrates..." is "1.1"
+                // "1.10 This illustrates..." is "1.10"
+                paraLength = p.Length;
+
+                for (int i = 0; i < @Model.NoOfPictures; i++)
+                {
+                    Title = Model.Pictures.ToArray()[i].Title;
+                    FigType = Title.Substring(0,3);
+                    FigNo = Title.Substring(Title.IndexOf(" ") + 1);
+                    // So now FigNo is
+                    // "Fig 1.1" is now "1.1" 
+                    // "Fig 1.10" is now "1.10" 
+                    FigNoAlt = FigNo.Replace(".", "-");
+                    FigNoIndex = -1;
+                    if (p.IndexOf(FigNo) > -1)
+                    {
+                        FigNoIndex = p.IndexOf(FigNo);
+                    }
+                    if (p.IndexOf(FigNoAlt) > -1)
+                    {
+                        FigNoIndex = p.IndexOf(FigNoAlt);
+                    }
+                    afterFigNo = FigNoIndex + FigNo.Length;
+                    afterFigNoAlt = FigNoIndex + FigNoAlt.Length;
+
+                    // This is to prevent the picture for Fig 1 being inserted where Fig 10 should go
+                    // So because the legnth of 1.1 is less that the length of 1.10 
+                    // adding a dot will prevent @p.Contains(FigNo) being true 
+                    // and so "Fig 1.1 Illustrate ..." wont go were "Fig 1.10 Illustrates ... " is
+                    if (FigNo.Length < ParaNo.Length)
+                    {
+                        FigNo += ".";
+                        FigNoAlt += ".";
+                    }
+                    if ((@p.Contains(FigType) || @p.Contains(FigType.ToUpper())) && (@p.Contains(FigNo) || @p.Contains(FigNoAlt)) && (itsATableHeading || itsAFigureHeading))
+                    {
+                        // This prevents Fig 5.20 being inserted after a Figure with a title paragraph of something like "Fig 5.20a This figure shows..."
+                        if (paraLength > afterFigNo || paraLength > afterFigNoAlt)
+                        {
+                            if (
+                                 ((FigNoIndex > 0) &&
+                                     (@p.Substring(afterFigNo, 1) == " " || @p.Substring(afterFigNo, 1) == ".")
+                                 ) ||
+                                 ((FigNoIndex > 0) &&
+                                     (@p.Substring(afterFigNoAlt, 1) == " " || @p.Substring(afterFigNoAlt, 1) == ".")
+                                 )
+                               )
+                            {
+                                //@Html.ActionLink("Index", "Picture", new { NodeID = @Model.Node.NodeId, caption = false, pictureptr = i });
+                                <figure>
+                                    @if (@Model.Node.TreeLevel == 1)
+                                    {
+                                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                                    }
+                                    else
+                                    {
+                                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                                    }
+                                </figure>
+                                Model.PicturePointer = i + 1;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            //@Html.ActionLink("Index", "Picture", new { NodeID = @Model.Node.NodeId, caption = false, pictureptr = i });
+                            <figure>
+                                @if (@Model.Node.TreeLevel == 1)
+                                {
+                                    <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                                }
+                                else
+                                {
+                                    <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                                }
+                            </figure>
+                            Model.PicturePointer = i + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@if (@Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures && @Model.ShowingDetails)
+{
+    do
+    {
+        <figure>
+            @if (@Model.Node.TreeLevel == 1)
+            {
+                <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+            }
+            else
+            {
+                <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+            }
+        </figure>
+        Model.PicturePointer++;
+    }
+    while (@Model.PicturePointer < @Model.NoOfPictures);
+}
