@@ -37,16 +37,24 @@
                 </li>
             </ul>
             <ul class="nav-main">
+                <li>
+                    <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
+                        <button class="navbutton, btn, btn-info" type="submit">New</button>
+                    </form>
+                </li>
+                <li>
+                    <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
+                        <button class="navbutton, btn, btn-info" type="submit">New Child</button>
+                    </form>
+                </li>
+                @if (!@Model.HasSummary && @Model.ShowingDetails)
+                {
                     <li>
-                        <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
-                            <button class="navbutton, btn, btn-info" type="submit">New</button>
+                        <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
                         </form>
                     </li>
-                    <li>
-                        <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
-                            <button class="navbutton, btn, btn-info" type="submit">New Child</button>
-                        </form>
-                    </li>
+                }
             </ul>
             <ul class="nav-main">
                 @if (@Model.HasSummary && @Model.ShowingDetails)
@@ -112,44 +120,137 @@
                     }
                 }
             </ul>
+            @if (@Model.HasPicture && !(@Model.Node.TreeLevel == 1))
+            {
+            <ul class="nav-main">
+                @if (!@Model.PictureFixed)
+                {
+                    <ul class="picturebuttons">
+                        @for (int i = 0; i < Model.NoOfPictures; i++)
+                        {
+                            <li>
+                                <form asp-action="Details" asp-controller="Books" asp-route-id="@Model.Node.NodeId" asp-route-picturefixed=true asp-route-pictureptr=@i>
+                                    <button class="navbutton, btn, btn-info" type="submit">@Model.Pictures.ToArray()[i].Title</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <ul class="picturebuttons">
+                        <li>
+                            <form asp-action="Details" asp-controller="Books" asp-route-id="@Model.Node.NodeId" asp-route-picturefixed=false asp-route-pictureptr=0>
+                                <button class="navbutton, btn, btn-info" type="submit">Back</button>
+                            </form>
+                        </li>
+                        @for (int i = 0; i < Model.NoOfPictures; i++)
+                        {
+                            <li>
+                                <form asp-action="Details" asp-controller="Books" asp-route-id="@Model.Node.NodeId" asp-route-picturefixed=true asp-route-pictureptr=@i>
+                                <button class="navbutton, btn, btn-info" type="submit">@Model.Pictures.ToArray()[i].Title</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+            </ul>
+            }
+
         </nav>
     </div>
-    <div class="post">
-        @if (TempData["message"] != null)
+    <main role="main">
+        @if (!@Model.PictureFixed)
         {
-            <div class="alert alert-success">@TempData["message"]</div>
+            <section class="post">
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success">@TempData["message"]</div>
+                }
+                <h1>@Model.Node.Heading</h1>
+                <h4>Node : @Model.Node.NodeId</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.ParentNodeId)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.TreeLevel)
+                    </dd>
+                    <dt class="col-sm-1">
+                        @Html.DisplayNameFor(model => @Model.Node.Tree)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.Tree.Heading)
+                    </dd>
+                    <dt class="col-sm-1">
+                        @Html.DisplayNameFor(model => @Model.Node.Type)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.Type.Label)
+                    </dd>
+                </dl>
+                <partial name="BookContent" model="@Model" />
+            </section>
         }
-        <h1>@Model.Node.Heading</h1>
-        <h4>Node : @Model.Node.NodeId</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
-            </dt>
-            <dd class="col-sm-1">
-                @Html.DisplayFor(model => @Model.Node.ParentNodeId)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
-            </dt>
-            <dd class="col-sm-1">
-                @Html.DisplayFor(model => @Model.Node.TreeLevel)
-            </dd>
-            <dt class="col-sm-1">
-                @Html.DisplayNameFor(model => @Model.Node.Tree)
-            </dt>
-            <dd class="col-sm-1">
-                @Html.DisplayFor(model => @Model.Node.Tree.Heading)
-            </dd>
-            <dt class="col-sm-1">
-                @Html.DisplayNameFor(model => @Model.Node.Type)
-            </dt>
-            <dd class="col-sm-1">
-                @Html.DisplayFor(model => @Model.Node.Type.Label)
-            </dd>
-        </dl>
-        <partial name="BookContent" model="@Model" />
-    <div/>
+        else
+        {
+            <div class="fixedpicture">
+                <figure>
+                    @if (@Model.Node.TreeLevel == 1)
+                    {
+                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                    }
+                    else
+                    {
+                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                    }
+                </figure>
+            </div>
+            <div class="fixedcontainer">
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success">@TempData["message"]</div>
+                }
+                <h1>@Model.Node.Heading</h1>
+                <h4>Node : @Model.Node.NodeId</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.ParentNodeId)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.TreeLevel)
+                    </dd>
+                    <dt class="col-sm-1">
+                        @Html.DisplayNameFor(model => @Model.Node.Tree)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.Tree.Heading)
+                    </dd>
+                    <dt class="col-sm-1">
+                        @Html.DisplayNameFor(model => @Model.Node.Type)
+                    </dt>
+                    <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.Type.Label)
+                    </dd>
+                </dl>
+                <partial name="BookContent" model="@Model" />
+            </div>
+        }
+    </main>
 </div>
 
 

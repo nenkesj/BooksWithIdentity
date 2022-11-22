@@ -1,0 +1,52 @@
+﻿@model Books.Models.BookIndexViewModel
+@using System.Collections.Generic
+@using System.Web
+@using Microsoft.AspNetCore.Html
+@using Books.Infrastructure
+
+@{
+    ViewBag.Title = "Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="summbody">
+        <form asp-action="CreateSummary">
+        <div class="summmast">
+            <h4>Create Summary</h4>
+            @Html.ActionLink("Return to Book", "Index", "Book", new { NodeID = @Model.Summary.NodeId }, new { @class = "btn btn-default" })
+            @Html.Hidden("NodeID", @Model.Summary.NodeId)
+            <input type="submit" value="Submit" class="btn btn-primary" /> <label>Save</label> @Html.CheckBox("save", false)
+        </div>
+        <div class="summresult">
+            @Html.Partial("BookContent", @Model)
+        </div>
+        <div class="summselect">
+            @for (int i = 0; i < @Model.SentencesNoOf; i++)
+            {
+                <div class="dataElem">
+                    @Html.CheckBoxFor(x => x.SelectedSentences[i], @Model.SelectedSentences[i])
+                    @Model.SentenceInParagraph[i]
+                    @Html.HiddenFor(x => x.SentenceInParagraph[i], @Model.SentenceInParagraph[i])
+                    @Html.HiddenFor(x => x.Sentences[i], @Model.Sentences[i])
+                    @if (@Model.Sentences[i].Contains("<math"))
+                    {
+                        var txt = new HtmlString(@Model.Sentences[i]);
+                        @txt                        
+                    }
+                    else if (@Model.Sentences[i].Count<char>(x => x == '<') > 1 && @Model.Sentences[i].Contains('>') && @Model.Sentences[i].Contains("</"))
+                    {
+                        var txt = new HtmlString(@Model.Sentences[i]);
+                        @txt
+                    }
+                    else
+                    {
+                        @Model.Sentences[i]
+                    }
+                </div>
+            }
+        </div>
+        @Html.HiddenFor(x => x.Summary.NodeId, @Model.Summary.NodeId)
+        @Html.HiddenFor(x => x.Summary.Summary1, @Model.Summary.Summary1)
+        @Html.HiddenFor(x => x.Summary.SummaryId, @Model.Summary.SummaryId)
+        @Html.HiddenFor(x => x.SentencesNoOf, @Model.SentencesNoOf)
+    </form>
+</div>

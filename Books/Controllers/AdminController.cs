@@ -10,6 +10,7 @@ using Books.Models;
 using Books.Infrastructure;
 using System.Diagnostics;
 using NuGet.Protocol.Core.Types;
+using System.Xml.Linq;
 
 namespace Books.Controllers
 {
@@ -73,6 +74,231 @@ namespace Books.Controllers
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
+        }
+
+        // GET: Summaries/Create
+        public IActionResult CreateSummary(int id)
+        {
+            int linesNoOf, sentencesNoOf, paragraphsNoOf, paragraphPtr, newNoOfParagraphs;
+            List<string> lines, sentences, para, paragrphs, newParagraphs;
+            List<int> sentenceInParagraph;
+            List<bool> selectedSentences;
+            Paragraphs paragraphs;
+            Summary summary;
+            IEnumerable<Summary> summaries;
+            IEnumerable<Picture> pictures;
+
+            lines = new List<string>();
+            sentences = new List<string>();
+            sentenceInParagraph = new List<int>();
+            selectedSentences = new List<bool>();
+            paragrphs = new List<string>();
+            para = new List<string>();
+            paragraphs = new Paragraphs();
+
+            bool haspict = false;
+            bool hasnofigpara = true;
+            bool hasnotabpara = true;
+
+            Node node = _context.Nodes.Single(n => n.NodeId == id);
+            paragraphs.TheText = node.NodeText;
+            paragraphs.NoOfChars = paragraphs.TheText.Length;
+
+            paragraphs.Paragrphs(out paragraphsNoOf, ref paragrphs, out sentencesNoOf, ref sentences, ref sentenceInParagraph, out linesNoOf, ref lines, 0, false, true, true, false, true, false, true);
+
+            paragraphs.TheText = paragraphs.TheAlteredText;
+            paragraphs.NoOfChars = paragraphs.TheAlteredText.Length;
+
+            paragraphs.ListsAndTables(paragraphsNoOf, paragrphs, out newNoOfParagraphs, out newParagraphs, out hasnofigpara, out hasnotabpara);
+
+            for (int i = 0; i < sentencesNoOf; i++)
+            {
+                selectedSentences.Add(false);
+            }
+
+            para.Add("");
+
+            summaries = _context.Summaries.Where(s => s.NodeId == id);
+            if (summaries.Count() > 0)
+            {
+                summary = summaries.ToArray()[0];
+            }
+            else
+            {
+                summary = new Summary();
+                summary.NodeId = id;
+            }
+
+            summary.Summary1 = "<h4>Summary: " + node.Heading + "</h4>\r\n";
+
+            pictures = _context.Pictures.Where(pic => pic.NodeId == id);
+            if (pictures.Count() > 0)
+            {
+                haspict = true;
+            }
+
+            BookIndexViewModel model = new BookIndexViewModel
+            {
+                Node = node,
+                Summary = summary,
+                SentencesNoOf = sentencesNoOf,
+                Sentences = sentences,
+                SentenceInParagraph = sentenceInParagraph,
+                SelectedSentences = selectedSentences,
+                Paragraphs = para,
+                NoOfParagraphs = 1,
+                Paragraph = "",
+                DisplayPictures = false,
+                HasPicture = haspict,
+                NoOfPictures = pictures.Count(),
+                PicturePointer = 0,
+                Pictures = pictures,
+                PictureTitle = "",
+                PictureFile = null,
+                PictureFixed = false,
+                HasSummary = false,
+                HasChildren = false,
+                NoOfChildren = 0,
+                HasParent = false,
+                HasNoFigPara = false,
+                HasNoTabPara = false,
+                ShowingDetails = false,
+                ShowingSummary = true,
+                SearchKey = ""
+            };
+
+            return View(model);
+
+        }
+
+        // POST: Summaries/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSummary(BookIndexViewModel summ, bool save = false)
+        {
+            int linesNoOf, sentencesNoOf, paragraphsNoOf, paragraphPtr, newNoOfParagraphs, pictPtr;
+            string FigNo, FigNoAlt;
+            List<string> lines, sentences, paragrphs, newParagraphs;
+            Paragraphs paragraphs;
+            List<int> sentenceInParagraph;
+            List<bool> selectedSentences;
+            IEnumerable<Node> nodes;
+            IEnumerable<Picture> pictures;
+            List<Picture> picts;
+
+            bool haspict = false;
+            bool hasnofigpara = true;
+            bool hasnotabpara = true;
+
+            sentenceInParagraph = new List<int>();
+            selectedSentences = new List<bool>();
+            paragrphs = new List<string>();
+            sentences = new List<string>();
+            lines = new List<string>();
+            newParagraphs = new List<string>();
+            picts = new List<Picture>();
+            paragraphs = new Paragraphs();
+
+            paragraphPtr = 0;
+            paragraphs.TheText = summ.Summary.Summary1;
+
+            for (int i = 0; i < summ.SentencesNoOf; i++)
+            {
+                if (summ.SentenceInParagraph[i] != paragraphPtr)
+                {
+                    if (paragraphs.TheText.Length > 2)
+                    {
+                        if (paragraphs.TheText.Substring(paragraphs.TheText.Length - 2) != "\r\n") { paragraphs.TheText += "\r\n"; }
+                    }
+                    paragraphPtr = summ.SentenceInParagraph[i];
+                }
+                if (summ.SelectedSentences[i])
+                {
+                    if (paragraphs.TheText.Length > 2)
+                    {
+                        if (paragraphs.TheText.Substring(paragraphs.TheText.Length - 2) == "\r\n")
+                        {
+                            paragraphs.TheText += summ.Sentences[i];
+                        }
+                        else
+                        {
+                            paragraphs.TheText += " " + summ.Sentences[i];
+                        }
+                    }
+                }
+            }
+
+            paragraphs.NoOfChars = paragraphs.TheText.Length;
+
+            paragraphs.Paragrphs(out paragraphsNoOf, ref paragrphs, out sentencesNoOf, ref sentences, ref sentenceInParagraph, out linesNoOf, ref lines, 0, false, true, true, false, true, false, false);
+
+            summ.Summary.Summary1 = paragraphs.TheAlteredText;
+
+            paragrphs = new List<string>();
+            sentences = new List<string>();
+            lines = new List<string>();
+
+            paragraphs.Paragrphs(out paragraphsNoOf, ref paragrphs, out sentencesNoOf, ref sentences, ref sentenceInParagraph, out linesNoOf, ref lines, 0, false, true, true, false, true, false, true);
+
+            paragraphs.ListsAndTables(paragraphsNoOf, paragrphs, out newNoOfParagraphs, out newParagraphs, out hasnofigpara, out hasnotabpara);
+
+            nodes = _context.Nodes.Where(n => n.NodeId == summ.Summary.NodeId);
+            pictures = _context.Pictures.Where(pic => pic.NodeId == summ.Summary.NodeId);
+            if (pictures.Count() > 0)
+            {
+                haspict = true;
+            }
+
+            BookIndexViewModel model = new BookIndexViewModel
+            {
+                Node = nodes.FirstOrDefault(),
+                Summary = summ.Summary,
+                SentencesNoOf = summ.SentencesNoOf,
+                Sentences = summ.Sentences,
+                SentenceInParagraph = summ.SentenceInParagraph,
+                SelectedSentences = summ.SelectedSentences,
+                Paragraphs = newParagraphs,
+                NoOfParagraphs = newNoOfParagraphs,
+                Paragraph = "",
+                DisplayPictures = true,
+                HasPicture = haspict,
+                NoOfPictures = pictures.Count(),
+                PicturePointer = 0,
+                Pictures = pictures,
+                PictureTitle = "",
+                PictureFile = null,
+                PictureFixed = false,
+                HasSummary = false,
+                HasChildren = false,
+                NoOfChildren = 0,
+                HasParent = false,
+                HasNoFigPara = false,
+                HasNoTabPara = false,
+                ShowingDetails = false,
+                ShowingSummary = true,
+                SearchKey = ""
+            };
+            //if (ModelState.IsValid)
+            //{
+                if (save)
+                {
+                    _context.Add(summ.Summary);
+                    await _context.SaveChangesAsync();
+                    TempData["message"] = string.Format("Summary: {0} ... has been created for Node: {1}", summ.Summary.SummaryId, summ.Summary.NodeId);
+                    return RedirectToAction("Details", "Books", new { id = summ.Summary.NodeId });
+                }
+                else
+                {
+                    return View(model);
+                }
+            //}
+            //else
+            //{
+                // there is something wrong with the data values
+            //    return View(model);
+            //}
         }
 
         // GET: Admin/Edit/5
