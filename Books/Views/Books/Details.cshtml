@@ -207,18 +207,6 @@
                     <dd class="col-sm-1">
                         @Html.DisplayFor(model => @Model.Node.TreeLevel)
                     </dd>
-                    <dt class="col-sm-1">
-                        @Html.DisplayNameFor(model => @Model.Node.Tree)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.Tree.Heading)
-                    </dd>
-                    <dt class="col-sm-1">
-                        @Html.DisplayNameFor(model => @Model.Node.Type)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.Type.Label)
-                    </dd>
                 </dl>
                 <partial name="BookContent" model="@Model" />
             </section>
