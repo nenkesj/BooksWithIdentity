@@ -542,6 +542,37 @@ namespace Books.Controllers
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
         }
+        // GET: Admin/New/5
+        public async Task<IActionResult> NewBook()
+        {
+            TempData["message"] = null;
+            Node node = new Node();
+            node.Heading = "Enter Heading Here";
+            node.NodeText = "Enter Text Here";
+            node.TreeId = 2;
+            node.TypeId = 2;
+            node.ParentNodeId = 0;
+            node.TreeLevel = 1;
+            return View(node);
+        }
+
+        // POST: Admin/New/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NewBook([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
+        {
+            //if (ModelState.IsValid)
+            //{
+            _context.Add(node);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Books", new { id = node.NodeId });
+            //}
+            ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
+            ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
+            return View(node);
+        }
         // GET: Summaries/EditSummary/5
         public async Task<IActionResult> EditSummary(int? id)
         {

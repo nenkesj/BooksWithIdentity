@@ -63,6 +63,22 @@
                         </form>
                     </li>
                 }
+                @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
+                {
+                    if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
+                    {
+                        <li>
+                            @using (Html.BeginForm("Chapter", "Summaries", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
+                            {
+                                <input class="navbutton, btn, btn-info" type="submit" value="Chapter Summary" />
+                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                            }
+                            <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
+                                <button class="navbutton, btn, btn-info" type="submit">Create Chapter Summary</button>
+                            </form>
+                        </li>
+                    }
+                }
             </ul>
             <ul class="nav-main">
                 @if (@Model.HasSummary && @Model.ShowingDetails)

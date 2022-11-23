@@ -1,0 +1,44 @@
+﻿@model HowTo_DBLibrary.Node
+
+@{
+    ViewData["Title"] = "Admin: New Book";
+}
+
+<h1>New Book</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="NewBook" asp-route-id="@Model.NodeId">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="NodeId" />
+            <input type="hidden" asp-for="TreeId" />
+            <input type="hidden" asp-for="TypeId" />
+            <input type="hidden" asp-for="ParentNodeId" />
+            <input type="hidden" asp-for="TreeLevel" />
+            <div class="form-group">
+                <label asp-for="Heading" class="control-label"></label>
+                <textarea class="form-control" asp-for="Heading"></textarea>
+                <span asp-validation-for="Heading" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NodeText" class="control-label"></label>
+                <textarea class="form-control" asp-for="NodeText" rows="2"></textarea>
+                <span asp-validation-for="NodeText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Home">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

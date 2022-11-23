@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HowTo_DBLibrary;
+using NuGet.Protocol.Core.Types;
 
 namespace Books.Controllers
 {
@@ -162,6 +163,84 @@ namespace Books.Controllers
         private bool SummaryExists(int id)
         {
           return _context.Summaries.Any(e => e.SummaryId == id);
+        }
+        public void SpanSummaries(ref string Summaries, int NodeID, ref int ChapterSummNode)
+        {
+            string Heading;
+            int nodePtr, summariescount, nodescount;
+            Node node = _context.Nodes.Single(n => n.NodeId == NodeID);
+            Heading = node.Heading;
+            if (Heading == "Chapter Summary")
+            {
+                ChapterSummNode = node.NodeId;
+            }
+            else
+            {
+                Heading = Heading.ToUpper();
+            }
+            Heading += " " + (Char)13 + (Char)10;
+            IEnumerable<Summary> summaries = _context.Summaries.Where(s => s.NodeId == node.NodeId);
+            summariescount = summaries.Count();
+            if (summaries.Count() > 0)
+            {
+                if (summaries.First().Summary1.Substring(0, 7) == "Summary" || summaries.First().Summary1.Substring(0, 11) == "<h4>Summary")
+                {
+                    Summaries += Heading + summaries.First().Summary1.Substring((summaries.First().Summary1.IndexOf((Char)10) + 1));
+                }
+                else
+                {
+                    Summaries += Heading + summaries.First().Summary1;
+                }
+            }
+            IEnumerable<Node> nodes = _context.Nodes.Where(n => n.ParentNodeId == node.NodeId);
+            nodescount = nodes.Count();
+            if (nodes.Count() > 0)
+            {
+                for (int ptr = 0; ptr <= nodes.Count() - 1; ptr++)
+                {
+                    nodePtr = nodes.ToArray()[ptr].NodeId;
+                    SpanSummaries(ref Summaries, nodePtr, ref ChapterSummNode);
+                }
+            }
+        }
+
+        public ActionResult Chapter(int id)
+        {
+            string Summaries;
+            int ChapterSummNode, nodePtr;
+            Summaries = "";
+            ChapterSummNode = -1;
+            nodePtr = id;
+            SpanSummaries(ref Summaries, nodePtr, ref ChapterSummNode);
+            if (ChapterSummNode != -1)
+            {
+                // Replace existing Chapter Summary with latest Summaries
+                Node node = _context.Nodes.Single(n => n.NodeId == id);
+                node.Heading = "Chapter Summary";
+                node.NodeText = Summaries;
+                _context.Update(node);
+                _context.SaveChangesAsync();
+                ChapterSummNode = node.NodeId;
+            }
+            else
+            {
+                // Create the new node
+                Node nde = _context.Nodes.Single(n => n.NodeId == id);
+                Node node = new Node
+                {
+                    TreeId = 2,
+                    TypeId = 2,
+                    TreeLevel = (short)(nde.TreeLevel + 1),
+                    ParentNodeId = nde.NodeId,
+                    Heading = "Chapter Summary",
+                    NodeText = Summaries
+                };
+                _context.Add(node);
+                _context.SaveChangesAsync();
+                ChapterSummNode = node.NodeId;
+            }
+            // Display Chapter Summary
+            return RedirectToAction("Details", "Books", new { id = ChapterSummNode });
         }
     }
 }
