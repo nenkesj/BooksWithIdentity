@@ -47,11 +47,19 @@
                         <button class="navbutton, btn, btn-info" type="submit">New Child</button>
                     </form>
                 </li>
-                @if (!@Model.HasSummary && @Model.ShowingDetails)
+                @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2)
                 {
                     <li>
                         <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
                             <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
+                        </form>
+                    </li>
+                }
+                @if(@Model.Node.TreeLevel > 1)
+                {
+                    <li>
+                        <form asp-action="Edit" asp-controller="Formula" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">Create Formula</button>
                         </form>
                     </li>
                 }

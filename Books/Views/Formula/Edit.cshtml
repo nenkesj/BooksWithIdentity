@@ -1,0 +1,919 @@
+﻿@model Books.Models.FormulaEditViewModel
+@using System.Collections.Generic
+@using System.Web
+@using Microsoft.AspNetCore.Html
+@using Books.Infrastructure
+
+@{
+    ViewBag.Title = "Formula";
+}
+<div class="panel">
+    <div class="panel-heading">
+        @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.NodeID }, new { @class = "btn btn-info" })
+        <form asp-action="Edit" asp-controller="Formula" asp-route-undo=true>
+            <input type="submit" value="Undo" class="btn btn-primary" />
+            @Html.Hidden("bothident", @Model.BothIdent)
+            @Html.Hidden("bothoper", @Model.BothOper)
+            @Html.Hidden("bothnum", @Model.BothNum)
+            @Html.Hidden("boldident", @Model.BoldIdent)
+            @Html.Hidden("boldnum", @Model.BoldNum)
+            @Html.Hidden("boldtext", @Model.BoldText)
+            @Html.Hidden("ident1", @Model.Ident1)
+            @Html.Hidden("ident2", @Model.Ident2)
+            @Html.Hidden("oper1", @Model.Oper1)
+            @Html.Hidden("oper2", @Model.Oper2)
+            @Html.Hidden("num1", @Model.Num1)
+            @Html.Hidden("num2", @Model.Num2)
+            @Html.Hidden("space", @Model.Num1)
+            @Html.Hidden("text", @Model.Text)
+            @Html.Hidden("algebraic", @Model.Algebraic)
+            @Html.Hidden("calculus", @Model.Calculus)
+            @Html.Hidden("ellipses", @Model.Ellipses)
+            @Html.Hidden("logic", @Model.Logic)
+            @Html.Hidden("vector", @Model.Vector)
+            @Html.Hidden("greekupper", @Model.GreekUpper)
+            @Html.Hidden("greeklower", @Model.GreekLower)
+            @Html.Hidden("insert", @Model.Insert)
+            @Html.Hidden("insert", @Model.Insert1)
+            @Html.Hidden("target", @Model.Target)
+            @Html.Hidden("block", @Model.Block)
+            @Html.Hidden("clearformula", @Model.ClearFormula)
+            @Html.Hidden("NodeID", @Model.NodeID)
+        </form>
+
+        @if (@Model.ContainsSupRow1)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row1">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row1" />
+            </form>
+        }
+        @if (@Model.ContainsSupRow2)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row2">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row2" />
+            </form>
+        }
+        @if (@Model.ContainsSubRow1)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Subscript Row1">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Subscript Row1" />
+            </form>
+        }
+        @if (@Model.ContainsSubRow2)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Subscript Row2">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Subscript Row2" />
+            </form>
+        }
+        @if (@Model.ContainsMatrix)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Matrix">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Matrix" />
+            </form>
+        }
+        @if (@Model.ContainsFenced)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Fenced">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Fenced" />
+            </form>
+        }
+        @if (@Model.ContainsSquareRootRow)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Square Root Row">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Square Root Row" />
+            </form>
+        }
+        @if (@Model.ContainsRootRow)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Root Row">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Root Row" />
+            </form>
+        }
+        @if (@Model.ContainsOverRow)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Over Row">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Over Row" />
+            </form>
+        }
+        @if (@Model.ContainsUnderRow)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Under Row">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Under Row" />
+            </form>
+        }
+        @if (@Model.ContainsRow)
+        {
+            <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Row">
+                @Html.Hidden("bothident", @Model.BothIdent)
+                @Html.Hidden("bothoper", @Model.BothOper)
+                @Html.Hidden("bothnum", @Model.BothNum)
+                @Html.Hidden("boldident", @Model.BoldIdent)
+                @Html.Hidden("boldnum", @Model.BoldNum)
+                @Html.Hidden("boldtext", @Model.BoldText)
+                @Html.Hidden("ident1", @Model.Ident1)
+                @Html.Hidden("ident2", @Model.Ident2)
+                @Html.Hidden("oper1", @Model.Oper1)
+                @Html.Hidden("oper2", @Model.Oper2)
+                @Html.Hidden("num1", @Model.Num1)
+                @Html.Hidden("num2", @Model.Num2)
+                @Html.Hidden("space", @Model.Num1)
+                @Html.Hidden("text", @Model.Text)
+                @Html.Hidden("algebraic", @Model.Algebraic)
+                @Html.Hidden("calculus", @Model.Calculus)
+                @Html.Hidden("ellipses", @Model.Ellipses)
+                @Html.Hidden("logic", @Model.Logic)
+                @Html.Hidden("vector", @Model.Vector)
+                @Html.Hidden("greekupper", @Model.GreekUpper)
+                @Html.Hidden("greeklower", @Model.GreekLower)
+                @Html.Hidden("insert", @Model.Insert)
+                @Html.Hidden("insert", @Model.Insert1)
+                @Html.Hidden("target", @Model.Target)
+                @Html.Hidden("block", @Model.Block)
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                @Html.Hidden("NodeID", @Model.NodeID)
+                <input class="navbutton, btn, btn-info" type="submit" value="Clear Row" />
+            </form>
+        }
+
+        <h3>Formula</h3>
+    </div>
+
+    <div class="panel-body">
+        <form asp-action="Edit" asp-controller="Formula" asp-route-undo=false>
+            <!--Html.ValidationSummary()-->
+            @Html.Hidden("NodeID", @Model.NodeID)
+            <div class="dataElem">
+                @{
+                    var txt = new HtmlString((string)@ViewBag.formula);
+                }
+                <p>@txt</p>
+            </div>
+            <br />
+            <div class="dataElem">
+                <label for="Algebraic">Algebraic:</label>
+                <select id="Algebraic" name="Algebraic">
+                    <option value="None" selected>None</option>
+                    <option value="plus;">+</option>
+                    <option value="minus;">-</option>
+                    <option value="times;">×</option>
+                    <option value="divide;">÷</option>
+                    <option value="ne;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&ne;</mo></math></option>
+                    <option value="asymp;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&asymp;</mo></math></option>
+                    <option value="lt;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&lt;</mo></math></option>
+                    <option value="le;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&le;</mo></math></option>
+                    <option value="gt;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&gt;</mo></math></option>
+                    <option value="ge;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&ge;</mo></math></option>
+                    <option value="plusmn;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&plusmn;</mo></math></option>
+                    <option value="prop;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&prop;</mo></math></option>
+                    <option value="sum;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&sum;</mo></math></option>
+                    <option value="prod;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&prod;</mo></math></option>
+                    <option value="lfloor;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&lfloor;</mo></math></option>
+                    <option value="rfloor;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&rfloor;</mo></math></option>
+                    <option value="lceil;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&lceil;</mo></math></option>
+                    <option value="rceil;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&rceil;</mo></math></option>
+                </select>
+                <label for="Calculus">Calculus:</label>
+                <select id="Calculus" name="Calculus">
+                    <option value="None" selected>None</option>
+                    <option value="prime;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&prime;</mo></math></option>
+                    <option value="Prime;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Prime;</mo></math></option>
+                    <option value="tprime;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&tprime;</mo></math></option>
+                    <option value="qprime;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&qprime;</mo></math></option>
+                    <option value="part;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&part;</mo></math></option>
+                    <option value="Delta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Delta;</mo></math></option>
+                    <option value="Del;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Del;</mo></math></option>
+                    <option value="int;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&int;</mo></math></option>
+                    <option value="Int;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Int;</mo></math></option>
+                    <option value="tint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&tint;</mo></math></option>
+                    <option value="qint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&qint;</mo></math></option>
+                    <option value="conint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&conint;</mo></math></option>
+                    <option value="cwconint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&cwconint;</mo></math></option>
+                    <option value="awconint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&awconint;</mo></math></option>
+                    <option value="Conint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Conint; </mo></math></option>
+                    <option value="Cconint;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&Cconint; </mo></math></option>
+                    <option value="infin;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'><mo>&infin; </mo></math></option>
+                </select>
+                <label for="Ellipses">Ellipses:</label>
+                <select id="Ellipses" name="Ellipses">
+                    <option value="None" selected>None</option>
+                    <option value="hellip;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&hellip;</mo> </math></option>
+                    <option value="vellip;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&vellip;</mo> </math></option>
+                    <option value="ctdot;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&ctdot;</mo> </math></option>
+                    <option value="utdot;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&utdot;</mo> </math></option>
+                    <option value="dtdot;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&dtdot;</mo> </math></option>
+                </select>
+                <label for="Logic">Logic:</label>
+                <select id="Logic" name="Logic">
+                    <option value="None" selected>None</option>
+                    <option value="not;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&not;</mo> </math></option>
+                    <option value="and;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&and; </mo> </math></option>
+                    <option value="or;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&or;</mo> </math></option>
+                    <option value="veebar;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&veebar;</mo> </math></option>
+                    <option value="forall;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&forall;</mo> </math></option>
+                    <option value="exist;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&exist;</mo> </math></option>
+                    <option value="rArr;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&rArr;</mo> </math></option>
+                    <option value="hArr;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&hArr;</mo> </math></option>
+                    <option value="EmptySmallSquare;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&EmptySmallSquare; </mo> </math></option>
+                    <option value="loz;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&loz;</mo> </math></option>
+                    <option value="vdash;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&vdash;</mo> </math></option>
+                    <option value="vDash;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&vDash;</mo> </math></option>
+                    <option value="there4;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&there4;</mo> </math></option>
+                </select>
+                <label for="Vector">Vector:</label>
+                <select id="Vector" name="Vector">
+                    <option value="None" selected>None</option>
+                    <option value="sdot;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&sdot;</mo> </math></option>
+                    <option value="Cross;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Cross;</mo> </math></option>
+                    <option value="Vert;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Vert;</mo> </math></option>
+                    <option value="lang;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&lang;</mo> </math></option>
+                    <option value="rang;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&rang;</mo> </math></option>
+                    <option value="compfn;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&compfn;</mo> </math></option>
+                    <option value="rarr;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&rarr;</mo> </math></option>
+                    <option value="mapsto;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&mapsto;</mo> </math></option>
+                    <option value="imath;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&imath;</mo> </math></option>
+                    <option value="jmath;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&jmath;</mo> </math></option>
+                </select>
+                <label for="Vector">Set:</label>
+                <select id="Set" name="Set">
+                    <option value="None" selected>None</option>
+                    <option value="empty;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&empty;</mo> </math></option>
+                    <option value="isin;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&isin;</mo> </math></option>
+                    <option value="notin;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&notin;</mo> </math></option>
+                    <option value="sube;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&sube;</mo> </math></option>
+                    <option value="nsube;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&nsube;</mo> </math></option>
+                    <option value="sub;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&sub;</mo> </math></option>
+                    <option value="nsub;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&nsub;</mo> </math></option>
+                    <option value="supe;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&supe;</mo> </math></option>
+                    <option value="nsupe;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&nsupe;</mo> </math></option>
+                    <option value="sup;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&sup;</mo> </math></option>
+                    <option value="nsup;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&nsup;</mo> </math></option>
+                    <option value="cap;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&cap;</mo> </math></option>
+                    <option value="cup;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&cup;</mo> </math></option>
+                    <option value="ssetmn;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&ssetmn;</mo> </math></option>
+                </select>
+                <label for="Geometric">Geometric:</label>
+                <select id="Geometric" name="Geometric">
+                    <option value="None" selected>None</option>
+                    <option value="deg;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&deg;</mo> </math></option>
+                    <option value="ang;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&ang;</mo> </math></option>
+                    <option value="angmsd;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&angmsd;</mo> </math></option>
+                    <option value="angrt;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&angrt;</mo> </math></option>
+                    <option value="vangrt;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&vangrt;</mo> </math></option>
+                    <option value="lrtri;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&lrtri;</mo> </math></option>
+                    <option value="cir;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&cir;</mo> </math></option>
+                    <option value="xutri;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&xutri;</mo> </math></option>
+                    <option value="squ;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&squ;</mo> </math></option>
+                    <option value="fltns;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&fltns;</mo> </math></option>
+                    <option value="spar;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&spar;</mo> </math></option>
+                    <option value="npar;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&npar;</mo> </math></option>
+                    <option value="perp;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&perp;</mo> </math></option>
+                    <option value="cong;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&cong;</mo> </math></option>
+                    <option value="rarr;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&rarr;</mo> </math></option>
+                    <option value="harr;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&harr;</mo> </math></option>
+                </select>
+                <label for="GreekUpper">Greek Upper:</label>
+                <select id="GreekUpper" name="GreekUpper">
+                    <option value="None" selected>None</option>
+                    <option value="Alpha;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Alpha;</mo> </math></option>
+                    <option value="Beta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Beta;</mo> </math></option>
+                    <option value="Gamma;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Gamma;</mo> </math></option>
+                    <option value="Delta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Delta;</mo> </math></option>
+                    <option value="Epsilon;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Epsilon;</mo> </math></option>
+                    <option value="Zeta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Zeta;</mo> </math></option>
+                    <option value="Eta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Eta;</mo> </math></option>
+                    <option value="Theta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Theta;</mo> </math></option>
+                    <option value="Iota;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Iota;</mo> </math></option>
+                    <option value="Kappa;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Kappa;</mo> </math></option>
+                    <option value="Lambda;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Lambda;</mo> </math></option>
+                    <option value="Mu;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Mu;</mo> </math></option>
+                    <option value="Nu;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Nu;</mo> </math></option>
+                    <option value="Xi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Xi;</mo> </math></option>
+                    <option value="Omicron;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Omicron;</mo> </math></option>
+                    <option value="Pi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Pi;</mo> </math></option>
+                    <option value="Rho;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Rho;</mo> </math></option>
+                    <option value="Sigma;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Sigma;</mo> </math></option>
+                    <option value="Tau;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Tau;</mo> </math></option>
+                    <option value="Upsilon;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Upsilon;</mo> </math></option>
+                    <option value="Phi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Phi;</mo> </math></option>
+                    <option value="Chi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Chi;</mo> </math></option>
+                    <option value="Psi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Psi;</mo> </math></option>
+                    <option value="Omega;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&Omega;</mo> </math></option>
+                </select>
+                <label for="GreekLower">Greek Lower:</label>
+                <select id="GreekLower" name="GreekLower">
+                    <option value="None" selected>None</option>
+                    <option value="alpha;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&alpha;</mo> </math></option>
+                    <option value="beta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&beta;</mo> </math></option>
+                    <option value="gamma;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&gamma;</mo> </math></option>
+                    <option value="delta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&delta;</mo> </math></option>
+                    <option value="epsilon;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&epsilon;</mo> </math></option>
+                    <option value="zeta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&zeta;</mo> </math></option>
+                    <option value="eta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&eta;</mo> </math></option>
+                    <option value="theta;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&theta;</mo> </math></option>
+                    <option value="iota;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&iota;</mo> </math></option>
+                    <option value="kappa;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&kappa;</mo> </math></option>
+                    <option value="lambda;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&lambda;</mo> </math></option>
+                    <option value="mu;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&mu;</mo> </math></option>
+                    <option value="nu;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&nu;</mo> </math></option>
+                    <option value="xi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&xi;</mo> </math></option>
+                    <option value="omicron;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&omicron;</mo> </math></option>
+                    <option value="pi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&pi;</mo> </math></option>
+                    <option value="rho;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&rho;</mo> </math></option>
+                    <option value="sigma;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&sigma;</mo> </math></option>
+                    <option value="tau;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&tau;</mo> </math></option>
+                    <option value="upsilon;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&upsilon;</mo> </math></option>
+                    <option value="phi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&phi;</mo> </math></option>
+                    <option value="chi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&chi;</mo> </math></option>
+                    <option value="psi;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&psi;</mo> </math></option>
+                    <option value="omega;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&omega;</mo> </math></option>
+                </select>
+            </div>
+            <br />
+            <div class="dataElem">
+                <label for="Insert">Insert:</label>
+                <fieldset class="radios">
+                    @if (@Model.Insert == "Identifier")
+                    {
+                        <input type="radio" id="Identifier" name="Insert" value="Identifier" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" id="Identifier" name="Insert" value="Identifier" />
+                    }
+                    <label for="Identifier">Identifier</label>
+                    @if (@Model.Insert == "Operator")
+                    {
+                        <input type="radio" id="Operator" name="Insert" value="Operator" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" id="Operator" name="Insert" value="Operator" />
+                    }
+                    <label for="Operator">Operator</label>
+                    @if (@Model.Insert == "Number")
+                    {
+                        <input type="radio" id="Number" name="Insert" value="Number" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" id="Number" name="Insert" value="Number" />
+                    }
+                    <label for="Number">Number</label>
+                    @if (@Model.Insert == "Matrix")
+                    {
+                        <input type="radio" id="Matrix" name="Insert" value="Matrix" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" id="Matrix" name="Insert" value="Matrix" />
+                    }
+                    <label for="Matrix">Matrix</label>
+                    @if (@Model.Insert == "None")
+                    {
+                        <input type="radio" id="None" name="Insert" value="None" checked />
+                    }
+                    else
+                    {
+                        <input type="radio" id="None" name="Insert" value="None" />
+                    }
+                    <label for="None">None</label>
+                </fieldset>
+                @Html.Hidden("insert", @Model.Insert)
+                <select id="Insert1" name="Insert1">
+                    <option value="None" selected>None</option>
+                    <option value="Superscript (Identifier, Number)">Superscript (Identifier, Number)</option>
+                    <option value="Superscript (Identifier, Identifier)">Superscript (Identifier, Identifier)</option>
+                    <option value="Superscript (Identifier, Row)">Superscript (Identifier, Row)</option>
+                    <option value="Subscript (Identifier, Number)">Subscript (Identifier, Number)</option>
+                    <option value="Subscript (Identifier, Identifier)">Subscript (Identifier, Identifier)</option>
+                    <option value="Subscript (Identifier, Row)">Subscript (Identifier, Row)</option>
+                    <option value="Fraction">Fraction</option>
+                    <option value="Fenced 0">Fenced</option>
+                    <option value="Space">Space</option>
+                    <option value="Text">Text</option>
+                    <option value="Square Root">Square Root</option>
+                    <option value="Under Over">Under Over</option>
+                    <option value="Over">Over</option>
+                    <option value="Under">Under</option>
+                    <option value="Over Row">Over Row</option>
+                    <option value="Limit">Limit</option>
+                    <option value="Fenced 1">Fenced 1</option>
+                    <option value="Fenced 2">Fenced 2</option>
+                    <option value="Fenced 3">Fenced 3</option>
+                    <option value="Line Break 1">Line Break 1</option>
+                    <option value="Line Break 2">Line Break 2</option>
+                    <option value="New Line =">New Line =</option>
+                    <option value="Root">Root</option>
+                    <option value="Row">Row</option>
+                    <option value="SubSup (Identifier, Number, Number)">SubSup (Identifier, Number, Number)</option>
+                    <option value="SubSup (Identifier, Identifier, Identifier)">SubSup (Identifier, Identifier, Identifier)</option>
+                    <option value="SubSup (Identifier, Number, Identifier)">SubSup (Identifier, Number, Identifier)</option>
+                    <option value="SubSup (Identifier, Identifier, Number)">SubSup (Identifier, Identifier, Number)</option>
+                    <option value="SubSup (Identifier, Row, Row)">SubSup (Identifier, Row, Row)</option>
+                    <option value="Superscript (Number, Number)">Superscript (Number, Number)</option>
+                    <option value="Superscript (Operator, Number)">Superscript (Operator, Number)</option>
+                    <option value="Superscript (Row, Identifier)">Superscript (Row, Identifier)</option>
+                    <option value="Superscript (Row, Number)">Superscript (Row, Number)</option>
+                    <option value="Superscript (Row, Row)">Superscript (Row, Row)</option>
+                    <option value="Superscript (Number, Row)">Superscript (Number, Row)</option>
+                    <option value="Subscript (Identifier, Operator)">Subscript (Identifier, Operator)</option>
+                    <option value="Subscript (Identifier, Row)">Subscript (Identifier, Row)</option>
+                    <option value="Subscript (Row, Identifier)">Subscript (Row, Identifier)</option>
+                    <option value="Subscript (Row, Number)">Subscript (Row, Number)</option>
+                    <option value="Subscript (Row, Row)">Subscript (Row, Row)</option>
+                </select>
+                @Html.Hidden("insert1", @Model.Insert1)
+                <label for="Target">Target:</label>
+                <select id="Target" name="Target">
+                    @if (@Model.Target == "Square Root Row")
+                    {
+                        <option value="Square Root Row" selected>Square Root Row</option>
+                    }
+                    else
+                    {
+                        <option value="">Square Root Row</option>
+                    }
+                    @if (@Model.Target == "Root Row")
+                    {
+                        <option value="Root Row" selected>Root Row</option>
+                    }
+                    else
+                    {
+                        <option value="Root Row">Root Row</option>
+                    }
+                    @if (@Model.Target == "Matrix")
+                    {
+                        <option value="Matrix" selected>Matrix</option>
+                    }
+                    else
+                    {
+                        <option value="">Matrix</option>
+                    }
+                    @if (@Model.Target == "Under Row")
+                    {
+                        <option value="Under Row" selected>Under Row</option>
+                    }
+                    else
+                    {
+                        <option value="Under Row">Under Row</option>
+                    }
+                    @if (@Model.Target == "Over Row")
+                    {
+                        <option value="Over Row" selected>Over Row</option>
+                    }
+                    else
+                    {
+                        <option value="Over Row">Over Row</option>
+                    }
+                    <option value="Over Row">Over Row</option>
+                    @if (@Model.Target == "Fenced")
+                    {
+                        <option value="Fenced" selected>Fenced</option>
+                    }
+                    else
+                    {
+                        <option value="Fenced">Fenced</option>
+                    }
+                    @if (@Model.Target == "Row")
+                    {
+                        <option value="Row" selected>Row</option>
+                    }
+                    else
+                    {
+                        <option value="Row">Row</option>
+                    }
+                    @if (@Model.Target == "Append")
+                    {
+                        <option value="Append" selected>Append</option>
+                    }
+                    else
+                    {
+                        <option value="Append">Append</option>
+                    }
+                    @if (@Model.Target == "Superscript Row1")
+                    {
+                        <option value="Superscript Row1" selected>Superscript Row1</option>
+                    }
+                    else
+                    {
+                        <option value="Superscript Row1">Superscript Row1</option>
+                    }
+                    @if (@Model.Target == "Superscript Row2")
+                    {
+                        <option value="Superscript Row2" selected>Superscript Row2</option>
+                    }
+                    else
+                    {
+                        <option value="Superscript Row2">Superscript Row2</option>
+                    }
+                    @if (@Model.Target == "Subscript Row1")
+                    {
+                        <option value="Subscript Row1" selected>Subscript Row1</option>
+                    }
+                    else
+                    {
+                        <option value="Subscript Row1">Subscript Row1</option>
+                    }
+                    @if (@Model.Target == "Subscript Row2")
+                    {
+                        <option value="Subscript Row2" selected>Subscript Row2</option>
+                    }
+                    else
+                    {
+                        <option value="Subscript Row2">Subscript Row2</option>
+                    }
+                    @if (@Model.Target == "Row")
+                    {
+                        <option value="Row" selected>Row</option>
+                    }
+                    else
+                    {
+                        <option value="Row">Row</option>
+                    }
+                    @if (@Model.Target == "Numerator")
+                    {
+                        <option value="Numerator" selected>Numerator</option>
+                    }
+                    else
+                    {
+                        <option value="Numerator">Numerator</option>
+                    }
+                    @if (@Model.Target == "Denominator")
+                    {
+                        <option value="Denominator" selected>Denominator</option>
+                    }
+                    else
+                    {
+                        <option value="Denominator">Denominator</option>
+                    }
+                </select>
+                @Html.Hidden("target", @Model.Target)
+                @Html.DropDownListFor(x => x.Block, new SelectList(
+                new[]
+                {
+                "Inline",
+                "Block"
+                }))
+                @Html.Hidden("block", @Model.Block)
+                <label>Clear Formula</label><input id="ClearFormula" name="ClearFormula" type="checkbox" value="true" /><input name="ClearFormula" type="hidden" value="false" />
+                @Html.Hidden("clearformula", @Model.ClearFormula)
+                <label>Reverse</label><input id="Reverse" name="Reverse" type="checkbox" value="true" /><input name="Reverse" type="hidden" value="false" />
+                @Html.Hidden("reverse", @Model.Reverse)
+                @if (@Model.Target == "Numerator")
+                {
+                    <label>Clear Numerator</label>
+
+                    <input id="ClearNumerator" name="ClearNumerator" type="checkbox" value="true" />
+
+                    <input name="ClearNumerator" type="hidden" value="false" />
+                    @Html.Hidden("clearnumerator", @Model.ClearNumerator)
+                }
+                @if (@Model.Target == "Denominator")
+                {
+                    <label>Clear Denominator</label>
+
+                    <input id="ClearDenominator" name="ClearDenominator" type="checkbox" value="true" />
+
+                    <input name="ClearDenominator" type="hidden" value="false" />
+                    @Html.Hidden("cleardenominator", @Model.ClearDenominator)
+                }
+            </div>
+            <br />
+            <div class="dataElem">
+                <table>
+                    <tr>
+                        <td><label>Identifier 1</label></td>
+                        <td>@Html.TextBoxFor(m => m.Ident1)</td>
+                        <td><label>Identifier 2</label></td>
+                        <td>@Html.TextBoxFor(m => m.Ident2)</td>
+                        <td><input id="Id2" name="Id2" type="checkbox" value="true" /><input name="Id2" type="hidden" value="false" /></td>
+                        <td><input id="BothIdent" name="BothIdent" type="checkbox" value="true" /><input name="BothIdent" type="hidden" value="false" /></td>
+                        <td><label>Both</label></td>
+                        <td><input id="BoldIdent" name="BoldIdent" type="checkbox" value="true" /><input name="BoldIdent" type="hidden" value="false" /></td>
+                        <td><label>Bold</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Operator 1</label></td>
+                        <td>@Html.TextBoxFor(m => m.Oper1)</td>
+                        <td><label>Operator 2</label></td>
+                        <td>@Html.TextBoxFor(m => m.Oper2)</td>
+                        <td><input id="Op2" name="Op2" type="checkbox" value="true" /><input name="Op2" type="hidden" value="false" /></td>
+                        <td><input id="BothOper" name="BothOper" type="checkbox" value="true" /><input name="BothOper" type="hidden" value="false" /></td>
+                        <td><label>Both</label></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><label>Number 1</label></td>
+                        <td>@Html.TextBoxFor(m => m.Num1)</td>
+                        <td><label>Number 2</label></td>
+                        <td>@Html.TextBoxFor(m => m.Num2)</td>
+                        <td><input id="N2" name="N2" type="checkbox" value="true" /><input name="N2" type="hidden" value="false" /></td>
+                        <td><input id="BothNum" name="BothNum" type="checkbox" value="true" /><input name="BothNum" type="hidden" value="false" /></td>
+                        <td><label>Both</label></td>
+                        <td><input id="BoldNum" name="BoldNum" type="checkbox" value="true" /><input name="BoldNum" type="hidden" value="false" /></td>
+                        <td><label>Bold</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Space</label></td>
+                        <td>@Html.TextBoxFor(m => m.Space)</td>
+                        <td><label>Text</label></td>
+                        <td>@Html.TextBoxFor(m => m.Text)</td>
+                        <td></td>
+                        <td><input id="BothText" name="BothText" type="checkbox" value="true" /><input name="BothText" type="hidden" value="false" /></td>
+                        <td><label>Both</label></td>
+                        <td><input id="BoldText" name="BoldText" type="checkbox" value="true" /><input name="BoldText" type="hidden" value="false" /></td>
+                        <td><label>Bold</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Row</label></td>
+                        <td>@Html.TextBoxFor(m => m.Row)</td>
+                        <td><label>Column</label></td>
+                        <td>@Html.TextBoxFor(m => m.Column)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <input type="submit" value="Insert" class="btn btn-primary" />
+            <br />
+            <br />
+            <div class="dataElem">
+                <label>@ViewBag.formula</label><br />
+            </div>
+        </form>
+    </div>
+</div>
+
