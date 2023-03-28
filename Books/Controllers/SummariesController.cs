@@ -179,7 +179,7 @@ namespace Books.Controllers
                 Heading = Heading.ToUpper();
             }
             Heading += " " + (Char)13 + (Char)10;
-            IEnumerable<Summary> summaries = _context.Summaries.Where(s => s.NodeId == node.NodeId);
+            IEnumerable<Summary> summaries = _context.Summaries.Where(s => s.NodeId == node.NodeId).OrderBy(n => n.NodeId);
             summariescount = summaries.Count();
             if (summaries.Count() > 0)
             {
@@ -192,7 +192,7 @@ namespace Books.Controllers
                     Summaries += Heading + summaries.First().Summary1;
                 }
             }
-            IEnumerable<Node> nodes = _context.Nodes.Where(n => n.ParentNodeId == node.NodeId);
+            IEnumerable<Node> nodes = _context.Nodes.Where(n => n.ParentNodeId == node.NodeId).OrderBy(n => n.NodeId);
             nodescount = nodes.Count();
             if (nodes.Count() > 0)
             {
@@ -204,7 +204,7 @@ namespace Books.Controllers
             }
         }
 
-        public ActionResult Chapter(int id)
+        public async Task<IActionResult> Chapter(int id)
         {
             string Summaries;
             int ChapterSummNode, nodePtr;
@@ -215,11 +215,10 @@ namespace Books.Controllers
             if (ChapterSummNode != -1)
             {
                 // Replace existing Chapter Summary with latest Summaries
-                Node node = _context.Nodes.Single(n => n.NodeId == id);
-                node.Heading = "Chapter Summary";
+                Node node = _context.Nodes.Single(n => n.NodeId == ChapterSummNode);
                 node.NodeText = Summaries;
                 _context.Update(node);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 ChapterSummNode = node.NodeId;
             }
             else
@@ -236,7 +235,7 @@ namespace Books.Controllers
                     NodeText = Summaries
                 };
                 _context.Add(node);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 ChapterSummNode = node.NodeId;
             }
             // Display Chapter Summary

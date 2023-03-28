@@ -25,8 +25,8 @@ namespace HowTo_DBLibrary
         public string Heading { get; set; } = null!;
         public string NodeText { get; set; } = null!;
 
-        public virtual Tree Tree { get; set; } = null!;
-        public virtual Type Type { get; set; } = null!;
+        public virtual Tree? Tree { get; set; } = null!;
+        public virtual Type? Type { get; set; } = null!;
         public virtual ICollection<Code> Codes { get; set; }
         public virtual ICollection<HowTo> HowTos { get; set; }
         public virtual ICollection<Info> Infos { get; set; }

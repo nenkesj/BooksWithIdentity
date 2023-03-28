@@ -93,6 +93,12 @@ p {
     margin: 0;
 }
 
+.contain1 {
+    background-color: cornsilk;
+    margin: 0;
+    padding: 30px;
+}
+
 .fixedcontainer {
     background-color: floralwhite;
     margin: 0 0 0 5px;
@@ -139,6 +145,8 @@ pre {
     display: inline-block;
     width: auto;
     font-size: 16px;
+    background-color: gainsboro;
+    padding: 15px;
 }
 
 code {

@@ -14,7 +14,8 @@
             <h4>Create Summary</h4>
             @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.Summary.NodeId }, new { @class = "btn btn-info" })
             @Html.Hidden("NodeID", @Model.Summary.NodeId)
-            <input type="submit" value="Submit" class="btn btn-primary" /> <label>Save</label> @Html.CheckBox("save", false)
+            <input type="submit" value="Submit" class="btn btn-primary" />
+            <input class="form-check-input" type="checkbox" name="save" value="true"/>
         </div>
         <div class="summresult">
             @Html.Partial("BookContent", @Model)

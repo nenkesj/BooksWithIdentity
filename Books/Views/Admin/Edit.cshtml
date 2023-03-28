@@ -3,16 +3,18 @@
 @{
     ViewData["Title"] = "Admin: Edit " + @Model.Heading;
 }
-<div class="contain">
+<div class="contain1">
     <h1>Edit</h1>
-
-    <h4>Node : @Model.NodeId</h4>
+    @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.NodeId, ParentNodeID = @Model.ParentNodeId, TreeLevel = @Model.TreeLevel}, new { @class = "btn btn-info" })
     <hr />
     <form asp-action="Edit" asp-route-id="@Model.NodeId" asp-route-ParentNodeID="@Model.ParentNodeId" asp-route-TreeLevel="@Model.TreeLevel">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="NodeId" />
         <div class="row">
             <div class="col-sm-12">
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
                 <div class="form-group">
                     <h4><label asp-for="Heading" class="control-label"></label></h4>
                     <textarea class="form-control" asp-for="Heading"></textarea>
@@ -27,6 +29,13 @@
         </div>
         <hr/>
         <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => @Model.NodeId)
+            </dt>
+            <dd class="col-sm-2">
+                @Html.EditorFor(model => @Model.NodeId)
+                <span asp-validation-for="NodeId" class="text-danger"></span>
+            </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => @Model.ParentNodeId)
             </dt>
@@ -58,15 +67,7 @@
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </dd>
         </dl>
-        <hr />
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary" />
-        </div>
     </form>
-    <div>
-        <a asp-action="Details" asp-controller="Books" asp-route-id="@Model.NodeId" asp-route-ParentNodeID="@Model.ParentNodeId" asp-route-TreeLevel="@Model.TreeLevel">Back to Details</a>
-    </div>
-
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");

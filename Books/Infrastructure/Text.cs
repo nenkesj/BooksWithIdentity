@@ -1507,6 +1507,13 @@ namespace Books.Infrastructure
                             if (!pastSecondWord)
                             {
                                 AnalyseNewLine(lineCurrChar, lineNextChar, lineLastChar, ref firstWord1stChr, ref nothingYet, ref atFirstWord, ref pastFirstWord, ref atSecondWord, ref pastSecondWord, ref firstWordAllCapitals, ref firstWordHasDelimiter, ref WordIsAInteger, ref WordIsAHexNumber, ref WordEndsWithFullStop, ref ItsAList, ref ItsAnUnorderedList, ref ItsAnOrderedList, ref ListItemEndsWithFullStop, ref txtCtr, ref firstWordPtr, ref firstWordLength, ref secondWordPtr, ref secondWordLength, ref firstWord, ref secondWord, Format);
+
+                                // In list change tabs to spaces
+
+                                if (lineCurrChar == (Char)9 && ItsAList)
+                                {
+                                    lineCurrChar = ' ';
+                                }
                             }
                             if (allCapitals) 
                             {

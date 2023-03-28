@@ -38,15 +38,17 @@
             </ul>
             <ul class="nav-main">
                 <li>
-                    <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
+                    <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
                         <button class="navbutton, btn, btn-info" type="submit">New</button>
                     </form>
                 </li>
                 <li>
-                    <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId">
+                    <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
                         <button class="navbutton, btn, btn-info" type="submit">New Child</button>
                     </form>
                 </li>
+            </ul>
+            <ul class="nav-main">
                 @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2)
                 {
                     <li>
@@ -55,7 +57,7 @@
                         </form>
                     </li>
                 }
-                @if(@Model.Node.TreeLevel > 1)
+                @if (@Model.Node.TreeLevel > 1)
                 {
                     <li>
                         <form asp-action="Edit" asp-controller="Formula" asp-route-id="@Model?.Node.NodeId" method="get">
@@ -68,13 +70,8 @@
                     if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
                     {
                         <li>
-                            @using (Html.BeginForm("Chapter", "Summaries", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
-                            {
-                                <input class="navbutton, btn, btn-info" type="submit" value="Chapter Summary" />
-                                @Html.Hidden("NodeID", @Model.Node.NodeId)
-                            }
                             <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
-                                <button class="navbutton, btn, btn-info" type="submit">Create Chapter Summary</button>
+                                <button class="navbutton, btn, btn-info" type="submit">Chapter Summary</button>
                             </form>
                         </li>
                     }
@@ -136,11 +133,9 @@
                     if (n.TreeLevel != 1)
                     {
                         var classfields = "navbuton btn" + (@n.Heading == ViewBag.SelectedNodeHeading ? " btn-primary" : "btn-info ");
-                        <li>
                             <form asp-action="Details" asp-controller="Books" asp-route-id="@n.NodeId">
-                                <button class="@classfields" type="submit">@n.Heading</button>
+                                <button class="@classfields" type="submit">@n.Heading</button><br/>
                             </form>
-                        </li>
                     }
                 }
             </ul>
@@ -192,23 +187,32 @@
                     <div class="alert alert-success">@TempData["message"]</div>
                 }
                 <h1>@Model.Node.Heading</h1>
-                <h4>Node : @Model.Node.NodeId</h4>
-                <hr />
-                <dl class="row">
-                    <dt class="col-sm-3">
-                        @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.ParentNodeId)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.TreeLevel)
-                    </dd>
-                </dl>
                 <partial name="BookContent" model="@Model" />
+                @if(Model.Node.TreeLevel > 1)
+                {
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => @Model.Node.NodeId)
+                        </dt>
+                        <dd class="col-sm-1">
+                            @Html.DisplayFor(model => @Model.Node.NodeId)
+                        </dd>
+                        <dt class="col-sm-3">
+                            @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
+                        </dt>
+                        <dd class="col-sm-1">
+                            @Html.DisplayFor(model => @Model.Node.ParentNodeId)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
+                        </dt>
+                        <dd class="col-sm-2">
+                            @Html.DisplayFor(model => @Model.Node.TreeLevel)
+                        </dd>
+                    </dl>
+                }
+
             </section>
         }
         else
@@ -232,33 +236,6 @@
                 }
                 <h1>@Model.Node.Heading</h1>
                 <h4>Node : @Model.Node.NodeId</h4>
-                <hr />
-                <dl class="row">
-                    <dt class="col-sm-3">
-                        @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.ParentNodeId)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.TreeLevel)
-                    </dd>
-                    <dt class="col-sm-1">
-                        @Html.DisplayNameFor(model => @Model.Node.Tree)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.Tree.Heading)
-                    </dd>
-                    <dt class="col-sm-1">
-                        @Html.DisplayNameFor(model => @Model.Node.Type)
-                    </dt>
-                    <dd class="col-sm-1">
-                        @Html.DisplayFor(model => @Model.Node.Type.Label)
-                    </dd>
-                </dl>
                 <partial name="BookContent" model="@Model" />
             </div>
         }

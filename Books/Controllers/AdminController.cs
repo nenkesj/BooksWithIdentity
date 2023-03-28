@@ -11,6 +11,7 @@ using Books.Infrastructure;
 using System.Diagnostics;
 using NuGet.Protocol.Core.Types;
 using System.Xml.Linq;
+using System.Net.NetworkInformation;
 
 namespace Books.Controllers
 {
@@ -100,7 +101,8 @@ namespace Books.Controllers
             bool hasnofigpara = true;
             bool hasnotabpara = true;
 
-            Node node = _context.Nodes.Single(n => n.NodeId == id);
+            //ViewBag.Save = false;
+            Node node = _context.Nodes.FirstOrDefault(n => n.NodeId == id);
             paragraphs.TheText = node.NodeText;
             paragraphs.NoOfChars = paragraphs.TheText.Length;
 
@@ -154,7 +156,7 @@ namespace Books.Controllers
                 PicturePointer = 0,
                 Pictures = pictures,
                 PictureTitle = "",
-                PictureFile = null,
+                PictureFile = "",
                 PictureFixed = false,
                 HasSummary = false,
                 HasChildren = false,
@@ -164,7 +166,10 @@ namespace Books.Controllers
                 HasNoTabPara = false,
                 ShowingDetails = false,
                 ShowingSummary = true,
-                SearchKey = ""
+                SearchKey = "",
+                NoOfKeys = 0,
+                Keys = null,
+                Siblings = null
             };
 
             return View(model);
@@ -251,37 +256,42 @@ namespace Books.Controllers
                 haspict = true;
             }
 
-            BookIndexViewModel model = new BookIndexViewModel
-            {
-                Node = nodes.FirstOrDefault(),
-                Summary = summ.Summary,
-                SentencesNoOf = summ.SentencesNoOf,
-                Sentences = summ.Sentences,
-                SentenceInParagraph = summ.SentenceInParagraph,
-                SelectedSentences = summ.SelectedSentences,
-                Paragraphs = newParagraphs,
-                NoOfParagraphs = newNoOfParagraphs,
-                Paragraph = "",
-                DisplayPictures = true,
-                HasPicture = haspict,
-                NoOfPictures = pictures.Count(),
-                PicturePointer = 0,
-                Pictures = pictures,
-                PictureTitle = "",
-                PictureFile = null,
-                PictureFixed = false,
-                HasSummary = false,
-                HasChildren = false,
-                NoOfChildren = 0,
-                HasParent = false,
-                HasNoFigPara = false,
-                HasNoTabPara = false,
-                ShowingDetails = false,
-                ShowingSummary = true,
-                SearchKey = ""
-            };
-            //if (ModelState.IsValid)
+            //ViewBag.Save = save;
+
+            //BookIndexViewModel model = new BookIndexViewModel
             //{
+            summ.Node = nodes.FirstOrDefault(n => n.NodeId == summ.Summary.NodeId);
+            //Summary = summ.Summary,
+            //SentencesNoOf = summ.SentencesNoOf,
+            //Sentences = summ.Sentences,
+            //SentenceInParagraph = summ.SentenceInParagraph,
+            //SelectedSentences = summ.SelectedSentences,
+            summ.Paragraphs = newParagraphs;
+            summ.NoOfParagraphs = newNoOfParagraphs;
+            summ.Paragraph = "";
+            summ.DisplayPictures = true;
+            summ.HasPicture = haspict;
+            summ.NoOfPictures = pictures.Count();
+            summ.PicturePointer = 0;
+            summ.Pictures = pictures;
+            summ.PictureTitle = "";
+            summ.PictureFile = "";
+            summ.PictureFixed = false;
+            summ.HasSummary = false;
+            summ.HasChildren = false;
+            summ.NoOfChildren = 0;
+            summ.HasParent = false;
+            summ.HasNoFigPara = false;
+            summ.HasNoTabPara = false;
+            summ.ShowingDetails = false;
+            summ.ShowingSummary = true;
+            summ.SearchKey = "";
+            summ.NoOfKeys = 0;
+            summ.Keys = null;
+            summ.Siblings = null;
+            //};
+            if (ModelState.IsValid)
+            {
                 if (save)
                 {
                     _context.Add(summ.Summary);
@@ -291,14 +301,14 @@ namespace Books.Controllers
                 }
                 else
                 {
-                    return View(model);
+                    return View(summ);
                 }
-            //}
-            //else
-            //{
+            }
+            else
+            {
                 // there is something wrong with the data values
-            //    return View(model);
-            //}
+                return View(summ);
+            }
         }
 
         // GET: Admin/Edit/5
@@ -364,8 +374,8 @@ namespace Books.Controllers
 
             if (node.Heading.Length > 50) { node.Heading = node.Heading.Substring(0, 50); };
 
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 try
                 {
                     _context.Update(node);
@@ -384,7 +394,7 @@ namespace Books.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Details),"Books",new {id = node.NodeId});
-            //}
+            }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
@@ -477,6 +487,7 @@ namespace Books.Controllers
             node.TypeId = 2;
             node.ParentNodeId = currNode.ParentNodeId;
             node.TreeLevel = currNode.TreeLevel;
+            ViewBag.ReturnNode = id;
             return View(node);
         }
 
@@ -487,13 +498,39 @@ namespace Books.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> New([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
         {
-            //if (ModelState.IsValid)
-            //{
+            int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
+            List<string> lines, sentences, paragrphs, newParagraphs;
+            Paragraphs paragraphs;
+            List<int> SentenceInParagraph;
+
+            SentenceInParagraph = new List<int>();
+            paragrphs = new List<string>();
+            sentences = new List<string>();
+            lines = new List<string>();
+            newParagraphs = new List<string>();
+            paragraphs = new Paragraphs();
+
+            if (ModelState.IsValid)
+            {
+                if (node.Heading == "Enter Heading Here" && node.NodeText.IndexOf((Char)10) > 1)
+                {
+                    node.Heading = node.NodeText.Substring(0, node.NodeText.IndexOf((Char)10) - 1);
+                    node.NodeText = node.NodeText.Substring(node.NodeText.IndexOf((char)10) + 1);
+                    paragraphs.TheText = node.NodeText;
+                    paragraphs.NoOfChars = paragraphs.TheText.Length;
+                    paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, false);
+                    node.NodeText = paragraphs.TheAlteredText;
+                }
+                if (node.Heading.Length > 50) 
+                {
+                    node.NodeText = node.Heading + (Char)13 + (Char)10 + node.NodeText;
+                    node.Heading = node.Heading.Substring(0, 50); 
+                };
                 _context.Add(node);
-                await _context.SaveChangesAsync();
-                ViewBag.SelectedNodeHeading = node.Heading;
-                return RedirectToAction("Details", "Books", new{ id = node.NodeId});
-            //}
+                    await _context.SaveChangesAsync();
+                    ViewBag.SelectedNodeHeading = node.Heading;
+                    return RedirectToAction("Details", "Books", new{ id = node.NodeId});
+            }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
@@ -521,6 +558,7 @@ namespace Books.Controllers
             node.TypeId = 2;
             node.ParentNodeId = currNode.NodeId;
             node.TreeLevel = (short)(currNode.TreeLevel + 1);
+            ViewBag.ReturnNode = id;
             return View(node);
         }
 
@@ -531,18 +569,44 @@ namespace Books.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> NewChild([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
         {
-            //if (ModelState.IsValid)
-            //{
+            int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
+            List<string> lines, sentences, paragrphs, newParagraphs;
+            Paragraphs paragraphs;
+            List<int> SentenceInParagraph;
+
+            SentenceInParagraph = new List<int>();
+            paragrphs = new List<string>();
+            sentences = new List<string>();
+            lines = new List<string>();
+            newParagraphs = new List<string>();
+            paragraphs = new Paragraphs();
+
+            if (ModelState.IsValid)
+            {
+                if (node.Heading == "Enter Heading Here" && node.NodeText.IndexOf((Char)10) > 1)
+                {
+                    node.Heading = node.NodeText.Substring(0, node.NodeText.IndexOf((Char)10) - 1);
+                    node.NodeText = node.NodeText.Substring(node.NodeText.IndexOf((char)10) + 1);
+                    paragraphs.TheText = node.NodeText;
+                    paragraphs.NoOfChars = paragraphs.TheText.Length;
+                    paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, false);
+                    node.NodeText = paragraphs.TheAlteredText;
+                }
+                if (node.Heading.Length > 50)
+                {
+                    node.NodeText = node.Heading + (Char)13 + (Char)10 + node.NodeText;
+                    node.Heading = node.Heading.Substring(0, 50);
+                };
                 _context.Add(node);
-                await _context.SaveChangesAsync();
-                ViewBag.SelectedNodeHeading = node.Heading;
-            return RedirectToAction("Details", "Books", new { id = node.NodeId });
-            //}
+                    await _context.SaveChangesAsync();
+                    ViewBag.SelectedNodeHeading = node.Heading;
+                return RedirectToAction("Details", "Books", new { id = node.NodeId });
+            }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
         }
-        // GET: Admin/New/5
+        // GET: Admin/NewBook/5
         public async Task<IActionResult> NewBook()
         {
             TempData["message"] = null;
@@ -555,20 +619,19 @@ namespace Books.Controllers
             node.TreeLevel = 1;
             return View(node);
         }
-
-        // POST: Admin/New/5
+        // POST: Admin/NewBook/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> NewBook([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
         {
-            //if (ModelState.IsValid)
-            //{
-            _context.Add(node);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Books", new { id = node.NodeId });
-            //}
+            if (ModelState.IsValid)
+            {
+                _context.Add(node);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", "Books", new { id = node.NodeId });
+            }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
             return View(node);
@@ -590,62 +653,6 @@ namespace Books.Controllers
             TempData["message"] = null;
             return View(summary);
         }
-
-        // POST: Summaries/EditSummary1/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditSummary1(int id, [Bind("SummaryId,NodeId,Summary1")] Summary summary)
-        {
-            if (id != summary.SummaryId)
-            {
-                return NotFound();
-            }
-
-            //if (ModelState.IsValid)
-            //{
-                try
-                {
-                    _context.Update(summary);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SummaryExists(summary.SummaryId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            //}
-            ViewData["NodeId"] = new SelectList(_context.Nodes, "NodeId", "Heading", summary.NodeId);
-            return View(summary);
-        }
-        // GET: Admin/EditSummary/5
-        public async Task<IActionResult> EditSummary1(int id)
-        {
-            if (id == null || _context.Summaries == null)
-            {
-                return NotFound();
-            }
-            var summary = await _context.Summaries
-                .Include(n => n.Node)
-                .FirstOrDefaultAsync(m => m.NodeId == id);
-            if (summary == null)
-            {
-                return NotFound();
-            }
-            TempData["message"] = null;
-            return View(summary);
-        }
-
-
-
         // POST: Admin/EditSummary/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -674,20 +681,20 @@ namespace Books.Controllers
             paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, false);
             summary.Summary1 = paragraphs.TheAlteredText;
 
-            //if (ModelState.IsValid)
-            //{
-            try
+            if (ModelState.IsValid)
             {
-                _context.Update(summary);
-                await _context.SaveChangesAsync();
-                TempData["message"] = string.Format("Summary: {0}... has been edited", summary.SummaryId);
+                try
+                {
+                    _context.Update(summary);
+                    await _context.SaveChangesAsync();
+                    TempData["message"] = string.Format("Summary: {0}... has been edited", summary.SummaryId);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Details), "Books", new { id = summary.NodeId });
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-            return RedirectToAction(nameof(Details), "Books", new { id = summary.NodeId });
-            //}
             return View(summary);
         }
         [HttpPost]
@@ -707,7 +714,7 @@ namespace Books.Controllers
                     chapter = "1";
                     if (node.Heading.Length > 8)
                     {
-                        if (node.Heading.Substring(0, 8).ToLower() == "chapter ")
+                        if (node.Heading.Substring(0, 7).ToLower() == "chapter")
                         {
                             chapter = node.Heading.Substring(8);
                             if (chapter.Contains("."))
@@ -769,6 +776,9 @@ namespace Books.Controllers
                     book = "Web Forms";
                     break;
                 case "ASP NET Core MVC 2 ":
+                    book = "ASP NET Core";
+                    break;
+                case "ASP NET Core 2 MVC ":
                     book = "ASP NET Core";
                     break;
                 case "Azure Introduction":
