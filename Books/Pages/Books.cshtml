@@ -1,0 +1,21 @@
+﻿@page "/pages/books"
+@using HowTo_DBLibrary;
+@model Books.Pages.BooksModel
+<h4 class="bg-info text-white text-center p-2">Pages - Level 2 - Signed In Users</h4>
+<div class="p-2">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Book</th><th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Node n in Model.DbContext.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading)) {
+                <tr>
+                    <td>@n.Heading</td>
+                    <td>@n.NodeText</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

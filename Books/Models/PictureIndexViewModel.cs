@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Books.Infrastructure;
-using HowTo_DBLibrary;
+﻿using HowTo_DBLibrary;
 
 namespace Books.Models
 {

@@ -75,6 +75,7 @@
     if (@p.Length > 4)
     {
         if (@p.Substring(0, 5).ToLower() == "error" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa")) { itsAFigureHeading = true; }
+        if (@p.Substring(0, 5).ToLower() == "proof" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa")) { itsAListingHeading = true; }
     }
     if (@p.Length > 5)
     {
@@ -85,6 +86,8 @@
         if (@p.Substring(0, 7).ToLower() == "listing" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
         if (@p.Substring(0, 7).ToLower() == "example" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
         if (@p.Substring(0, 7).ToLower() == "exercis" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+        if (@p.Substring(0, 7).ToLower() == "definit" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+        if (@p.Substring(0, 7).ToLower() == "theorem" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
     }
     if (itsAFigureHeading || itsAListingHeading || itsATableHeading)
     {
@@ -369,6 +372,10 @@
                             Model.PicturePointer = i + 1;
                             break;
                         }
+                    }
+                    if (@Model.ShowingSummary)
+                    {
+                        Model.PicturePointer = i + 1;
                     }
                 }
             }

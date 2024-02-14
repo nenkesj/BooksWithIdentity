@@ -1,7 +1,5 @@
 ﻿using Books.Models;
-using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Migrations;
 using System.Diagnostics;
 
 namespace Books.Controllers
@@ -16,13 +14,15 @@ namespace Books.Controllers
             _repository = repo;
             _logger = logger;
         }
+        //public IActionResult Index()
+        //{
+        //    return View(_repository.Nodes
+        //        .Where(p => p.TreeLevel == 1)
+        //        .OrderBy(p => p.Heading));
+        //}
 
-        public IActionResult Index()
-        {
-            return View(_repository.Nodes
-                .Where(p => p.TreeLevel == 1)
-                .OrderBy(p => p.Heading));
-        }
+        public IActionResult Index() => View(_repository.Nodes.Where(n => n.ParentNodeId == 0));
+
 
         public IActionResult Privacy()
         {

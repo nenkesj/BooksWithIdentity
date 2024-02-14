@@ -1,0 +1,147 @@
+﻿@model IEnumerable<HowTo_DBLibrary.Key>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+<h1>Index</h1>
+@if (ViewBag.Distinct == "All")
+{
+    <h4>All Keys</h4>    
+}
+else
+{
+    <h4>Distinct Keys</h4>    
+}
+<form asp-action="Index" class="form-inline">
+    <dl class="row">
+        <dt class="col-sm-1">
+            <label class="m-1">Category:</label>
+        </dt>
+        <dd class="col-sm-2">
+            <select name="Category" class="form-control">
+                <option selected="@(ViewBag.Category == "All")">All</option>
+                <option selected="@(ViewBag.Category == "AngularJS")">AngularJS</option>
+                <option selected="@(ViewBag.Category == "ADO")">ADO</option>
+                <option selected="@(ViewBag.Category == "ASP")">ASP</option>
+                <option selected="@(ViewBag.Category == "Bootstrap")">Bootstrap</option>
+                <option selected="@(ViewBag.Category == "CSharp")">CSharp</option>
+                <option selected="@(ViewBag.Category == "CSS")">CSS</option>
+                <option selected="@(ViewBag.Category == "Debugging")">Debugging</option>
+                <option selected="@(ViewBag.Category == "Dev Tools Edge")">Dev Tools Edge</option>
+                <option selected="@(ViewBag.Category == "Excel")">Excel</option>
+                <option selected="@(ViewBag.Category == "Fixes")">Fixes</option>
+                <option selected="@(ViewBag.Category == "Git")">Git</option>
+                <option selected="@(ViewBag.Category == "HTML")">HTML</option>
+                <option selected="@(ViewBag.Category == "HTTP")">HTTP</option>
+                <option selected="@(ViewBag.Category == "Java")">Java</option>
+                <option selected="@(ViewBag.Category == "JavaScript")">JavaScript</option>
+                <option selected="@(ViewBag.Category == "JQuery")">JQuery</option>
+                <option selected="@(ViewBag.Category == "LINQ")">LINQ</option>
+                <option selected="@(ViewBag.Category == "MVC")">MVC</option>
+                <option selected="@(ViewBag.Category == "Net Framework")">Net Framework</option>
+                <option selected="@(ViewBag.Category == "Razor")">Razor</option>
+                <option selected="@(ViewBag.Category == "Refactoring")">Refactoring</option>
+                <option selected="@(ViewBag.Category == "SVG")">SVG</option>
+                <option selected="@(ViewBag.Category == "TCPIP")">TCPIP</option>
+                <option selected="@(ViewBag.Category == "T-SQL")">T-SQL</option>
+                <option selected="@(ViewBag.Category == "VB")">VB</option>
+                <option selected="@(ViewBag.Category == "Visual Studio")">Visual Studio</option>
+                <option selected="@(ViewBag.Category == "Windows")">Windows</option>
+                <option selected="@(ViewBag.Category == "WPF")">WPF</option>
+                <option selected="@(ViewBag.Category == "801.11")">801.11</option>
+            </select>
+        </dd>
+        <dt class="col-sm-1">
+            <label class="m-1">Distinct:</label>
+        </dt>
+        <dd class="col-sm-2">
+            <select name="Distinct" class="form-control">
+                <option selected="@(ViewBag.Distinct == "Distinct")">Distinct</option>
+                <option selected="@(ViewBag.Distinct == "All")">All</option>
+            </select>
+        </dd>
+        <dt class="col-sm-1">
+            <label class="m-1">Starts With:</label>
+        </dt>
+        <dd class="col-md-2">
+            <input type="search" id="StartsWith" name="StartsWith" value="All" class="form-control" />
+        </dd>
+        <dd class="col-sm-2">
+            <div class="form-group">
+                <input type="submit" value="Filter" asp-route-calledfrom="Index" asp-route-Category="@ViewBag.Category" asp-route-Distinct="@ViewBag.Distinct" asp-route-StartsWith="StartsWith" class="btn btn-primary" />
+            </div>
+        </dd>
+    </dl>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            @if (ViewBag.Distinct == "All")
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.KeyText)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+            }
+            else
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.KeyText)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @if (ViewBag.Distinct == "All")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.KeyText)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Keys" asp-route-id="@item.KeyId" asp-route-keyText="@item.KeyText" asp-route-Distinct="@ViewBag.Distinct" asp-route-Category="@ViewBag.Category">View</a>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="Keys" asp-route-id="@item.KeyId">Edit</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-controller="Keys" asp-route-id="@item.KeyId">Delete</a>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.KeyText)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Keys" asp-route-id="@item.KeyId" asp-route-keyText="@item.KeyText" asp-route-Distinct="@ViewBag.Distinct" asp-route-Category="@ViewBag.Category">View</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HowTo_DBLibrary;
-using Books.Models;
-using NuGet.Protocol.Core.Types;
 
 namespace Books.Controllers
 {
@@ -162,14 +156,14 @@ namespace Books.Controllers
             {
                 _context.Pictures.Remove(picture);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PictureExists(int id)
         {
-          return _context.Pictures.Any(e => e.PictureId == id);
+            return _context.Pictures.Any(e => e.PictureId == id);
         }
     }
 }

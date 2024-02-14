@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Books.Infrastructure;
+using Books.Models;
+using HowTo_DBLibrary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HowTo_DBLibrary;
-using Books.Models;
-using Books.Infrastructure;
-using System.Diagnostics;
-using NuGet.Protocol.Core.Types;
-using System.Xml.Linq;
-using System.Net.NetworkInformation;
+using System.Data;
 
 namespace Books.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly HowToDBContext _context;
@@ -25,7 +20,8 @@ namespace Books.Controllers
         }
 
         // GET: Admin
-        public async Task<IActionResult> Index()
+        public IActionResult Index() => View(_context.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading));
+        public async Task<IActionResult> Index1()
         {
             var howToDBContext = _context.Nodes.Include(n => n.Tree).Include(n => n.Type);
             return View(await howToDBContext.ToListAsync());
@@ -393,7 +389,7 @@ namespace Books.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details),"Books",new {id = node.NodeId});
+                return RedirectToAction(nameof(Details), "Books", new { id = node.NodeId });
             }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
@@ -434,14 +430,14 @@ namespace Books.Controllers
             {
                 _context.Nodes.Remove(node);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NodeExists(int id)
         {
-          return _context.Nodes.Any(e => e.NodeId == id);
+            return _context.Nodes.Any(e => e.NodeId == id);
         }
         private bool SummaryExists(int id)
         {
@@ -521,15 +517,15 @@ namespace Books.Controllers
                     paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, false);
                     node.NodeText = paragraphs.TheAlteredText;
                 }
-                if (node.Heading.Length > 50) 
+                if (node.Heading.Length > 50)
                 {
                     node.NodeText = node.Heading + (Char)13 + (Char)10 + node.NodeText;
-                    node.Heading = node.Heading.Substring(0, 50); 
+                    node.Heading = node.Heading.Substring(0, 50);
                 };
                 _context.Add(node);
-                    await _context.SaveChangesAsync();
-                    ViewBag.SelectedNodeHeading = node.Heading;
-                    return RedirectToAction("Details", "Books", new{ id = node.NodeId});
+                await _context.SaveChangesAsync();
+                ViewBag.SelectedNodeHeading = node.Heading;
+                return RedirectToAction("Details", "Books", new { id = node.NodeId });
             }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
@@ -598,8 +594,8 @@ namespace Books.Controllers
                     node.Heading = node.Heading.Substring(0, 50);
                 };
                 _context.Add(node);
-                    await _context.SaveChangesAsync();
-                    ViewBag.SelectedNodeHeading = node.Heading;
+                await _context.SaveChangesAsync();
+                ViewBag.SelectedNodeHeading = node.Heading;
                 return RedirectToAction("Details", "Books", new { id = node.NodeId });
             }
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
@@ -781,6 +777,9 @@ namespace Books.Controllers
                 case "ASP NET Core 2 MVC ":
                     book = "ASP NET Core";
                     break;
+                case "ASP NET and AJAX":
+                    book = "Ajax";
+                    break;
                 case "Azure Introduction":
                     book = "Azure Intro";
                     break;
@@ -862,6 +861,25 @@ namespace Books.Controllers
             {
                 TempData["message"] = string.Format("Picture: {0} for Node: {1}, {2} ... NOT created ONLY WORKS IN INTERNET EXPLORER, CHROME OR FIREFOX", picturetitle, node.NodeId, node.Heading);
             }
+
+            ViewBag.SelectedNodeHeading = node.Heading;
+
+            return RedirectToAction("Details", "Books", new { id = node.NodeId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public RedirectToActionResult NewKey(int id, string keytext = "", string category = "None")
+        {
+            Key k = new Key();
+            k.NodeId = id;
+            k.KeyText = keytext;
+            k.Category = category;
+            k.TreeId = 2;
+            k.TypeId = 7;
+            _context.Add(k);
+            _context.SaveChanges();
+            Node node = _context.Nodes.Where(n => n.NodeId == id).FirstOrDefault();
+            TempData["message"] = string.Format("Key: {0} for Node: {1}, {2} ... has been created", keytext, id, node.Heading);
 
             ViewBag.SelectedNodeHeading = node.Heading;
 

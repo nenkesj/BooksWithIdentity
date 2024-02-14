@@ -1,0 +1,315 @@
+﻿@model Books.Models.BookIndexViewModel
+@using System.Collections.Generic
+@using System.Web
+@using Books.Infrastructure
+
+@{
+    ViewBag.Title = "Your Book";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page">
+    <!-- ==== START MASTHEAD ==== -->
+    <header class="masthead" role="banner">
+        <p class="logo"><img src="~/images/logo.jpg" /></p>
+        <nav role="navigation">
+            @if (@Model.HasParent || @Model.HasChildren)
+            {
+                <ul class="nav-main">
+                    @if (@Model.HasChildren)
+                    {
+                        <li>
+                            <form asp-action="Down" asp-controller="Books" asp-route-id="@Model?.Node.NodeId">
+                                <button class="navbutton, btn, btn-info" type="submit">Down</button>
+                            </form>
+                        </li>
+                    }
+                    @if (@Model.HasParent)
+                    {
+                        <li>
+                            <form asp-action="Up" asp-controller="Books" asp-route-id="@Model?.Node.NodeId">
+                                <button class="navbutton, btn, btn-info" type="submit">Up</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+            <ul class="nav-main">
+                @if (!@Model.ShowingSummary)
+                {
+                    <li>
+                        <form asp-action="Details" asp-controller="Books" method="get" asp-route-id="@Model?.Node.NodeId">
+                            <button class="navbutton, btn, btn-info" type="submit">Details</button>
+                        </form>
+                    </li>
+                    if (@Model.Node.TreeLevel > 1)
+                    {
+                        <li>
+                            @using (Html.BeginForm("New", "Admin", new { }, FormMethod.Get, true, new { @class = "navbutton" }))
+                            {
+                                <input class="navbutton, btn, btn-info" type="submit" value="New" />
+                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                            }
+                        </li>
+                    }
+                    <li>
+                        @using (Html.BeginForm("NewChild", "Admin", new { }, FormMethod.Get, true, new { @class = "navbutton" }))
+                        {
+                            <input class="navbutton, btn, btn-info" type="submit" value="New Child" />
+                            @Html.Hidden("NodeID", @Model.Node.NodeId)
+                        }
+                    </li>
+                }
+            </ul>
+            <ul class="nav-main">
+                @if (@Model.HasSummary && @Model.ShowingDetails)
+                {
+                    <ul class="detailssummary">
+                        <li>
+                            @using (Html.BeginForm("Index", "Books", new { Display = "Summary" }))
+                            {
+                                <input class="navbutton, btn, btn-info" type="submit" value="Summary" />
+                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                            }
+                        </li>
+                    </ul>
+                }
+                @if (@Model.HasSummary && @Model.ShowingSummary)
+                {
+                    <ul class="detailssummary">
+                        <li>
+                            @using (Html.BeginForm("Index", "Books", new { Display = "Details" }, FormMethod.Get, true, new { @class = "navbutton" }))
+                        {
+                                <input class="navbutton, btn, btn-info" type="submit" value="Details" />
+                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                        }
+                        </li>
+                    </ul>
+                }
+            </ul>
+            <ul class="nav-main">
+                @if (@Model.Node.TreeLevel > 1)
+                {
+                    <ul class="createformula">
+                        <li>
+                            @using (Html.BeginForm("Edit", "Formulas", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
+                            {
+                                <input class="navbutton, btn, btn-info" type="submit" value="Create Formula" />
+                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                            }
+                        </li>
+                        @if (@Model.HasSummary && @Model.ShowingSummary)
+                        {
+                            <li>
+                                @using (Html.BeginForm("Update", "Summaries", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
+                                {
+                                    <input class="navbutton, btn, btn-info" type="submit" value="Edit Summary" />
+                                    @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                }
+                            </li>
+                        }
+                        @if (!@Model.HasSummary && @Model.ShowingDetails)
+                        {
+                            <li>
+                                @using (Html.BeginForm("Edit", "Summaries", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
+                                {
+                                    <input class="navbutton, btn, btn-info" type="submit" value="Create Summary" />
+                                    @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                }
+                            </li>
+                        }
+                    </ul>
+                    <ul class="nav-main">
+                        @if (@Model.HasPicture)
+                        {
+                            if (!@Model.PictureFixed)
+                            {
+                                <ul class="picturebuttons">
+                                    @for (int i = 0; i < Model.NoOfPictures; i++)
+                                    {
+                                        <li>
+                                            @using (Html.BeginForm("Index", "Books", new { picturefixed = true, pictureptr = i }))
+                                            {
+                                                <input class="navbutton, btn, btn-info" type="submit" value="@Model.Pictures.ToArray()[i].Title" />
+                                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="picturebuttons">
+                                    <li>
+                                        @using (Html.BeginForm("Index", "Books", new { picturefixed = false, pictureptr = 0 }))
+                                        {
+                                            <input class="navbutton, btn, btn-info" type="submit" value="Back" />
+                                            @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                        }
+                                    </li>
+                                    @for (int i = 0; i < Model.NoOfPictures; i++)
+                                    {
+                                        <li>
+                                            @using (Html.BeginForm("Index", "Books", new { picturefixed = true, pictureptr = i }))
+                                            {
+                                                <input class="navbutton, btn, btn-info" type="submit" value="@Model.Pictures.ToArray()[i].Title" />
+                                                @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    </ul>
+                    <ul class="nav-main">
+                        @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
+                        {
+                            if(@Model.Node.Heading.Substring(0, 7) == "Chapter")
+                            {
+                                <li>
+                                    @using (Html.BeginForm("Chapter", "Summaries", new { NodeID = @Model.Node.NodeId }, FormMethod.Get, true, new { @class = "navbutton" }))
+                                    {
+                                        <input class="navbutton, btn, btn-info" type="submit" value="Chapter Summary" />
+                                        @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                    <ul class="nav-main">
+                        <div class="search">
+                            @if (@Model.SearchKey == "")
+                            {
+                                if (@Model.Node.TreeLevel > 1)
+                                {
+                                    <li>
+                                        @using (Html.BeginForm("Index", "Books", new { searchkey = @Model.SearchKey }, FormMethod.Get, true, new { @class = "navbutton" }))
+                                        {
+                                        <label for="searchkey">Search</label>
+                                        <input type="search" id="searchkey" name="searchkey" value="@Model.SearchKey" />
+                                        <input type="image" src="../../../images/icons/go.png" />
+                                        @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                        }
+                                    </li>
+                                    <li>
+                                        @using (Html.BeginForm("Create", "Keys", new { NodeID = @Model.Node.NodeId }, FormMethod.Post, true, new { @class = "navbutton" }))
+                                        {
+                                        <label for="addkey">Add Key</label>
+                                        <input type="text" id="KeyText" name="KeyText" value="" />
+                                        <input type="image" src="../../../images/icons/go.png" />
+                                        @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                        }
+                                    </li>
+                                    if (@Model.SearchKey == "" && @Model.NoOfKeys > 0)
+                                    {
+                                     <li>
+                                        <div class="dataElem">
+                                            <label>Keys</label>
+                                            @Html.DropDownListFor(m => m.Keys, new SelectList(@Model.Keys))
+                                        </div>
+                                    </li>                                   
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                using (Html.BeginForm("Index", "Books", new { NodeID = @ViewData["SearchReturn"], searchkey = "", picturefixed = false, pictureptr = 0 }))
+                                {
+                                <label>@ViewData["SearchMsg"] @ViewData["SearchKey"]</label>
+                                            <input class="navbutton, btn, btn-info" type="submit" value="Back" />
+                                            @Html.Hidden("NodeID", @Model.Node.NodeId)
+                                }
+                            }
+                        </div>
+                    </ul>
+                }
+                <ul class="nav-main">
+                    <div class="PictureTools">
+                        @using (Html.BeginForm("NewPicture", "Admin", new { picturetitle = @Model.PictureTitle, picturefile = @Model.PictureFile }, FormMethod.Post, true, new { @class = "navbutton", enctype = "multipart/form-data" }))
+                        {
+                            <label>Add Picture</label><br />
+                            <label for="PictureTitle">Title:</label><br />
+                            <input type="text" id="PictureTitle" name="PictureTitle" value="@Model.PictureTitle" /><br />
+                            <label for="PictureFile">File:</label>
+                            <input type="file" id="PictureFile" name="PictureFile" value="@Model.PictureFile" /><br />
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            @Html.Hidden("NodeID", @Model.Node.NodeId)
+                        }
+                    </div>
+                </ul>
+                <div class="siblings">
+                    <ul class="nav-main">
+                        <li>
+                            @Html.ActionLink("Home", "List", "Node", new { NodeID = @Model.Node.NodeId }, new { @class = "btn btn-block btn-default btn-sm" })
+                            <br />
+                        </li>
+                        @foreach (var n in Model.Siblings)
+                        {
+                            if (n.TreeLevel != 1)
+                            {
+                                <li>
+                                        @using (Html.BeginForm("Index", "Books", new { NodeID = @Model.Node.NodeId, searchkey = ViewData["SearchKey"] },
+                                    FormMethod.Get, true, new
+                                    { @class = "navbutton" +
+                                    (n.Heading == ViewBag.SelectedNodeHeading ? " btn-primary" : "")}))
+                                    {
+                                        <input class="navbutton, btn, btn-info" type="submit" value="@n.Heading" />
+                                        <br />      
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </ul>
+        </nav>
+    </header>
+    <!-- end masthead -->
+    @if (!@Model.PictureFixed)
+    {
+        <div class="container">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert alert-success">@TempData["message"]</div>
+            }
+            <!-- ==== START MAIN ==== -->
+            <main role="main">
+                <section class="post">
+                    <h1>@Model.Node.Heading</h1>
+                    @Html.Partial("BookContent", @Model)
+                </section>
+            </main>
+            <!-- end main -->
+            <!-- end container -->
+            <!-- ==== START PAGE FOOTER ==== -->
+            <footer role="contentinfo" class="footer">
+                <p class="legal"><small>&copy; 2019 Kanangra Code</small></p>
+            </footer>
+            <!-- end page footer -->
+        </div>    
+    }
+    else
+    {
+    <!-- Fixed Image -->
+        <div class="fixedpicture">
+            @Html.ActionLink("Index", "Picture", new { NodeID = @Model.Node.NodeId, pictureptr = @Model.PicturePointer })
+        </div>
+        <div class="fixedcontainer">
+            <!-- ==== START MAIN ==== -->
+            <main role="main">
+                <section class="post">
+                    <h1>@Model.Node.Heading</h1>
+                    @Html.Partial("BookContent", @Model)
+                </section>
+            </main>
+            <!-- end main -->
+            <!-- end container -->
+            <!-- ==== START PAGE FOOTER ==== -->
+            <footer role="contentinfo" class="footer">
+                <p class="legal"><small>&copy; 2019 Kanangra Code</small></p>
+            </footer>
+            <!-- end page footer -->
+        </div>            
+    }
+    <!-- end page -->
+</div>

@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Books.Infrastructure;
+﻿using HowTo_DBLibrary;
 using System.Web.Mvc;
-using System.ComponentModel.DataAnnotations;
-using HowTo_DBLibrary;
 
 namespace Books.Models
 {

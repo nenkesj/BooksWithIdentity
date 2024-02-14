@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Books.Infrastructure;
+using Books.Models;
+using HowTo_DBLibrary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HowTo_DBLibrary;
-using Books.Infrastructure;
-using Books.Models;
-using NuGet.Protocol.Core.Types;
-using Microsoft.AspNetCore.Html;
 
 namespace Books.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private readonly HowToDBContext _context;
@@ -22,12 +18,14 @@ namespace Books.Controllers
         }
 
         // GET: Books
+
+        public IActionResult Index() => View(_context.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading));
         public async Task<IActionResult> Index1()
         {
             var howToDBContext = _context.Nodes.Include(n => n.Tree).Include(n => n.Type);
             return View(await howToDBContext.ToListAsync());
         }
-        public ViewResult Index(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "")
+        public ViewResult Index2(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "")
         {
             bool haspict = false;
             bool hassumm = false;
@@ -224,7 +222,7 @@ namespace Books.Controllers
         }
 
         // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "")
+        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "", string keyText = "", string Distinct = "All", string Category = "All")
         {
             bool haspict = false;
             bool hassumm = false;
@@ -261,12 +259,22 @@ namespace Books.Controllers
             keyvalues = new List<string>();
             paragraphs = new Paragraphs();
 
+            ViewBag.KeyText = keyText;
+            ViewBag.Distinct = Distinct;
+            ViewBag.Category = Category;
+
             nodes = _context.Nodes.Where(m => m.NodeId == id);
             node = nodes.FirstOrDefault();
             summaries = _context.Summaries.Where(n => n.NodeId == id);
             pictures = _context.Pictures.Where(pic => pic.NodeId == id);
             children = _context.Nodes.Where(n => n.ParentNodeId == id);
-            siblings = _context.Nodes.Where(n => n.ParentNodeId == nodes.FirstOrDefault().ParentNodeId).OrderBy(n=>n.NodeId);
+            siblings = _context.Nodes.Where(n => n.ParentNodeId == nodes.FirstOrDefault().ParentNodeId).OrderBy(n => n.NodeId);
+            keys = _context.Keys.Where(k => k.NodeId == id);
+            searchkey = "";
+            foreach (Key k in keys)
+            {
+                searchkey += k.KeyText + " ";
+            }
 
             if (summaries.Count() > 0)
             {
@@ -347,7 +355,7 @@ namespace Books.Controllers
                 ShowingDetails = showingdetails,
                 ShowingSummary = showingsummary,
                 SearchKey = searchkey,
-                NoOfKeys = keyvalues.Count(),
+                NoOfKeys = keys.Count(),
                 Keys = keyvalues,
                 Siblings = siblings
             };
@@ -414,23 +422,23 @@ namespace Books.Controllers
 
             //if (ModelState.IsValid)
             //{
-                try
+            try
+            {
+                _context.Update(node);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!NodeExists(node.NodeId))
                 {
-                    _context.Update(node);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!NodeExists(node.NodeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Details), new {id=node.NodeId});
+            }
+            return RedirectToAction(nameof(Details), new { id = node.NodeId });
             //}
             ViewData["TreeId"] = new SelectList(_context.Trees, "TreeId", "Heading", node.TreeId);
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "Label", node.TypeId);
@@ -471,14 +479,14 @@ namespace Books.Controllers
             {
                 _context.Nodes.Remove(node);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NodeExists(int id)
         {
-          return _context.Nodes.Any(e => e.NodeId == id);
+            return _context.Nodes.Any(e => e.NodeId == id);
         }
     }
 }

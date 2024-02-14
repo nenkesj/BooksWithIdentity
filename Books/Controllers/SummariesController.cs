@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HowTo_DBLibrary;
-using NuGet.Protocol.Core.Types;
 
 namespace Books.Controllers
 {
@@ -155,14 +150,14 @@ namespace Books.Controllers
             {
                 _context.Summaries.Remove(summary);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SummaryExists(int id)
         {
-          return _context.Summaries.Any(e => e.SummaryId == id);
+            return _context.Summaries.Any(e => e.SummaryId == id);
         }
         public void SpanSummaries(ref string Summaries, int NodeID, ref int ChapterSummNode)
         {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Diagnostics; 
-
-namespace Books.Infrastructure
+﻿namespace Books.Infrastructure
 {
     public class Paragraphs : Text
     {
@@ -231,7 +225,7 @@ namespace Books.Infrastructure
                         {
                             newParagraphs[unorderedListStartedAt] += p;
                         }
-                    } 
+                    }
                     if (p.IndexOf((Char)9) > 0)
                     {
                         if (itHasATableHeading)

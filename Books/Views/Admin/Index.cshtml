@@ -1,65 +1,47 @@
-﻿@model IEnumerable<HowTo_DBLibrary.Node>
-
+﻿@model IQueryable<Node>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Home Page";
 }
 
-<h1>Index</h1>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <h4 class="bg-primary text-white text-center p-2">MVC Level 3 - Administrators</h4>
+</div>
+<h6 class="bg-secondary text-white text-center m-2 p-2">Books</h6>
+<form asp-action="NewBook" asp-controller="Admin" method="get">
+    <button class="navbutton, btn, btn-info" type="submit">New Book</button>
+</form>
+<div class="m-2">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Book</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model ?? Enumerable.Empty<Node>())
+            {
+                <!--<partial name="_BookRowPartial" model="p" />-->
+                <tr>
+                    <td>
+                        <a class="btn btn-sm btn-info text-white" asp-action="Details"
+                       asp-controller="Books" asp-route-id="@p.NodeId">
+                            View
+                        </a>
+                    </td>
+                    <td>@p?.Heading</td>
+                    <td>@p?.NodeText</td>
+                    <td>
+                        <form method="post">
+                            <a class="btn btn-sm btn-warning" asp-action="edit"
+                           asp-route-id="@p.NodeId">Edit</a>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentNodeId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TreeLevel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Heading)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NodeText)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tree)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentNodeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TreeLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Heading)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NodeText)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tree.Heading)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type.Category)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.NodeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.NodeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.NodeId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>

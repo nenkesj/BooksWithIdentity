@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Books.Infrastructure;
+﻿using HowTo_DBLibrary;
 using System.Web.Mvc;
-using System.ComponentModel.DataAnnotations;
-using HowTo_DBLibrary;
 
 namespace Books.Models
 {
@@ -24,7 +21,7 @@ namespace Books.Models
         public int NoOfPictures { get; set; }
         public int PicturePointer { get; set; }
         public IEnumerable<Picture>? Pictures { get; set; }
-        public string? PictureTitle { get; set;}
+        public string? PictureTitle { get; set; }
         //public System.Web.HttpPostedFileWrapper PictureFile { get; set; }
         public string? PictureFile { get; set; }
 
@@ -39,6 +36,8 @@ namespace Books.Models
         public bool ShowingSummary { get; set; }
         [AllowHtml]
         public string? SearchKey { get; set; }
+        public string? KeyText { get; set; }
+        public string? Category { get; set; }
         public int NoOfKeys { get; set; }
         public List<string>? Keys { get; set; }
         public IEnumerable<Node>? Siblings { get; set; }

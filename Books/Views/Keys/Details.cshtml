@@ -1,0 +1,34 @@
+﻿@model IEnumerable<HowTo_DBLibrary.Node>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Heading)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Heading)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-controller="Books" asp-route-id="@item.NodeId" asp-route-keyText="@ViewBag.KeyText" asp-route-Distinct="@ViewBag.Distinct" asp-route-Category="@ViewBag.Category">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Keys" asp-action="Index">Back</a>
+
+

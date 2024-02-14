@@ -7,6 +7,23 @@
         <p class="logo"><img src="~/images/logo.jpg" /></p>
         <nav role="navigation">
             <ul class="nav-main">
+                @if (ViewBag.KeyText != "")
+                {
+                    <li>
+                        @if (ViewBag.Distinct == "Distinct")
+                        {
+                            <form asp-action="Details" asp-controller="Keys" asp-route-keyText="@ViewBag.KeyText" asp-route-Distinct="@ViewBag.Distinct" asp-route-Category="@ViewBag.Category">
+                                <button class="navbutton, btn, btn-info" type="submit">Back</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Index" asp-controller="Keys">
+                                <button class="navbutton, btn, btn-info" type="submit">Back</button>
+                            </form>
+                        }
+                    </li>
+                }
                 @if (@Model.HasChildren)
                 {
                     <li>
@@ -126,6 +143,50 @@
                         <input class="btn btn-primary" type="submit" value="Save" />
                     </form>
                 </div>
+            </ul>
+            <ul class="nav-main">
+                <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" method="post">
+                    <dl>
+                        <dt>
+                            <label asp-for="@Model.KeyText"></label>
+                        </dt>
+                        <dd>
+                            <input asp-for="@Model.KeyText" type="text" value="@Model.SearchKey">
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>
+                        <label asp-for="@Model.Category" class="control-label"></label>
+                        </dt>
+                        <dd>
+                        <select asp-for="@Model.Category" class="form-control">
+                            <option value="None">None</option>
+                            <option value="AngularJS">AngularJS</option>
+                            <option value="ASP">ASP</option>
+                            <option value="Bootstrap">Bootstrap</option>
+                            <option value="CSharp">CSharp</option>
+                            <option value="CSS">CSS</option>
+                            <option value="Debugging">Debugging</option>
+                            <option value="Dev Tools Edge">Dev Tools Edge</option>
+                            <option value="Excel">Excel</option>
+                            <option value="Fixes">Fixes</option>
+                            <option value="Git">Git</option>
+                            <option value="HTML">HTML</option>
+                            <option value="HTTP">HTTP</option>
+                            <option value="Java">Java</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="JQuery">JQuery</option>
+                            <option value="LINQ">LINQ</option>
+                            <option value="MVC">MVC</option>
+                            <option value="Razor">Razor</option>
+                            <option value="TCPIP">TCPIP</option>
+                            <option value="VB">VB</option>
+                            <option value="WPF">WPF</option>
+                        </select>
+                        </dd>
+                    </dl>
+                    <input class="btn btn-primary" type="submit" value="Save" />
+                </form>
             </ul>
             <ul class="nav-main">
                 @foreach (var n in Model.Siblings)

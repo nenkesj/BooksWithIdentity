@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HowTo_DBLibrary;
 
 namespace Books.Controllers
 {
@@ -160,14 +156,14 @@ namespace Books.Controllers
             {
                 _context.Nodes.Remove(node);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NodeExists(int id)
         {
-          return _context.Nodes.Any(e => e.NodeId == id);
+            return _context.Nodes.Any(e => e.NodeId == id);
         }
     }
 }

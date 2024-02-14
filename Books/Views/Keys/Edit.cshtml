@@ -1,0 +1,72 @@
+﻿@model HowTo_DBLibrary.Key
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Key</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-id="@Model.KeyId" asp-route-NodeId="@Model.NodeId">
+            <div>
+                <button class="btn btn-primary" type="submit">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="KeyId" />
+            <div class="form-group">
+                <label asp-for="KeyText" class="control-label"></label>
+                <input asp-for="KeyText" class="form-control" />
+                <span asp-validation-for="KeyText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" class="form-control">
+                    <option value="AngularJS">AngularJS</option>
+                    <option value="ADO">ADO</option>
+                    <option value="ASP">ASP</option>
+                    <option value="Bootstrap">Bootstrap</option>
+                    <option value="CSharp">CSharp</option>
+                    <option value="CSS">CSS</option>
+                    <option value="Debugging">Debugging</option>
+                    <option value="Dev Tools Edge">Dev Tools Edge</option>
+                    <option value="Excel">Excel</option>
+                    <option value="Fixes">Fixes</option>
+                    <option value="Git">Git</option>
+                    <option value="HTML">HTML</option>
+                    <option value="HTTP">HTTP</option>
+                    <option value="Java">Java</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="JQuery">JQuery</option>
+                    <option value="LINQ">LINQ</option>
+                    <option value="MVC">MVC</option>
+                    <option value="Net Framework">Net Framework</option>
+                    <option value="Razor">Razor</option>
+                    <option value="Refactoring">Refactoring</option>
+                    <option value="SVG">SVG</option>
+                    <option value="TCPIP">TCPIP</option>
+                    <option value="T-SQL">T-SQL</option>
+                    <option value="VB">VB</option>
+                    <option value="Visual Studio">Visual Studio</option>
+                    <option value="Windows">Windows</option>
+                    <option value="WPF">WPF</option>
+                    <option value="801.11">801.11</option>
+                </select>
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

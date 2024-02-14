@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using Books.Infrastructure;
-using System.Web.Mvc;
-using System.ComponentModel.DataAnnotations;
-
-namespace Books.Models
+﻿namespace Books.Models
 {
     public class FormulaEditViewModel
     {

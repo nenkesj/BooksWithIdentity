@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Books.Infrastructure
+﻿namespace Books.Infrastructure
 {
     public class Text
     {
@@ -431,7 +426,7 @@ namespace Books.Infrastructure
                         ItsAnOrderedList = false;
                     }
 
-                    if (firstWord == "•")
+                    if (firstWord == "•" || firstWord == "o")
                     {
                         ItsAList = true;
                         ItsAnUnorderedList = true;
@@ -464,7 +459,7 @@ namespace Books.Infrastructure
                     }
                 }
             }
-        }        
+        }
 
         public void IncludeSegments(int SegmentsNoOf, int SegmentsAlteredNoOf, string MatchText, ref List<string> Segments, string AlteredText)
         {
@@ -726,7 +721,7 @@ namespace Books.Infrastructure
             if ((!Format && InsertIndicators && !SplittingOnColon && !ItsGotHTML) ||
                 (!Format && InsertIndicators && SplittingOnColon) ||
                 (Format && InsertIndicators && !allCapitals && SplittingOnColon && !ItsAnOrderedList && !ItsAnUnorderedList))
-                {
+            {
                 paragraph = "§" + currChar.ToString();
                 ParagraphLength = 2;
             }
@@ -768,9 +763,9 @@ namespace Books.Infrastructure
         public bool Formatting(ref bool format, string firstWord, char firstWordChar, string secondWord, char lastCharInLine, bool ItsAList, ref bool SplittingOnAColon, string newLine, bool allCapitals)
         {
 
-        // Generally make sure the last char on formatted line end in a semicolon to indicate it is preceded by code which won't 
-        // be formatted i.e. wont have the lines run togeather and we start formatting again when the newline starts with a capital
-        // letter. The following are exceptions to this general rule
+            // Generally make sure the last char on formatted line end in a semicolon to indicate it is preceded by code which won't 
+            // be formatted i.e. wont have the lines run togeather and we start formatting again when the newline starts with a capital
+            // letter. The following are exceptions to this general rule
 
             if (format)
             {
@@ -874,7 +869,7 @@ namespace Books.Infrastructure
                 // Format Figure headings (you would think it would automatically do this not sure why this is here)
                 if (firstWord.Length > 2)
                 {
-                    if (firstWord.Substring(0,3) == "Fig")
+                    if (firstWord.Substring(0, 3) == "Fig")
                     {
                         format = true;
                     }
@@ -1440,7 +1435,7 @@ namespace Books.Infrastructure
                 if (!(
                       (currChar == (Char)10 && Format) ||
                       (currChar == (Char)13 && Format) ||
-                      (currChar == ' ' && lastChar == ' ' && Format) 
+                      (currChar == ' ' && lastChar == ' ' && Format)
                      ))
                 {
 
@@ -1515,25 +1510,25 @@ namespace Books.Infrastructure
                                     lineCurrChar = ' ';
                                 }
                             }
-                            if (allCapitals) 
+                            if (allCapitals)
                             {
                                 // figure headings are never all Capitals (the actual picture won't go in the right place)
                                 if (firstWord.Length > 2)
                                 {
-                                    if (firstWord.Substring(0,3).ToLower() == "fig")
+                                    if (firstWord.Substring(0, 3).ToLower() == "fig")
                                     {
-                                        allCapitals = false; 
+                                        allCapitals = false;
                                     }
                                 }
                                 // if it contains a lower case letter its not all Capitals
                                 if ((int)lineCurrChar >= (int)'a' && (int)lineCurrChar <= (int)'z')
                                 {
-                                    allCapitals = false; 
+                                    allCapitals = false;
                                 }
                                 if (ItsAList)
                                 {
                                     allCapitals = false;
-                                } 
+                                }
                             }
 
                             lineLastChar = lineCurrChar;
@@ -1547,9 +1542,9 @@ namespace Books.Infrastructure
 
                         if (noOfLTs > 1 && ItsGotAGT && ItsGotALTSlash) { ItsGotHTML = true; } else { ItsGotHTML = false; }
 
-                        if (allCapitals && !ItsGotACapital ) 
-                        { 
-                            allCapitals = false; 
+                        if (allCapitals && !ItsGotACapital)
+                        {
+                            allCapitals = false;
                         }
 
                         // Decide whether were formatting this line or treating it as preformatted code
@@ -1563,21 +1558,21 @@ namespace Books.Infrastructure
                         {
                             // Insert List indicator prior to adding 1st char to the paragraph 
                             // (otherwise it ignores list items starting on 1st line)
-                                if (ItsAnOrderedList && InsertIndicators)
-                                {
-                                    paragraph = "¤";
-                                    ParagraphLength = 1;
-                                }
-                                if (ItsAnUnorderedList && InsertIndicators)
-                                {
-                                    paragraph = "¥";
-                                    ParagraphLength = 1;
-                                }
-                                if (allCapitals && InsertIndicators)
-                                {
-                                    paragraph = "Ÿ";
-                                    ParagraphLength = 1;
-                                }
+                            if (ItsAnOrderedList && InsertIndicators)
+                            {
+                                paragraph = "¤";
+                                ParagraphLength = 1;
+                            }
+                            if (ItsAnUnorderedList && InsertIndicators)
+                            {
+                                paragraph = "¥";
+                                ParagraphLength = 1;
+                            }
+                            if (allCapitals && InsertIndicators)
+                            {
+                                paragraph = "Ÿ";
+                                ParagraphLength = 1;
+                            }
                         }
 
                         // if this is the first line and last char is LF and paragraph isnt empty were not at the
@@ -1627,7 +1622,7 @@ namespace Books.Infrastructure
                                 )
                                ) ||
                                (
-                                !Format && ItsGotATab 
+                                !Format && ItsGotATab
                                )
                               )
                              )

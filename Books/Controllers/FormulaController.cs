@@ -1,16 +1,6 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Books.Models;
 using Microsoft.AspNetCore.Mvc;
-using Books.Models;
-using Books.Infrastructure;
-using HowTo_DBLibrary;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Metrics;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace Books.Controllers
 {
@@ -329,57 +319,57 @@ namespace Books.Controllers
 
             //if (ModelState.IsValid)
             //{
-                if (undo && _context.Session.GetInt32("undoptr") > 0)
-                {
-                    sb = new StringBuilder(_context.Session.GetString("undo" + _context.Session.GetInt32("undoptr").ToString()));
-                    _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
-                    _context.Session.CommitAsync();
-                    ViewBag.formula = sb.ToString();
-                }
-                else
-                {
-                    sb = new StringBuilder(_context.Session.GetString("formula"));
+            if (undo && _context.Session.GetInt32("undoptr") > 0)
+            {
+                sb = new StringBuilder(_context.Session.GetString("undo" + _context.Session.GetInt32("undoptr").ToString()));
+                _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
+                _context.Session.CommitAsync();
+                ViewBag.formula = sb.ToString();
+            }
+            else
+            {
+                sb = new StringBuilder(_context.Session.GetString("formula"));
                 ViewBag.formula = sb.ToString();
             }
 
             switch (clear)
-                {
-                    case "Clear Superscript Row1":
-                        form.Target = "Clear Superscript Row1";
-                        break;
-                    case "Clear Subscript Row1":
-                        form.Target = "Clear Subscript Row1";
-                        break;
-                    case "Clear Superscript Row2":
-                        form.Target = "Clear Superscript Row2";
-                        break;
-                    case "Clear Subscript Row2":
-                        form.Target = "Clear Subscript Row2";
-                        break;
-                    case "Clear Matrix":
-                        form.Target = "Clear Matrix";
-                        break;
-                    case "Clear Under Row":
-                        form.Target = "Clear Under Row";
-                        break;
-                    case "Clear Over Row":
-                        form.Target = "Clear Over Row";
-                        break;
-                    case "Clear Square Root Row":
-                        form.Target = "Clear Square Root Row";
-                        break;
-                    case "Clear Root Row":
-                        form.Target = "Clear Root Row";
-                        break;
-                    case "Clear Fenced":
-                        form.Target = "Clear Fenced";
-                        break;
-                    case "Clear Row":
-                        form.Target = "Clear Row";
-                        break;
-                    default:
-                        break;
-                }
+            {
+                case "Clear Superscript Row1":
+                    form.Target = "Clear Superscript Row1";
+                    break;
+                case "Clear Subscript Row1":
+                    form.Target = "Clear Subscript Row1";
+                    break;
+                case "Clear Superscript Row2":
+                    form.Target = "Clear Superscript Row2";
+                    break;
+                case "Clear Subscript Row2":
+                    form.Target = "Clear Subscript Row2";
+                    break;
+                case "Clear Matrix":
+                    form.Target = "Clear Matrix";
+                    break;
+                case "Clear Under Row":
+                    form.Target = "Clear Under Row";
+                    break;
+                case "Clear Over Row":
+                    form.Target = "Clear Over Row";
+                    break;
+                case "Clear Square Root Row":
+                    form.Target = "Clear Square Root Row";
+                    break;
+                case "Clear Root Row":
+                    form.Target = "Clear Root Row";
+                    break;
+                case "Clear Fenced":
+                    form.Target = "Clear Fenced";
+                    break;
+                case "Clear Row":
+                    form.Target = "Clear Row";
+                    break;
+                default:
+                    break;
+            }
 
             if (form.ClearFormula)
             {
@@ -1722,15 +1712,15 @@ namespace Books.Controllers
                 }
                 _context.Session.SetString("formula", sb.ToString());
                 _context.Session.CommitAsync();
-                ViewBag.formula= sb.ToString();
+                ViewBag.formula = sb.ToString();
             }
             return View(form);
-                //}
-                //else
-                //{
-                // there is something wrong with the data values
-                //    return View(form);
-                //}
+            //}
+            //else
+            //{
+            // there is something wrong with the data values
+            //    return View(form);
+            //}
         }
     }
 }

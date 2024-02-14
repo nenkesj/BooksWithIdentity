@@ -1,0 +1,21 @@
+﻿@page "/pages/edit/{id:long?}"
+@model Books.Pages.EditModel
+<h4 class="bg-info text-white text-center p-2">Node Page</h4>
+<form method="post" class="p-2">
+    <div class="form-group">
+        <label>ID</label>
+        <input class="form-control" readonly asp-for="@Model.Node.NodeId" />
+    </div>
+    <div class="form-group">
+        <label>Book</label>
+        <input class="form-control" asp-for="@Model.Node.Heading" />
+    </div>
+    <div class="form-group">
+        <label>Details</label>
+        <input class="form-control" asp-for="@Model.Node.NodeText" />
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-secondary">Save</button>
+        <a class="btn btn-secondary" asp-page="Admin">Cancel</a>
+    </div>
+</form>

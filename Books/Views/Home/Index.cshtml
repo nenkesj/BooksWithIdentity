@@ -1,26 +1,7 @@
 ﻿@model IQueryable<Node>
-@{
-    ViewData["Title"] = "Home Page";
-}
-
+<h4 class="bg-primary text-white text-center p-2">MVC - Level 1 - Anyone</h4>
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-</div>
-<h6 class="bg-secondary text-white text-center m-2 p-2">Books</h6>
-<form asp-action="NewBook" asp-controller="Admin" method="get">
-    <button class="navbutton, btn, btn-info" type="submit">New Book</button>
-</form>
-<div class="m-2">
-    <table class="table table-sm table-striped table-bordered">
-        <thead>
-            <tr>
-                <th></th><th>Book</th><th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in Model ?? Enumerable.Empty<Node>()) {
-                <partial name="_BookRowPartial" model="p" />
-            }
-        </tbody>
-    </table>
+    <h6 class="p-2">
+        There are @Model.Count() books.
+    </h6>
 </div>

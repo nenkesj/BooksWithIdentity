@@ -1,12 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using HtmlHelper = System.Web.Mvc.HtmlHelper;
 using TagBuilder = System.Web.Mvc.TagBuilder;
 

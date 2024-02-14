@@ -1,0 +1,32 @@
+﻿@page "/pages/admin"
+@using HowTo_DBLibrary;
+@model Books.Pages.AdminModel
+<h4 class="bg-info text-white text-center p-2">Pages Level 3 - Administrators</h4>
+<div class="p-2">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Books</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Node n in Model.DbContext.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading))
+            {
+                <tr>
+                    <td>@n.Heading</td>
+                    <td>@n.NodeText</td>
+                    <td class="text-center">
+                        <form method="post">
+                            <a class="btn btn-sm btn-warning" asp-page="Edit"
+                               asp-route-id="@n.NodeId">Edit</a>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<a class="btn btn-info mx-2" asp-page="Edit">Create</a>
+
+

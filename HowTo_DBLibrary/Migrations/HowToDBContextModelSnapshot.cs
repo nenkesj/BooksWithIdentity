@@ -191,6 +191,10 @@ namespace HowTo_DBLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KeyId"), 1L, 1);
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("KeyText")
                         .IsRequired()
                         .ValueGeneratedOnAdd()

@@ -1,0 +1,45 @@
+﻿@{
+    string theme = ViewData["theme"] as string ?? "primary";
+    bool showNav = ViewData["showNav"] as bool? ?? true;
+    string navPartial = ViewData["navPartial"] as string ?? "_Workflows";
+    string workflow = ViewData["workflow"] as string;
+    string banner = ViewData["banner"] as string ?? "User Dashboard";
+    bool showHeader = ViewData["showHeader"] as bool? ?? true;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Books</title>
+    <link rel="stylesheet" href="/Identity/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/Identity/css/site.css" />
+    <script src="/Identity/lib/jquery/dist/jquery.js"></script>
+    <script src="/Identity/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="/Identity/js/site.js" asp-append-version="true"></script>
+</head>
+<body>
+    @if (showHeader)
+    {
+        <nav class="navbar navbar-dark bg-@theme">
+            <a class="navbar-brand text-white" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
+            <div class="text-white"><partial name="_LoginPartial" /></div>
+        </nav>
+    }
+    <h4 class="bg-@theme text-center text-white p-2">@banner</h4>
+    <div class="my-2">
+        <div class="container-fluid">
+            <div class="row">
+                @if (showNav)
+                {
+                    <div class="col-auto">
+                        <partial name="@navPartial" model="@((workflow, theme))" />
+                    </div>
+                }
+                <div class="col">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
