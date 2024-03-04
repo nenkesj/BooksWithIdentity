@@ -31,12 +31,14 @@
                     @if (@Model.Sentences[i].Contains("<math"))
                     {
                         var txt = new HtmlString(@Model.Sentences[i]);
-                        @txt                        
+                        @txt
+                        
                     }
                     else if (@Model.Sentences[i].Count<char>(x => x == '<') > 1 && @Model.Sentences[i].Contains('>') && @Model.Sentences[i].Contains("</"))
                     {
-                        var txt = new HtmlString(@Model.Sentences[i]);
-                        @txt
+                        //var txt = new HtmlString(@Model.Sentences[i]);
+                        //@txt
+                        @Model.Sentences[i]
                     }
                     else
                     {

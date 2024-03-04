@@ -1,3 +1,4 @@
+using Books;
 using Books.Data;
 using Books.Models;
 using Books.Services;
@@ -23,6 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString1 = builder.Configuration.GetConnectionString("IdentityDB");
 var connectionString2 = builder.Configuration.GetConnectionString("HowToDB");
 
+var configuration = builder.Configuration;
+
 builder.Services.AddControllersWithViews().AddSessionStateTempDataProvider();
 
 builder.Services.AddRazorPages();
@@ -40,6 +43,10 @@ builder.Services.AddHttpsRedirection(opts =>
 
 builder.Services.AddHttpContextAccessor();
 
+//builder.Services.AddDefaultIdentity<IdentityUser>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
 {
     opts.Password.RequiredLength = 8;
@@ -51,6 +58,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
 }).AddEntityFrameworkStores<ApplicationDbContext>()
    .AddDefaultTokenProviders();
 
+builder.Services.Configure<SecurityStampValidatorOptions>(opts =>
+{
+    opts.ValidationInterval = System.TimeSpan.FromMinutes(1);
+});
+
 builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
 
 
@@ -60,19 +72,28 @@ builder.Services.AddScoped<IdentityEmailService>();
 
 builder.Services.AddAuthentication();
 
-var Configuration = builder.Configuration;
+//var Configuration = builder.Configuration;
 
-builder.Services.AddAuthentication();
-//    .AddFacebook(opts =>
-//    {
-//        opts.AppId = Configuration["Facebook:AppId"];
-//        opts.AppSecret = Configuration["Facebook:AppSecret"];
-//    })
-//    .AddTwitter(opts =>
-//    {
-//        opts.ConsumerKey = Configuration["Twitter:ApiKey"];
-//        opts.ConsumerSecret = Configuration["Twitter:ApiSecret"];
-//    });
+builder.Services.AddAuthentication()
+    .AddFacebook(opts =>
+    {
+        opts.AppId = configuration["Facebook:AppId"];
+        opts.AppSecret = configuration["Facebook:AppSecret"];
+
+        //opts.AppId = configuration["Authentication:Facebook:AppId"];
+        //opts.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+    })
+.AddGoogle(opts =>
+{
+    opts.ClientId = configuration["Authentication:Google:ClientId"];
+    opts.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+})
+.AddTwitter(opts =>
+{
+    opts.ConsumerKey = configuration["Authentication:Twitter:ConsumerAPIKey"];
+    opts.ConsumerSecret = configuration["Authentication:Twitter:ConsumerSecret"];
+    opts.RetrieveUserDetails = true;
+});
 
 builder.Services.ConfigureApplicationCookie(opts =>
 {
@@ -130,5 +151,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapDefaultControllerRoute();
     endpoints.MapRazorPages();
 });
+
+app.SeedUserStoreForDashboard();
 
 app.Run();
