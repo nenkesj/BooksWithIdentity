@@ -4,7 +4,7 @@
     ViewData["showNav"] = false;
     ViewData["banner"] = "Sign In";
 }
-<link href="/lib/font-awesome/css/all.min.css" rel="stylesheet" />
+<link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
 <div asp-validation-summary="All" class="text-danger m-2"></div>
 @if (TempData.ContainsKey("message"))
 {
@@ -30,6 +30,8 @@
                 <a asp-page="UserPasswordRecovery" class="btn btn-secondary">
                     Forgot Password?
                 </a>
+                <label>Return Url: </label>
+                @Html.DisplayFor(model => model.ReturnUrl)
             </form>
         </div>
         <div class="col-auto">

@@ -38,7 +38,7 @@ builder.Services.AddDbContext<HowToDBContext>(options =>
 
 builder.Services.AddHttpsRedirection(opts =>
 {
-    opts.HttpsPort = 44350;
+    opts.HttpsPort = 44352;
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -65,7 +65,6 @@ builder.Services.Configure<SecurityStampValidatorOptions>(opts =>
 
 builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
 
-
 builder.Services.AddScoped<TokenUrlEncoderService>();
 
 builder.Services.AddScoped<IdentityEmailService>();
@@ -77,23 +76,20 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthentication()
     .AddFacebook(opts =>
     {
-        opts.AppId = configuration["Facebook:AppId"];
-        opts.AppSecret = configuration["Facebook:AppSecret"];
-
-        //opts.AppId = configuration["Authentication:Facebook:AppId"];
-        //opts.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+        opts.AppId = "1065322317442222";
+        opts.AppSecret = "88972d386e0e7ba59c1adeca20d4ad6f";
     })
-.AddGoogle(opts =>
-{
-    opts.ClientId = configuration["Authentication:Google:ClientId"];
-    opts.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-})
-.AddTwitter(opts =>
-{
-    opts.ConsumerKey = configuration["Authentication:Twitter:ConsumerAPIKey"];
-    opts.ConsumerSecret = configuration["Authentication:Twitter:ConsumerSecret"];
-    opts.RetrieveUserDetails = true;
-});
+    .AddGoogle(opts =>
+    {
+        opts.ClientId = "793941428387-lfq49fnrc885btflnemaq347gp1n9tsd.apps.googleusercontent.com";
+        opts.ClientSecret = "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";
+    })
+    .AddTwitter(opts =>
+    {
+        opts.ConsumerKey = "dThRLWlxQUpna0FvYVJGaDdVTjc6MTpjaQ";
+        opts.ConsumerSecret = "bT0sdEti528l753rt1Acqd6QqKDFqW_Pm__ZofHlpPZ_vLGFsk";
+        opts.RetrieveUserDetails = true;
+    });
 
 builder.Services.ConfigureApplicationCookie(opts =>
 {

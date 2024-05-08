@@ -25,7 +25,7 @@ namespace Books.Pages.Identity
         [Required]
         [BindProperty]
         public string Password { get; set; }
-        //[BindProperty(SupportsGet = true)]
+        [BindProperty(SupportsGet = true)]
         public string ReturnUrl { get; set; }
         public async Task<IActionResult> OnPostAsync()
         {
@@ -36,6 +36,7 @@ namespace Books.Pages.Identity
                     Password, true, true);
                 if (result.Succeeded)
                 {
+                    TempData["message"] = "Signin Successful - " + ReturnUrl;
                     return Redirect(ReturnUrl ?? "/");
                 }
                 else if (result.IsLockedOut)
@@ -60,6 +61,10 @@ namespace Books.Pages.Identity
                 {
                     TempData["message"] = "Sign In Failed";
                 }
+            }
+            else
+            {
+                TempData["message"] = "Model isnt valid";
             }
             return Page();
         }

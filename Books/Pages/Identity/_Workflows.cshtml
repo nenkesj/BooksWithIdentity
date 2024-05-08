@@ -9,18 +9,23 @@
 <a class="btn btn-@Model.theme btn-block @getClass("Overview")" asp-page="Index">
     Overview
 </a>
+<br />
 @if (await UserManager.HasPasswordAsync(identityUser))
 {
-    <a class="btn btn-@Model.theme btn-block @getClass("PasswordChange")"
+    <a class="m-1 btn btn-@Model.theme btn-block @getClass("PasswordChange")"
    asp-page="UserPasswordChange">
         Change Password
     </a>
-    <a class="btn btn-@Model.theme btn-block @getClass("UserTwoFactor")"
+    <br />
+    <a class="m-1 btn btn-@Model.theme btn-block @getClass("UserTwoFactor")"
    asp-page="UserTwoFactorManage">
         Authenticator
     </a>
+    <br />
 }
-<a class="btn btn-@Model.theme btn-block @getClass("UserDelete")"
+<!--
+<a class="m-1 btn btn-Model.theme btn-block getClass("UserDelete")"
    asp-page="UserDelete">
     Delete Account
 </a>
+-->
