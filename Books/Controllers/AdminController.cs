@@ -2,6 +2,7 @@
 using Books.Models;
 using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,16 @@ using System.Data;
 
 namespace Books.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly HowToDBContext _context;
+        public UserManager<IdentityUser> UserManager { get; set; }
 
-        public AdminController(HowToDBContext context)
+        public AdminController(HowToDBContext context, UserManager<IdentityUser> userMgr)
         {
             _context = context;
+            UserManager = userMgr;
         }
 
         // GET: Admin
@@ -333,7 +336,7 @@ namespace Books.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node, int ParentNodeID = -1, int TreeLevel = -1, bool save = true)
+        public async Task<IActionResult> Edit(int id, [Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner")] Node node, int ParentNodeID = -1, int TreeLevel = -1, bool save = true)
         {
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
             List<string> lines, sentences, paragrphs, newParagraphs;
@@ -483,6 +486,7 @@ namespace Books.Controllers
             node.TypeId = 2;
             node.ParentNodeId = currNode.ParentNodeId;
             node.TreeLevel = currNode.TreeLevel;
+            node.Owner = currNode.Owner;
             ViewBag.ReturnNode = id;
             return View(node);
         }
@@ -492,7 +496,7 @@ namespace Books.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> New([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
+        public async Task<IActionResult> New([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner")] Node node)
         {
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
             List<string> lines, sentences, paragrphs, newParagraphs;
@@ -554,6 +558,7 @@ namespace Books.Controllers
             node.TypeId = 2;
             node.ParentNodeId = currNode.NodeId;
             node.TreeLevel = (short)(currNode.TreeLevel + 1);
+            node.Owner = currNode.Owner;
             ViewBag.ReturnNode = id;
             return View(node);
         }
@@ -563,7 +568,7 @@ namespace Books.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NewChild([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
+        public async Task<IActionResult> NewChild([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner")] Node node)
         {
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
             List<string> lines, sentences, paragrphs, newParagraphs;
@@ -613,6 +618,8 @@ namespace Books.Controllers
             node.TypeId = 2;
             node.ParentNodeId = 0;
             node.TreeLevel = 1;
+            IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
+            node.Owner = CurrentUser?.Email ?? "(No Value)";
             return View(node);
         }
         // POST: Admin/NewBook/5
@@ -620,7 +627,7 @@ namespace Books.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NewBook([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText")] Node node)
+        public async Task<IActionResult> NewBook([Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner")] Node node)
         {
             if (ModelState.IsValid)
             {

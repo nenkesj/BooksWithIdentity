@@ -46,54 +46,57 @@
                     </form>
                 </li>
             </ul>
-            <ul class="nav-main">
-                <li>
-                    <form asp-action="Edit" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                        <button class="navbutton, btn, btn-info" type="submit">Edit</button>
-                    </form>
-                </li>
-            </ul>
-            <ul class="nav-main">
-                <li>
-                    <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                        <button class="navbutton, btn, btn-info" type="submit">New</button>
-                    </form>
-                </li>
-                <li>
-                    <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                        <button class="navbutton, btn, btn-info" type="submit">New Child</button>
-                    </form>
-                </li>
-            </ul>
-            <ul class="nav-main">
-                @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2)
-                {
+            @if (@Model.Owner)
+            {
+                <ul class="nav-main">
                     <li>
-                        <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                            <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
+                        <form asp-action="Edit" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">Edit</button>
                         </form>
                     </li>
-                }
-                @if (@Model.Node.TreeLevel > 1)
-                {
+                </ul>
+                <ul class="nav-main">
                     <li>
-                        <form asp-action="Edit" asp-controller="Formula" asp-route-id="@Model?.Node.NodeId" method="get">
-                            <button class="navbutton, btn, btn-info" type="submit">Create Formula</button>
+                        <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">New</button>
                         </form>
                     </li>
-                }
-                @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
-                {
-                    if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
+                    <li>
+                        <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">New Child</button>
+                        </form>
+                    </li>
+                </ul>
+                <ul class="nav-main">
+                    @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2)
                     {
                         <li>
-                            <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
-                                <button class="navbutton, btn, btn-info" type="submit">Chapter Summary</button>
+                            <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                                <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
                             </form>
                         </li>
                     }
-                }
-            </ul>
+                    @if (@Model.Node.TreeLevel > 1)
+                    {
+                        <li>
+                            <form asp-action="Edit" asp-controller="Formula" asp-route-id="@Model?.Node.NodeId" method="get">
+                                <button class="navbutton, btn, btn-info" type="submit">Create Formula</button>
+                            </form>
+                        </li>
+                    }
+                    @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
+                    {
+                        if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
+                        {
+                            <li>
+                                <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
+                                    <button class="navbutton, btn, btn-info" type="submit">Chapter Summary</button>
+                                </form>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
             <ul class="nav-main">
                 @if (@Model.HasSummary && @Model.ShowingDetails)
                 {
@@ -108,11 +111,14 @@
                 @if (@Model.HasSummary && @Model.ShowingSummary)
                 {
                     <ul class="detailssummary">
-                        <li>
-                            <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model?.Summary.SummaryId" method="get">
-                                <button class="navbutton, btn, btn-info" type="submit">Edit Summary</button>
-                            </form>
-                        </li>
+                        if (@Model.Owner)
+                        {
+                            <li>
+                                <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model?.Summary.SummaryId" method="get">
+                                    <button class="navbutton, btn, btn-info" type="submit">Edit Summary</button>
+                                </form>
+                            </li>
+                        }
                         <li>
                             <form asp-action="Details" asp-controller="Books" asp-route-id="@Model?.Node.NodeId" asp-route-Display="Details">
                                 <button class="navbutton, btn, btn-info" type="submit">Details</button>
@@ -121,29 +127,33 @@
                     </ul>
                 }
             </ul>
-            <ul class="nav-main">
-                <div class="PictureTools">
-                    <form asp-action="NewPicture" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-picturetitle="@Model.PictureTitle" asp-route-picturefile="@Model.PictureFile" enctype="multipart/form-data" method="post">
-                        <dl>
-                            <dt>
-                                <label asp-for="@Model.PictureTitle"></label>
-                            </dt>
-                            <dd>
-                                <input asp-for="@Model.PictureTitle" type="text">
-                                <span asp-validation-for="@Model.PictureTitle"></span>
-                            </dd>
-                            <dt>
-                                <label asp-for="@Model.PictureFile"></label>
-                            </dt>
-                            <dd>
-                                <input asp-for="@Model.PictureFile" type="file">
-                                <span asp-validation-for="@Model.PictureFile"></span>
-                            </dd>
-                        </dl>
-                        <input class="btn btn-primary" type="submit" value="Save" />
-                    </form>
-                </div>
-            </ul>
+            @if (Model.Owner)
+            {
+                <ul class="nav-main">
+                    <div class="PictureTools">
+                        <form asp-action="NewPicture" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-picturetitle="@Model.PictureTitle" asp-route-picturefile="@Model.PictureFile" enctype="multipart/form-data" method="post">
+                            <dl>
+                                <dt>
+                                    <label asp-for="@Model.PictureTitle"></label>
+                                </dt>
+                                <dd>
+                                    <input asp-for="@Model.PictureTitle" type="text">
+                                    <span asp-validation-for="@Model.PictureTitle"></span>
+                                </dd>
+                                <dt>
+                                    <label asp-for="@Model.PictureFile"></label>
+                                </dt>
+                                <dd>
+                                    <input asp-for="@Model.PictureFile" type="file">
+                                    <span asp-validation-for="@Model.PictureFile"></span>
+                                </dd>
+                            </dl>
+                            <input class="btn btn-primary" type="submit" value="Save" />
+                        </form>
+                    </div>
+                </ul>
+            }
+
             <ul class="nav-main">
                 <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" method="post">
                     <dl>
@@ -270,6 +280,12 @@
                         </dt>
                         <dd class="col-sm-2">
                             @Html.DisplayFor(model => @Model.Node.TreeLevel)
+                        </dd>
+                        <dt>
+                        @Html.DisplayNameFor(model => @Model.Node.Owner)
+                        </dt>
+                        <dd class="col-sm-1">
+                        @Html.DisplayFor(model => @Model.Node.Owner)
                         </dd>
                     </dl>
                 }

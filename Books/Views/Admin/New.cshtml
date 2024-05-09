@@ -43,6 +43,13 @@
                 @Html.EditorFor(model => @Model.TreeLevel)
                 <span asp-validation-for="TreeLevel" class="text-danger"></span>
             </dd>
+            <dt class="col-sm-1">
+                @Html.DisplayNameFor(model => @Model.Owner)
+            </dt>
+            <dd class="col-sm-2">
+                @Html.EditorFor(model => @Model.Owner)
+                <span asp-validation-for="Owner" class="text-danger"></span>
+            </dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">

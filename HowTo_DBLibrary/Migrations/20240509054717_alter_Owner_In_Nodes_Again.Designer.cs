@@ -4,6 +4,7 @@ using HowTo_DBLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HowTo_DBLibrary.Migrations
 {
     [DbContext(typeof(HowToDBContext))]
-    partial class HowToDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240509054717_alter_Owner_In_Nodes_Again")]
+    partial class alter_Owner_In_Nodes_Again
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

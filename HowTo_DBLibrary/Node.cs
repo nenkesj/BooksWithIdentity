@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HowTo_DBLibrary
+﻿namespace HowTo_DBLibrary
 {
     public partial class Node
     {
@@ -24,7 +21,7 @@ namespace HowTo_DBLibrary
         public short TreeLevel { get; set; }
         public string Heading { get; set; } = null!;
         public string NodeText { get; set; } = null!;
-
+        public string? Owner { get; set; } = null!;
         public virtual Tree? Tree { get; set; } = null!;
         public virtual Type? Type { get; set; } = null!;
         public virtual ICollection<Code> Codes { get; set; }

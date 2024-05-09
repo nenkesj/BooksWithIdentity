@@ -1,7 +1,9 @@
-﻿using Books.Infrastructure;
+﻿
+using Books.Infrastructure;
 using Books.Models;
 using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +14,11 @@ namespace Books.Controllers
     public class BooksController : Controller
     {
         private readonly HowToDBContext _context;
-        public BooksController(HowToDBContext context)
+        public UserManager<IdentityUser> UserManager { get; set; }
+        public BooksController(HowToDBContext context, UserManager<IdentityUser> userMgr)
         {
             _context = context;
+            UserManager = userMgr;
         }
 
         // GET: Books
@@ -228,6 +232,7 @@ namespace Books.Controllers
             bool hassumm = false;
             bool haschild = false;
             bool hasparent = true;
+            bool owner = false;
             bool showingdetails = true;
             bool showingsummary = false;
             bool hasnofigpara = true;
@@ -262,6 +267,10 @@ namespace Books.Controllers
             ViewBag.KeyText = keyText;
             ViewBag.Distinct = Distinct;
             ViewBag.Category = Category;
+
+            IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
+            string Email = CurrentUser?.Email ?? "(No Value)";
+            string Phone = CurrentUser?.PhoneNumber ?? "(No Value)";
 
             nodes = _context.Nodes.Where(m => m.NodeId == id);
             node = nodes.FirstOrDefault();
@@ -315,6 +324,11 @@ namespace Books.Controllers
                 showingdetails = false;
             }
 
+            if (CurrentUser.Email == node.Owner)
+            {
+                owner = true;
+            }
+
             paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, true);
             paragraphs.ListsAndTables(ParagraphsNoOf, paragrphs, out newNoOfParagraphs, out newParagraphs, out hasnofigpara, out hasnotabpara);
 
@@ -357,7 +371,8 @@ namespace Books.Controllers
                 SearchKey = searchkey,
                 NoOfKeys = keys.Count(),
                 Keys = keyvalues,
-                Siblings = siblings
+                Siblings = siblings,
+                Owner = owner
             };
 
             return View(model);

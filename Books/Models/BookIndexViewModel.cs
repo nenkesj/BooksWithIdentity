@@ -41,5 +41,7 @@ namespace Books.Models
         public int NoOfKeys { get; set; }
         public List<string>? Keys { get; set; }
         public IEnumerable<Node>? Siblings { get; set; }
+        public bool Owner { get; set; }
+
     }
 }

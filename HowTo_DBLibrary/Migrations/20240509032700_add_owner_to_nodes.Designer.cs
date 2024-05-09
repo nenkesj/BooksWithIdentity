@@ -4,6 +4,7 @@ using HowTo_DBLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HowTo_DBLibrary.Migrations
 {
     [DbContext(typeof(HowToDBContext))]
-    partial class HowToDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240509032700_add_owner_to_nodes")]
+    partial class add_owner_to_nodes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,7 +253,6 @@ namespace HowTo_DBLibrary.Migrations
                         .HasDefaultValueSql("(' ')");
 
                     b.Property<string>("Owner")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ParentNodeId")
