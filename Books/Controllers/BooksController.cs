@@ -324,7 +324,7 @@ namespace Books.Controllers
                 showingdetails = false;
             }
 
-            if (CurrentUser.Email == node.Owner)
+            if (CurrentUser.NormalizedEmail == node.Owner)
             {
                 owner = true;
             }

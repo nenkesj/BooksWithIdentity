@@ -111,7 +111,7 @@
                 @if (@Model.HasSummary && @Model.ShowingSummary)
                 {
                     <ul class="detailssummary">
-                        if (@Model.Owner)
+                        @if (@Model.Owner)
                         {
                             <li>
                                 <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model?.Summary.SummaryId" method="get">
@@ -281,10 +281,12 @@
                         <dd class="col-sm-2">
                             @Html.DisplayFor(model => @Model.Node.TreeLevel)
                         </dd>
-                        <dt>
+                    </dl>
+                    <dl class="row">
+                        <dt class="col-sm-1">
                         @Html.DisplayNameFor(model => @Model.Node.Owner)
                         </dt>
-                        <dd class="col-sm-1">
+                        <dd class="col-sm-4">
                         @Html.DisplayFor(model => @Model.Node.Owner)
                         </dd>
                     </dl>
