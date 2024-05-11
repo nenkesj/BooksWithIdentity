@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Books\DetailsOld - Copy.cshtml" />
+    <Content Remove="Views\Books\DetailsOld.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Views\Shared\_LoginPartial.1cshtml" />
   </ItemGroup>
 
@@ -45,6 +50,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HowTo_DBLibrary\HowTo_DBLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Books\DetailsOld.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Books\DetailsOld.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Books\DetailsOld - Copy.cshtml" />
+    <None Include="Views\Books\DetailsOld.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -8,23 +8,23 @@
         @if (User.IsInRole(dashboardRole))
         {
             <a asp-page="/Identity/Admin/Dashboard"
-               class="nav-link bg-secondary text-white">
+               class="nav-link text-white bg-dark">
                 @User.Identity.Name
             </a>
         }
         else
         {
-            <a asp-page="/Identity/Index" class="nav-link bg-secondary text-white">
+            <a asp-page="/Identity/Index" class="nav-link text-white bg-dark">
                 @User.Identity.Name
             </a>
         }
-        <a asp-page="/Identity/SignOut" class="nav-link bg-secondary text-white">
+        <a asp-page="/Identity/SignOut" class="nav-link text-white bg-dark">
             Sign Out
         </a>
     }
     else
     {
-        <a asp-page="/Identity/SignIn" class="nav-link bg-secondary text-white">
+        <a asp-page="/Identity/SignIn" class="nav-link text-white bg-dark">
             Sign In/Register
         </a>
     }
