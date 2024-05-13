@@ -57,48 +57,53 @@
                         </form>
                     </li>
                 </ul>
-                <ul class="nav-main">
-                    <li>
-                        <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                            <button class="navbutton, btn, btn-info" type="submit">New</button>
-                        </form>
-                    </li>
-                    <li>
-                        <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                            <button class="navbutton, btn, btn-info" type="submit">New Child</button>
-                        </form>
-                    </li>
-                </ul>
-                <ul class="nav-main">
-                    @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2)
-                    {
+                @if (@Model.Node.Heading != "Chapter Summary")
+                {
+                    <ul class="nav-main">
                         <li>
-                            <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
-                                <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
+                            <form asp-action="New" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                                <button class="navbutton, btn, btn-info" type="submit">New</button>
                             </form>
                         </li>
-                    }
-                    @if (@Model.Node.TreeLevel > 1)
-                    {
+                        <li>
+                            <form asp-action="NewChild" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                                <button class="navbutton, btn, btn-info" type="submit">New Child</button>
+                            </form>
+                        </li>
+                    </ul>
+                }
+                @if (@Model.Node.TreeLevel > 1 && @Model.Node.Heading != "Chapter Summary")
+                {
+                    <ul class="nav-main">
                         <li>
                             <form asp-action="Edit" asp-controller="Formula" asp-route-id="@Model?.Node.NodeId" method="get">
                                 <button class="navbutton, btn, btn-info" type="submit">Create Formula</button>
                             </form>
                         </li>
-                    }
-                    @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
-                    {
-                        if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
-                        {
-                            <li>
-                                <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
-                                    <button class="navbutton, btn, btn-info" type="submit">Chapter Summary</button>
-                                </form>
-                            </li>
-                        }
-                    }
-                </ul>
+                    </ul>
+                }
             }
+            <ul class="nav-main">
+                @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2 && @Model.Node.Heading != "Chapter Summary")
+                {
+                    <li>
+                        <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
+                            <button class="navbutton, btn, btn-info" type="submit">Create Summary</button>
+                        </form>
+                    </li>
+                }
+                @if (@Model.Node.TreeLevel == 2 && @Model.Node.Heading.Length > 6)
+                {
+                    if (@Model.Node.Heading.Substring(0, 7) == "Chapter")
+                    {
+                        <li>
+                            <form asp-action="Chapter" asp-controller="Summaries" asp-route-id="@Model?.Node.NodeId">
+                                <button class="navbutton, btn, btn-info" type="submit">Chapter Summary</button>
+                            </form>
+                        </li>
+                    }
+                }
+            </ul>
             <ul class="nav-main">
                 @if (@Model.HasSummary && @Model.ShowingDetails)
                 {
@@ -113,14 +118,11 @@
                 @if (@Model.HasSummary && @Model.ShowingSummary)
                 {
                     <ul class="detailssummary">
-                        @if (@Model.Owner)
-                        {
-                            <li>
-                                <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model?.Summary.SummaryId" method="get">
-                                    <button class="navbutton, btn, btn-info" type="submit">Edit Summary</button>
-                                </form>
-                            </li>
-                        }
+                        <li>
+                            <form asp-action="EditSummary" asp-controller="Admin" asp-route-id="@Model?.Summary.SummaryId" method="get">
+                                <button class="navbutton, btn, btn-info" type="submit">Edit Summary</button>
+                            </form>
+                        </li>
                         <li>
                             <form asp-action="Details" asp-controller="Books" asp-route-id="@Model?.Node.NodeId" asp-route-Display="Details">
                                 <button class="navbutton, btn, btn-info" type="submit">Details</button>
@@ -128,6 +130,38 @@
                         </li>
                     </ul>
                 }
+                @if (@Model.HasOtherSummaries && @Model.ShowingDetails)
+                {
+                    <ul class="detailssummary">
+                        <li>
+                            <form asp-action="Details" asp-controller="Books" asp-route-id="@Model.Node.NodeId" asp-route-Display="Summary" asp-route-summaryid="@Model.SummaryId">
+                                <dl>
+                                    <dt>
+                                        Select Other Summary
+                                    </dt>
+                                    <dd>
+                                        <select asp-for="@Model.SummaryId" class="form-control" asp-items="ViewBag.SummaryId">
+                                        </select>
+                                    </dd>
+                                </dl>
+                                <input class="btn btn-primary" type="submit" value="Select" />
+                            </form>
+                            @Html.Hidden("summaryid", @Model.SummaryId)
+                        </li>
+                    </ul>
+                }
+                <!--
+                @if (@Model.HasOtherSummaries && @Model.ShowingSummary)
+                {
+                        <ul class="detailssummary">
+                            <li>
+                                <form asp-action="Details" asp-controller="Books" asp-route-id="@Model?.Node.NodeId" asp-route-Display="Details" method="post">
+                                    <button class="navbutton, btn, btn-info" type="submit">Details</button>
+                                </form>
+                            </li>
+                        </ul>
+                }
+                -->
             </ul>
             @if (Model.Owner)
             {
@@ -155,63 +189,85 @@
                     </div>
                 </ul>
             }
-
-            <ul class="nav-main">
-                <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" method="post">
-                    <dl>
-                        <dt>
-                            <label asp-for="@Model.KeyText"></label>
-                        </dt>
-                        <dd>
-                            <input asp-for="@Model.KeyText" type="text" value="@Model.SearchKey">
-                        </dd>
-                    </dl>
-                    <dl>
-                        <dt>
-                            <label asp-for="@Model.Category" class="control-label"></label>
-                        </dt>
-                        <dd>
-                            <select asp-for="@Model.Category" class="form-control">
-                                <option value="None">None</option>
-                                <option value="AngularJS">AngularJS</option>
-                                <option value="ASP">ASP</option>
-                                <option value="Bootstrap">Bootstrap</option>
-                                <option value="CSharp">CSharp</option>
-                                <option value="CSS">CSS</option>
-                                <option value="Debugging">Debugging</option>
-                                <option value="Dev Tools Edge">Dev Tools Edge</option>
-                                <option value="Excel">Excel</option>
-                                <option value="Fixes">Fixes</option>
-                                <option value="Git">Git</option>
-                                <option value="HTML">HTML</option>
-                                <option value="HTTP">HTTP</option>
-                                <option value="Java">Java</option>
-                                <option value="JavaScript">JavaScript</option>
-                                <option value="JQuery">JQuery</option>
-                                <option value="LINQ">LINQ</option>
-                                <option value="MVC">MVC</option>
-                                <option value="Razor">Razor</option>
-                                <option value="TCPIP">TCPIP</option>
-                                <option value="VB">VB</option>
-                                <option value="WPF">WPF</option>
-                            </select>
-                        </dd>
-                    </dl>
-                    <input class="btn btn-primary" type="submit" value="Save" />
-                </form>
-            </ul>
+            @if (Model.Node.TreeLevel > 1 && @Model.Node.Heading != "Chapter Summary" && @Model.ShowingDetails)
+            {
+                <ul class="nav-main">
+                    <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" method="post">
+                        <dl>
+                            <dt>
+                                <label asp-for="@Model.KeyText"></label>
+                            </dt>
+                            <dd>
+                                <input asp-for="@Model.KeyText" type="text" value="@Model.SearchKey">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <label asp-for="@Model.Category" class="control-label"></label>
+                            </dt>
+                            <dd>
+                                <select asp-for="@Model.Category" class="form-control">
+                                    <option value="None">None</option>
+                                    <option value="AngularJS">AngularJS</option>
+                                    <option value="ASP">ASP</option>
+                                    <option value="Bootstrap">Bootstrap</option>
+                                    <option value="CSharp">CSharp</option>
+                                    <option value="CSS">CSS</option>
+                                    <option value="Debugging">Debugging</option>
+                                    <option value="Dev Tools Edge">Dev Tools Edge</option>
+                                    <option value="Excel">Excel</option>
+                                    <option value="Fixes">Fixes</option>
+                                    <option value="Git">Git</option>
+                                    <option value="HTML">HTML</option>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="Java">Java</option>
+                                    <option value="JavaScript">JavaScript</option>
+                                    <option value="JQuery">JQuery</option>
+                                    <option value="LINQ">LINQ</option>
+                                    <option value="MVC">MVC</option>
+                                    <option value="Razor">Razor</option>
+                                    <option value="TCPIP">TCPIP</option>
+                                    <option value="VB">VB</option>
+                                    <option value="WPF">WPF</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <input class="btn btn-primary" type="submit" value="Save" />
+                    </form>
+                </ul>
+            }
             <ul class="nav-main">
                 @foreach (var n in Model.Siblings)
                 {
-                    if (n.TreeLevel != 1)
+                    var classfields = "navbuton btn" + (@n.Heading == ViewBag.SelectedNodeHeading ? " btn-primary" : "btn-info ");
+                    @if (n.TreeLevel != 1)
                     {
-                        var classfields = "navbuton btn" + (@n.Heading == ViewBag.SelectedNodeHeading ? " btn-primary" : "btn-info ");
                         <form asp-action="Details" asp-controller="Books" asp-route-id="@n.NodeId">
                             <button class="@classfields" type="submit">@n.Heading</button><br />
                         </form>
                     }
                 }
             </ul>
+            @if (Model.Node.TreeLevel == 3 && Model.HasOtherChapterSummSiblings)
+            {
+                <ul class="detailssummary">
+                    <li>
+                        <form asp-action="Details" asp-controller="Books" asp-route-id="@Model.OtherChapterSummId">
+                            <dl>
+                                <dt>
+                                    Select Other Chapter Summary
+                                </dt>
+                                <dd>
+                                    <select asp-for="@Model.OtherChapterSummId" class="form-control" asp-items="ViewBag.OtherChapterSummId">
+                                    </select>
+                                </dd>
+                            </dl>
+                            <input class="btn btn-primary" type="submit" value="Select" />
+                        </form>
+                        @Html.Hidden("OtherChapterSummId", @Model.OtherChapterSummId)
+                    </li>
+                </ul>
+            }
             @if (@Model.HasPicture && !(@Model.Node.TreeLevel == 1))
             {
                 <ul class="nav-main">
@@ -264,34 +320,60 @@
                 @if (Model.Node.TreeLevel > 1)
                 {
                     <hr />
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => @Model.Node.NodeId)
-                        </dt>
-                        <dd class="col-sm-1">
-                            @Html.DisplayFor(model => @Model.Node.NodeId)
-                        </dd>
-                        <dt class="col-sm-3">
-                            @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
-                        </dt>
-                        <dd class="col-sm-1">
-                            @Html.DisplayFor(model => @Model.Node.ParentNodeId)
-                        </dd>
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
-                        </dt>
-                        <dd class="col-sm-2">
-                            @Html.DisplayFor(model => @Model.Node.TreeLevel)
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => @Model.Node.Owner)
-                        </dt>
-                        <dd class="col-sm-4">
-                            @Html.DisplayFor(model => @Model.Node.Owner)
-                        </dd>
-                    </dl>
+                    @if (Model.ShowingDetails)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Node.NodeId)
+                            </dt>
+                            <dd class="col-sm-1">
+                                @Html.DisplayFor(model => @Model.Node.NodeId)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => @Model.Node.ParentNodeId)
+                            </dt>
+                            <dd class="col-sm-1">
+                                @Html.DisplayFor(model => @Model.Node.ParentNodeId)
+                            </dd>
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Node.TreeLevel)
+                            </dt>
+                            <dd class="col-sm-1">
+                                @Html.DisplayFor(model => @Model.Node.TreeLevel)
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Node.Owner)
+                            </dt>
+                            <dd class="col-sm-4">
+                                @Html.DisplayFor(model => @Model.Node.Owner)
+                            </dd>
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Node.Views)
+                            </dt>
+                            <dd class="col-sm-1">
+                                @Html.DisplayFor(model => @Model.Node.Views)
+                            </dd>
+                        </dl>
+                    }
+                    @if (Model.ShowingSummary)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Summary.Owner)
+                            </dt>
+                            <dd class="col-sm-4">
+                                @Html.DisplayFor(model => @Model.Summary.Owner)
+                            </dd>
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => @Model.Summary.Views)
+                            </dt>
+                            <dd class="col-sm-1">
+                                @Html.DisplayFor(model => @Model.Summary.Views)
+                            </dd>
+                        </dl>
+                    }
                 }
 
             </section>

@@ -77,7 +77,7 @@ namespace Books.Controllers
         }
 
         // GET: Summaries/Create
-        public IActionResult CreateSummary(int id)
+        public async Task<IActionResult> CreateSummary(int id)
         {
             int linesNoOf, sentencesNoOf, paragraphsNoOf, paragraphPtr, newNoOfParagraphs;
             List<string> lines, sentences, para, paragrphs, newParagraphs;
@@ -100,6 +100,8 @@ namespace Books.Controllers
             bool hasnofigpara = true;
             bool hasnotabpara = true;
 
+            IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
+
             //ViewBag.Save = false;
             Node node = _context.Nodes.FirstOrDefault(n => n.NodeId == id);
             paragraphs.TheText = node.NodeText;
@@ -119,7 +121,7 @@ namespace Books.Controllers
 
             para.Add("");
 
-            summaries = _context.Summaries.Where(s => s.NodeId == id);
+            summaries = _context.Summaries.Where(s => s.NodeId == id && s.Owner == CurrentUser.NormalizedEmail);
             if (summaries.Count() > 0)
             {
                 summary = summaries.ToArray()[0];
@@ -128,6 +130,7 @@ namespace Books.Controllers
             {
                 summary = new Summary();
                 summary.NodeId = id;
+                summary.Owner = CurrentUser.NormalizedEmail;
             }
 
             summary.Summary1 = "<h4>Summary: " + node.Heading + "</h4>\r\n";
@@ -619,7 +622,7 @@ namespace Books.Controllers
             node.ParentNodeId = 0;
             node.TreeLevel = 1;
             IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
-            node.Owner = CurrentUser?.Email ?? "(No Value)";
+            node.Owner = CurrentUser.NormalizedEmail;
             return View(node);
         }
         // POST: Admin/NewBook/5

@@ -53,17 +53,24 @@
                 @Html.EditorFor(model => @Model.Owner)
                 <span asp-validation-for="Owner" class="text-danger"></span>
             </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => @Model.Tree)
+            <dt class="col-sm-1">
+                @Html.DisplayNameFor(model => @Model.Views)
             </dt>
             <dd class="col-sm-2">
+                @Html.EditorFor(model => @Model.Views)
+                <span asp-validation-for="Views" class="text-danger"></span>
+            </dd>
+            <dt class="col-sm-1">
+                @Html.DisplayNameFor(model => @Model.Tree)
+            </dt>
+            <dd class="col-sm-1">
                 <select asp-for="TreeId" class="form-control" asp-items="ViewBag.TreeId"></select>
                 <span asp-validation-for="TreeId" class="text-danger"></span>
             </dd>
             <dt class="col-sm-1">
                 @Html.DisplayNameFor(model => @Model.Type)
             </dt>
-            <dd class="col-sm-2">
+            <dd class="col-sm-1">
                 <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </dd>

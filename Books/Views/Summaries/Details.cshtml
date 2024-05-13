@@ -23,6 +23,21 @@
             @Html.DisplayFor(model => model.Node.Heading)
         </dd>
     </dl>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-1">
+            @Html.DisplayNameFor(model => @Model.Owner)
+        </dt>
+        <dd class="col-sm-4">
+            @Html.DisplayFor(model => @Model.Owner)
+        </dd>
+        <dt class="col-sm-1">
+            @Html.DisplayNameFor(model => @Model.Views)
+        </dt>
+        <dd class="col-sm-1">
+            @Html.DisplayFor(model => @Model.Views)
+        </dd>
+    </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.SummaryId">Edit</a> |

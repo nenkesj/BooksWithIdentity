@@ -26,6 +26,23 @@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-1">
+                    @Html.DisplayNameFor(model => @Model.Owner)
+                </dt>
+                <dd class="col-sm-2">
+                    @Html.EditorFor(model => @Model.Owner)
+                    <span asp-validation-for="Owner" class="text-danger"></span>
+                </dd>
+                <dt class="col-sm-1">
+                    @Html.DisplayNameFor(model => @Model.Views)
+                </dt>
+                <dd class="col-sm-2">
+                    @Html.EditorFor(model => @Model.Views)
+                    <span asp-validation-for="Views" class="text-danger"></span>
+                </dd>
+            </dl>
         </form>
     </div>
 </div>

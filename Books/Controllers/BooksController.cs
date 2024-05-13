@@ -226,10 +226,12 @@ namespace Books.Controllers
         }
 
         // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "", string keyText = "", string Distinct = "All", string Category = "All")
+        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "", string keyText = "", string Distinct = "All", string Category = "All", int summaryid = 0, int OtherChapterSummId = 0)
         {
             bool haspict = false;
             bool hassumm = false;
+            bool hasothersumm = false;
+            bool hasotherchaptersummsiblings = false;
             bool haschild = false;
             bool hasparent = true;
             bool owner = false;
@@ -240,19 +242,26 @@ namespace Books.Controllers
             bool NodeIDOK = false;
             int noofchildren = 0;
             int newNoOfParagraphs = 0;
+            int summUser = 0;
+            int noofsummaries = 0;
+            int noofchaptersummsiblings = 0;
+            int userchaptsumms = 0;
 
 
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf, noofkeys;
             List<string> lines, sentences, paragrphs, newParagraphs, keyvalues;
             Paragraphs paragraphs;
-            Node node;
+            Node node, appnode;
+            Summary summ;
             List<int> SentenceInParagraph;
             List<Node> MatchingNodes;
-            IEnumerable<Node> nodes;
+            IQueryable<Node> nodes;
+            IQueryable<Node> chaptersummsiblings;
             IEnumerable<Summary> summaries;
+            IEnumerable<Summary> othersummaries;
             IEnumerable<Key> keys;
             IEnumerable<Node> children;
-            IEnumerable<Node> siblings;
+            IQueryable<Node> siblings, newsiblings;
             IEnumerable<Picture> pictures;
 
             MatchingNodes = new List<Node>();
@@ -269,25 +278,76 @@ namespace Books.Controllers
             ViewBag.Category = Category;
 
             IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
-            string Email = CurrentUser?.Email ?? "(No Value)";
-            string Phone = CurrentUser?.PhoneNumber ?? "(No Value)";
+
+            if (OtherChapterSummId > 0)
+            {
+                id = OtherChapterSummId;
+            }
 
             nodes = _context.Nodes.Where(m => m.NodeId == id);
             node = nodes.FirstOrDefault();
-            summaries = _context.Summaries.Where(n => n.NodeId == id);
             pictures = _context.Pictures.Where(pic => pic.NodeId == id);
             children = _context.Nodes.Where(n => n.ParentNodeId == id);
-            siblings = _context.Nodes.Where(n => n.ParentNodeId == nodes.FirstOrDefault().ParentNodeId).OrderBy(n => n.NodeId);
+            siblings = _context.Nodes.Where(n => n.ParentNodeId == node.ParentNodeId && n.Owner == node.Owner).OrderBy(n => n.NodeId);
+            if (node.TreeLevel == 3 && OtherChapterSummId == 0)
+            {
+                chaptersummsiblings = _context.Nodes.Where(n => n.ParentNodeId == node.ParentNodeId && n.Heading == "Chapter Summary");
+                noofchaptersummsiblings = _context.Summaries.Where(n => n.NodeId == id).Count();
+                if (noofchaptersummsiblings > 1)
+                {
+                    hasotherchaptersummsiblings = true;
+                    ViewData["OtherChapterSummId"] = new SelectList(chaptersummsiblings.OrderByDescending(s => s.Views).Take(5), "NodeId", "Owner");
+                    userchaptsumms = siblings.Where(s => s.Owner == CurrentUser.NormalizedEmail).Count();
+                }
+            }
+            else
+            {
+                chaptersummsiblings = null;
+                hasotherchaptersummsiblings = false;
+            }
             keys = _context.Keys.Where(k => k.NodeId == id);
+
+            summaries = _context.Summaries.Where(n => n.NodeId == id);
+            noofsummaries = _context.Summaries.Where(n => n.NodeId == id).Count();
+            othersummaries = summaries;
+
+            if (summaries.Any())
+            {
+                summUser = summaries.Where(s => s.Owner == CurrentUser.NormalizedEmail).Count();
+                if (summUser > 0)
+                {
+                    summ = summaries.Where(s => s.Owner == CurrentUser.NormalizedEmail).FirstOrDefault();
+                    hassumm = true;
+                    if (noofsummaries > 1)
+                    {
+                        hasothersumm = true;
+                        othersummaries = summaries;
+                        ViewData["SummaryId"] = new SelectList(othersummaries.OrderByDescending(s => s.Views).Take(5), "SummaryId", "Owner");
+                    }
+                }
+                else
+                {
+                    summ = summaries.FirstOrDefault();
+                    hassumm = false;
+                    hasothersumm = true;
+                    othersummaries = summaries;
+                    ViewData["SummaryId"] = new SelectList(othersummaries.OrderByDescending(s => s.Views).Take(5), "SummaryId", "Owner");
+                }
+            }
+            else
+            {
+                summ = summaries.FirstOrDefault();
+                hassumm = false;
+                hasothersumm = false;
+            }
+            if (summaryid > 0)
+            {
+                summ = summaries.Where(s => s.SummaryId == summaryid).FirstOrDefault();
+            }
             searchkey = "";
             foreach (Key k in keys)
             {
                 searchkey += k.KeyText + " ";
-            }
-
-            if (summaries.Count() > 0)
-            {
-                hassumm = true;
             }
 
             if (node.TreeLevel == 1)
@@ -313,15 +373,23 @@ namespace Books.Controllers
 
                 showingdetails = true;
                 showingsummary = false;
+
+                node.Views++;
+                _context.Update(node);
+                await _context.SaveChangesAsync();
             }
 
             if (Display == "Summary")
             {
-                paragraphs.TheText = summaries.FirstOrDefault().Summary1;
+                paragraphs.TheText = summ.Summary1;
                 paragraphs.NoOfChars = paragraphs.TheText.Length;
 
                 showingsummary = true;
                 showingdetails = false;
+
+                summ.Views++;
+                _context.Update(summ);
+                await _context.SaveChangesAsync();
             }
 
             if (CurrentUser.NormalizedEmail == node.Owner)
@@ -348,7 +416,11 @@ namespace Books.Controllers
             BookIndexViewModel model = new BookIndexViewModel
             {
                 Node = node,
-                Summary = summaries.FirstOrDefault(),
+                Summary = summ,
+                OtherSummaries = othersummaries,
+                ChapterSummSiblings = chaptersummsiblings,
+                UserChaptSumms = userchaptsumms,
+                HasOtherChapterSummSiblings = hasotherchaptersummsiblings,
                 NoOfParagraphs = newNoOfParagraphs,
                 Paragraphs = newParagraphs,
                 Paragraph = "",
@@ -361,6 +433,7 @@ namespace Books.Controllers
                 PictureFile = "",
                 PictureFixed = picturefixed,
                 HasSummary = hassumm,
+                HasOtherSummaries = hasothersumm,
                 HasChildren = haschild,
                 NoOfChildren = noofchildren,
                 HasParent = hasparent,
@@ -372,6 +445,7 @@ namespace Books.Controllers
                 NoOfKeys = keys.Count(),
                 Keys = keyvalues,
                 Siblings = siblings,
+                CurrentUser = CurrentUser.NormalizedEmail,
                 Owner = owner
             };
 

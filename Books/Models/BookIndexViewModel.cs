@@ -7,6 +7,11 @@ namespace Books.Models
     {
         public Node? Node { get; set; }
         public Summary? Summary { get; set; }
+        public int SummaryId { get; set; }
+        public int? OtherChapterSummId { get; set; }
+        public int UserChaptSumms { get; set; }
+        public IEnumerable<Summary>? OtherSummaries { get; set; }
+        public IEnumerable<Node>? ChapterSummSiblings { get; set; }
         public int SentencesNoOf { get; set; }
         [AllowHtml]
         public List<string>? Sentences { get; set; }
@@ -27,6 +32,8 @@ namespace Books.Models
 
         public bool PictureFixed { get; set; }
         public bool HasSummary { get; set; }
+        public bool HasOtherSummaries { get; set; }
+        public bool HasOtherChapterSummSiblings { get; set; }
         public bool HasChildren { get; set; }
         public int NoOfChildren { get; set; }
         public bool HasParent { get; set; }
@@ -41,6 +48,7 @@ namespace Books.Models
         public int NoOfKeys { get; set; }
         public List<string>? Keys { get; set; }
         public IEnumerable<Node>? Siblings { get; set; }
+        public string? CurrentUser { get; set; }
         public bool Owner { get; set; }
 
     }
