@@ -150,7 +150,6 @@
                         </li>
                     </ul>
                 }
-                <!--
                 @if (@Model.HasOtherSummaries && @Model.ShowingSummary)
                 {
                         <ul class="detailssummary">
@@ -161,7 +160,6 @@
                             </li>
                         </ul>
                 }
-                -->
             </ul>
             @if (Model.Owner)
             {
@@ -319,7 +317,7 @@
                 <partial name="BookContent" model="@Model" />
                 @if (Model.Node.TreeLevel > 1)
                 {
-                    <hr />
+                    <hr style="clear:left"/>
                     @if (Model.ShowingDetails)
                     {
                         <dl class="row">

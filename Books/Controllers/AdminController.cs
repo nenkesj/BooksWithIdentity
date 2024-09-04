@@ -686,6 +686,8 @@ namespace Books.Controllers
             paragraphs.NoOfChars = paragraphs.TheText.Length;
             paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, false);
             summary.Summary1 = paragraphs.TheAlteredText;
+            IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
+            summary.Owner = CurrentUser.NormalizedEmail;
 
             if (ModelState.IsValid)
             {
