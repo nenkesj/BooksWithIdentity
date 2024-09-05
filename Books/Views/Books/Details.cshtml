@@ -9,6 +9,14 @@
         -->
         <nav role="navigation">
             <ul class="nav-main">
+                @if (ViewBag.SearchText != "")
+                {
+                    <li>
+                        <form asp-action="Index" asp-controller="Books" asp-route-searchtext ="@ViewBag.SearchText">
+                            <button class="navbutton, btn, btn-info" type="submit">Back</button>
+                        </form>
+                    </li>
+                }
                 @if (ViewBag.KeyText != "")
                 {
                     <li>

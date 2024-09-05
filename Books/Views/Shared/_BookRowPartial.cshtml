@@ -7,5 +7,12 @@
         </a>
     </td>
     <td>@Model?.Heading</td>
-    <td>@Model?.NodeText</td>
+    @if(Model?.NodeText.Length <= 100)
+    {
+        <td>@Model?.NodeText</td>
+    }
+    else
+    {
+        <td>@Model?.NodeText.Substring(0,100) ...</td>
+    }
 </tr>

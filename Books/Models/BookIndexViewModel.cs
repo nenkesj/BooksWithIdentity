@@ -43,6 +43,7 @@ namespace Books.Models
         public bool ShowingSummary { get; set; }
         [AllowHtml]
         public string? SearchKey { get; set; }
+        public string? SearchText { get; set; }
         public string? KeyText { get; set; }
         public string? Category { get; set; }
         public int NoOfKeys { get; set; }

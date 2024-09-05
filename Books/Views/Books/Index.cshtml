@@ -1,4 +1,4 @@
-﻿@model IQueryable<Node>
+﻿@model BookListViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -11,6 +11,19 @@
 </div>
 <h6 class="bg-secondary text-white text-center m-2 p-2">Books</h6>
 -->
+<form asp-action="Index" asp-controller="Books" method="get" asp-route-searchtext="@Model.SearchText">
+    <dl class="row">
+        <dt class="col-sm-1">
+            <label asp-for="SearchText" class="control-label">Search For</label>
+        </dt>
+        <dd class="col-sm-10">
+            <textarea rows="1" asp-for=SearchText class="form-control"></textarea>
+        </dd>
+        <dd class="col-sm-1">
+            <input type="image" name="Search" id="Search" src="~/images/Icons/Search1.png" />
+        </dd>
+    </dl>
+</form>
 <form asp-action="NewBook" asp-controller="Admin" method="get">
     <button class="navbutton, btn, btn-info" type="submit">New Book</button>
 </form>
@@ -24,9 +37,26 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Model ?? Enumerable.Empty<Node>())
+            @foreach (var p in Model.Nodes ?? Enumerable.Empty<Node>())
             {
-                <partial name="_BookRowPartial" model="p" />
+                <!-- <partial name="_BookRowPartial" model="p" />  -->
+                <tr>
+                    <td>
+                        <a class="btn btn-sm btn-info text-white" asp-action="Details"
+                           asp-controller="Books" asp-route-id="@p.NodeId" asp-route-searchtext="@Model.SearchText">
+                            View
+                        </a>
+                    </td>
+                    <td>@p?.Heading</td>
+                    @if (p?.NodeText.Length <= 100)
+                    {
+                        <td>@p?.NodeText</td>
+                    }
+                    else
+                    {
+                        <td>@p?.NodeText.Substring(0, 100) ...</td>
+                    }
+                </tr>
             }
         </tbody>
     </table>

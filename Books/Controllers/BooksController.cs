@@ -14,6 +14,8 @@ namespace Books.Controllers
     public class BooksController : Controller
     {
         private readonly HowToDBContext _context;
+        private List<Node> howToDBContext;
+
         public UserManager<IdentityUser> UserManager { get; set; }
         public BooksController(HowToDBContext context, UserManager<IdentityUser> userMgr)
         {
@@ -22,12 +24,24 @@ namespace Books.Controllers
         }
 
         // GET: Books
-
-        public IActionResult Index() => View(_context.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading));
-        public async Task<IActionResult> Index1()
+        public IActionResult Index1() => View(_context.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading));
+        public async Task<IActionResult> Index(string searchtext = "")
         {
-            var howToDBContext = _context.Nodes.Include(n => n.Tree).Include(n => n.Type);
-            return View(await howToDBContext.ToListAsync());
+            IQueryable<Node> results;
+            if (searchtext == "")
+            {
+                results = _context.Nodes.Where(n => n.ParentNodeId == 0).OrderBy(n => n.Heading);
+            }
+            else
+            {
+                results = _context.Nodes.Where(n => n.NodeText.Contains(searchtext)).OrderBy(n => n.Heading);
+            }
+            BookListViewModel model = new BookListViewModel
+            {
+                Nodes = results,
+                SearchText = searchtext
+            };
+            return View(model);
         }
         public ViewResult Index2(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "")
         {
@@ -226,7 +240,7 @@ namespace Books.Controllers
         }
 
         // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "", string keyText = "", string Distinct = "All", string Category = "All", int summaryid = 0, int OtherChapterSummId = 0)
+        public async Task<IActionResult> Details(int? id, string Display = "Details", bool picturefixed = false, int pictureptr = 0, string searchkey = "", string keyText = "", string Distinct = "All", string Category = "All", int summaryid = 0, int OtherChapterSummId = 0, string searchtext = "")
         {
             bool haspict = false;
             bool hassumm = false;
@@ -276,6 +290,7 @@ namespace Books.Controllers
             ViewBag.KeyText = keyText;
             ViewBag.Distinct = Distinct;
             ViewBag.Category = Category;
+            ViewBag.SearchText = searchtext;
 
             IdentityUser CurrentUser = await UserManager.GetUserAsync(User);
 
@@ -442,6 +457,7 @@ namespace Books.Controllers
                 ShowingDetails = showingdetails,
                 ShowingSummary = showingsummary,
                 SearchKey = searchkey,
+                SearchText = searchtext,
                 NoOfKeys = keys.Count(),
                 Keys = keyvalues,
                 Siblings = siblings,
