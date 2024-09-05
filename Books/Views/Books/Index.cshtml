@@ -48,13 +48,27 @@
                         </a>
                     </td>
                     <td>@p?.Heading</td>
-                    @if (p?.NodeText.Length <= 100)
+                    @if(Model.SearchText == "")
                     {
-                        <td>@p?.NodeText</td>
+                        @if (p?.NodeText.Length <= 100)
+                        {
+                            <td>@p?.NodeText</td>
+                        }
+                        else
+                        {
+                            <td>@p?.NodeText.Substring(0, 100) ...</td>
+                        }
                     }
                     else
                     {
-                        <td>@p?.NodeText.Substring(0, 100) ...</td>
+                        @if (p?.NodeText.Substring(p.NodeText.IndexOf(Model.SearchText, StringComparison.InvariantCultureIgnoreCase)).Length <= 100)
+                        {
+                            <td>@p?.NodeText.Substring(p.NodeText.IndexOf(Model.SearchText, StringComparison.InvariantCultureIgnoreCase))</td>
+                        }
+                        else
+                        {
+                            <td>@p?.NodeText.Substring(p.NodeText.IndexOf(Model.SearchText, StringComparison.InvariantCultureIgnoreCase), 100) ...</td>
+                        }
                     }
                 </tr>
             }
