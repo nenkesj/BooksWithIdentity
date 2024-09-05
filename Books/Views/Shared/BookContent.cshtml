@@ -108,7 +108,6 @@
             if (@Model.Pictures.ToArray()[@Model.PicturePointer].Title.Substring(0, 5).ToLower() == "cover") { itsAFigPict = true; }
         }
     }
-
     if (itsATable || itsAnOrderedList || itsAnUnorderedList || itsAnAllCapitalsHeading || itsCode)
     {
         if (itsCode)
@@ -373,10 +372,10 @@
                             break;
                         }
                     }
-                    if (@Model.ShowingSummary)
-                    {
-                        Model.PicturePointer = i + 1;
-                    }
+                    //if (@Model.ShowingSummary)
+                    //{
+                    //    Model.PicturePointer = i + 1;
+                    //}
                 }
             }
         }
