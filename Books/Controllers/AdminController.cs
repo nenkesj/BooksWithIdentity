@@ -880,7 +880,7 @@ namespace Books.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public RedirectToActionResult NewKey(int id, string keytext = "", string category = "None")
+        public RedirectToActionResult NewKey(int id, string keytext = "", string category = "None", string searchtext = "")
         {
             Key k = new Key();
             k.NodeId = id;
@@ -895,7 +895,7 @@ namespace Books.Controllers
 
             ViewBag.SelectedNodeHeading = node.Heading;
 
-            return RedirectToAction("Details", "Books", new { id = node.NodeId });
+            return RedirectToAction("Details", "Books", new { id = node.NodeId, searchtext = searchtext });
         }
     }
 }

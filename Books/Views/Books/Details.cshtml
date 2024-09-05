@@ -198,7 +198,7 @@
             @if (Model.Node.TreeLevel > 1 && @Model.Node.Heading != "Chapter Summary" && @Model.ShowingDetails)
             {
                 <ul class="nav-main">
-                    <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" method="post">
+                    <form asp-action="NewKey" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" asp-route-keytext="@Model?.KeyText" asp-route-category="@Model?.Category" asp-route-searchtext="@ViewBag.SearchText" method="post">
                         <dl>
                             <dt>
                                 <label asp-for="@Model.KeyText"></label>
@@ -221,6 +221,7 @@
                                     <option value="CSS">CSS</option>
                                     <option value="Debugging">Debugging</option>
                                     <option value="Dev Tools Edge">Dev Tools Edge</option>
+                                    <option value="Errors">Errors</option>
                                     <option value="Excel">Excel</option>
                                     <option value="Fixes">Fixes</option>
                                     <option value="Git">Git</option>
