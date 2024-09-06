@@ -92,7 +92,7 @@
                 }
             }
             <ul class="nav-main">
-                @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel > 2 && @Model.Node.Heading != "Chapter Summary")
+                @if (!@Model.HasSummary && @Model.ShowingDetails && @Model.Node.TreeLevel >= 2 && @Model.Node.Heading != "Chapter Summary")
                 {
                     <li>
                         <form asp-action="CreateSummary" asp-controller="Admin" asp-route-id="@Model?.Node.NodeId" method="get">
