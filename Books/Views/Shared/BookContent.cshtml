@@ -112,7 +112,8 @@
     {
         if (itsCode)
         {
-            <pre>@p.Substring(1)</pre>
+            var txt = new HtmlString(@p.Substring(1));
+            <pre>@txt</pre>
         }
         if (itsAnAllCapitalsHeading)
         {
