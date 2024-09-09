@@ -339,7 +339,7 @@ namespace Books.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner")] Node node, int ParentNodeID = -1, int TreeLevel = -1, bool save = true)
+        public async Task<IActionResult> Edit(int id, [Bind("NodeId,TreeId,TypeId,ParentNodeId,TreeLevel,Heading,NodeText,Owner,CodeHasHTML")] Node node, int ParentNodeID = -1, int TreeLevel = -1, bool save = true)
         {
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf;
             List<string> lines, sentences, paragrphs, newParagraphs;

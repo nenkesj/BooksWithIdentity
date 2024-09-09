@@ -2,6 +2,7 @@
 using Books.Infrastructure;
 using Books.Models;
 using HowTo_DBLibrary;
+using HowTo_DBLibrary.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -254,13 +255,13 @@ namespace Books.Controllers
             bool hasnofigpara = true;
             bool hasnotabpara = true;
             bool NodeIDOK = false;
+            bool codehashtml = false;
             int noofchildren = 0;
             int newNoOfParagraphs = 0;
             int summUser = 0;
             int noofsummaries = 0;
             int noofchaptersummsiblings = 0;
             int userchaptsumms = 0;
-
 
             int LinesNoOf, SentencesNoOf, ParagraphsNoOf, noofkeys;
             List<string> lines, sentences, paragrphs, newParagraphs, keyvalues;
@@ -412,6 +413,8 @@ namespace Books.Controllers
                 owner = true;
             }
 
+            codehashtml = node.CodeHasHTML;
+
             paragraphs.Paragrphs(out ParagraphsNoOf, ref paragrphs, out SentencesNoOf, ref sentences, ref SentenceInParagraph, out LinesNoOf, ref lines, 0, false, true, true, false, true, false, true);
             paragraphs.ListsAndTables(ParagraphsNoOf, paragrphs, out newNoOfParagraphs, out newParagraphs, out hasnofigpara, out hasnotabpara);
 
@@ -462,7 +465,8 @@ namespace Books.Controllers
                 Keys = keyvalues,
                 Siblings = siblings,
                 CurrentUser = CurrentUser.NormalizedEmail,
-                Owner = owner
+                Owner = owner,
+                CodeHasHTML = codehashtml
             };
 
             return View(model);

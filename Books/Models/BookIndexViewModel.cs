@@ -51,6 +51,7 @@ namespace Books.Models
         public IEnumerable<Node>? Siblings { get; set; }
         public string? CurrentUser { get; set; }
         public bool Owner { get; set; }
+        public bool CodeHasHTML { get; set; }
 
     }
 }

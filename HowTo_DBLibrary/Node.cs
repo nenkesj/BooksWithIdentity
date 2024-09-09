@@ -22,6 +22,7 @@
         public string Heading { get; set; } = null!;
         public string NodeText { get; set; } = null!;
         public string? Owner { get; set; } = null!;
+        public bool CodeHasHTML { get; set; }
         public long Views { get; set; }
         public virtual Tree? Tree { get; set; } = null!;
         public virtual Type? Type { get; set; } = null!;

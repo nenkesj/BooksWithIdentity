@@ -112,8 +112,15 @@
     {
         if (itsCode)
         {
-            var txt = new HtmlString(@p.Substring(1));
-            <pre>@txt</pre>
+            if(Model.CodeHasHTML)
+            {
+                var txt = new HtmlString(@p.Substring(1));
+                <pre>@txt</pre>
+            }
+            else
+            {
+                <pre>@p.Substring(1)</pre>
+            }
         }
         if (itsAnAllCapitalsHeading)
         {

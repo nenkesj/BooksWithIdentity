@@ -81,6 +81,15 @@
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </dd>
         </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => @Model.CodeHasHTML)
+            </dt>
+            <dd class="col-sm-1">
+                @Html.EditorFor(model => @Model.CodeHasHTML)
+                <span asp-validation-for="CodeHasHTML" class="text-danger"></span>
+            </dd>
+        </dl>
     </form>
     @section Scripts {
         @{
