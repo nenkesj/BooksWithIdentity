@@ -302,6 +302,8 @@
                 // So now ParaNo is
                 // "1.1 This illustrates..." is "1.1"
                 // "1.10 This illustrates..." is "1.10"
+                // Also check if its actually "1.1:" sometimes its got a semi colon appended which stuffs things up
+                if (ParaNo.Contains(":")) { ParaNo = ParaNo.Substring(0, ParaNo.IndexOf(":")); }
                 paraLength = p.Length;
 
                 for (int i = 0; i < @Model.NoOfPictures; i++)
@@ -341,10 +343,10 @@
                         {
                             if (
                                  ((FigNoIndex > 0) &&
-                                     (@p.Substring(afterFigNo, 1) == " " || @p.Substring(afterFigNo, 1) == ".")
+                                     (@p.Substring(afterFigNo, 1) == " " || @p.Substring(afterFigNo, 1) == ":" || @p.Substring(afterFigNo, 1) == ".")
                                  ) ||
                                  ((FigNoIndex > 0) &&
-                                     (@p.Substring(afterFigNoAlt, 1) == " " || @p.Substring(afterFigNoAlt, 1) == ".")
+                                     (@p.Substring(afterFigNoAlt, 1) == " " || @p.Substring(afterFigNoAlt, 1) == ":" || @p.Substring(afterFigNoAlt, 1) == ".")
                                  )
                                )
                             {
