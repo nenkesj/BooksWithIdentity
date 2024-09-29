@@ -54,6 +54,7 @@
         public bool Id2 { get; set; }
         public bool Op2 { get; set; }
         public bool N2 { get; set; }
+        public string Formula { get; set; }
 
     }
 }

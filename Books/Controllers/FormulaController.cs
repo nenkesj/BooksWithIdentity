@@ -14,20 +14,24 @@ namespace Books.Controllers
         public ViewResult Edit(int id)
         {
             string formula = "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
-            _context.Session.SetString("formula", formula);
-            int undoptr = 0;
-            _context.Session.SetInt32("undoptr", undoptr);
-            string ident = "";
-            _context.Session.SetString("indent", ident);
-            string oper = "";
-            _context.Session.SetString("oper", oper);
-            string num = "";
-            _context.Session.SetString("num", num);
-            string space = "";
-            _context.Session.SetString("space", space);
-            string text = "";
-            _context.Session.SetString("text", text);
-            _context.Session.CommitAsync();
+            if (_context != null)
+            {
+                _context.Session.SetString("formula", formula);
+                int undoptr = 0;
+                _context.Session.SetInt32("undoptr", undoptr);
+                string ident = "";
+                _context.Session.SetString("indent", ident);
+                string oper = "";
+                _context.Session.SetString("oper", oper);
+                string num = "";
+                _context.Session.SetString("num", num);
+                string space = "";
+                _context.Session.SetString("space", space);
+                string text = "";
+                _context.Session.SetString("text", text);
+                _context.Session.CommitAsync();
+            }
+
             ViewBag.matrix = "false";
 
             FormulaEditViewModel model = new FormulaEditViewModel
@@ -82,7 +86,8 @@ namespace Books.Controllers
                 ContainsRow = false,
                 Id2 = false,
                 Op2 = false,
-                N2 = false
+                N2 = false,
+                Formula = formula
             };
 
             return View(model);
@@ -319,17 +324,24 @@ namespace Books.Controllers
 
             //if (ModelState.IsValid)
             //{
-            if (undo && _context.Session.GetInt32("undoptr") > 0)
+            if (_context != null)
             {
-                sb = new StringBuilder(_context.Session.GetString("undo" + _context.Session.GetInt32("undoptr").ToString()));
-                _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
-                _context.Session.CommitAsync();
-                ViewBag.formula = sb.ToString();
+                if (undo && _context.Session.GetInt32("undoptr") > 0)
+                {
+                    sb = new StringBuilder(_context.Session.GetString("undo" + _context.Session.GetInt32("undoptr").ToString()));
+                    _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
+                    _context.Session.CommitAsync();
+                    ViewBag.formula = sb.ToString();
+                }
+                else
+                {
+                    sb = new StringBuilder(_context.Session.GetString("formula"));
+                    ViewBag.formula = sb.ToString();
+                }
             }
             else
             {
-                sb = new StringBuilder(_context.Session.GetString("formula"));
-                ViewBag.formula = sb.ToString();
+                sb = new StringBuilder(form.Formula);
             }
 
             switch (clear)
@@ -373,16 +385,38 @@ namespace Books.Controllers
 
             if (form.ClearFormula)
             {
-                _context.Session.SetString("formula", "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>");
-                _context.Session.SetString("undo", _context.Session.GetString("formula"));
-                _context.Session.SetString("indent", _context.Session.GetString("ident"));
-                _context.Session.SetString("oper", _context.Session.GetString("oper"));
-                _context.Session.SetString("num", _context.Session.GetString("num"));
-                _context.Session.SetString("space", _context.Session.GetString("space"));
-                _context.Session.SetString("text", _context.Session.GetString("text"));
-                _context.Session.CommitAsync();
-                sb = new StringBuilder(_context.Session.GetString("formula"));
-                ViewBag.formula = sb.ToString();
+                if (_context != null)
+                {
+                    _context.Session.SetString("formula", "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>");
+                    //_context.Session.SetString("undo", _context.Session.GetString("formula"));
+                    //_context.Session.SetString("indent", _context.Session.GetString("ident"));
+                    //_context.Session.SetString("oper", _context.Session.GetString("oper"));
+                    //_context.Session.SetString("num", _context.Session.GetString("num"));
+                    //_context.Session.SetString("space", _context.Session.GetString("space"));
+                    //_context.Session.SetString("text", _context.Session.GetString("text"));
+                    //_context.Session.CommitAsync();
+                    int undoptr = 0;
+                    _context.Session.SetInt32("undoptr", undoptr);
+                    string ident = "";
+                    _context.Session.SetString("indent", ident);
+                    string oper = "";
+                    _context.Session.SetString("oper", oper);
+                    string num = "";
+                    _context.Session.SetString("num", num);
+                    string space = "";
+                    _context.Session.SetString("space", space);
+                    string text = "";
+                    _context.Session.SetString("text", text);
+                    _context.Session.CommitAsync();
+                    sb = new StringBuilder(_context.Session.GetString("formula"));
+                    ViewBag.formula = sb.ToString();
+                }
+                else
+                {
+                    string formula = "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
+                    sb = new StringBuilder(formula);
+                    ViewBag.formula = sb.ToString();
+                }
                 form.Reverse = false;
                 form.ClearNumerator = false;
                 form.ClearNumerator = false;
@@ -1705,14 +1739,20 @@ namespace Books.Controllers
                 if (form.Op2) { form.Op2 = false; }
                 if (form.N2) { form.N2 = false; }
 
-                if (!undo)
+                if (_context != null)
                 {
-                    _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
-                    _context.Session.SetString("undo" + (_context.Session.GetInt32("undoptr") ?? 0).ToString(), _context.Session.GetString("formula"));
+                    if (!undo)
+                    {
+                        _context.Session.SetInt32("undoptr", (_context.Session.GetInt32("undoptr") ?? 0) + 1);
+                        _context.Session.SetString("undo" + (_context.Session.GetInt32("undoptr") ?? 0).ToString(), _context.Session.GetString("formula"));
+                    }
+                    _context.Session.SetString("formula", sb.ToString());
+                    _context.Session.CommitAsync();
                 }
-                _context.Session.SetString("formula", sb.ToString());
-                _context.Session.CommitAsync();
                 ViewBag.formula = sb.ToString();
+                form.Formula = sb.ToString();
+
+
             }
             return View(form);
             //}
