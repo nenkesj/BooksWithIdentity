@@ -17,24 +17,19 @@ namespace Books.Controllers
             if (_context != null)
             {
                 _context.Session.SetString("formula", formula);
-                int undoptr = 0;
-                _context.Session.SetInt32("undoptr", undoptr);
-                string ident = "";
-                _context.Session.SetString("indent", ident);
-                string oper = "";
-                _context.Session.SetString("oper", oper);
-                string num = "";
-                _context.Session.SetString("num", num);
-                string space = "";
-                _context.Session.SetString("space", space);
-                string text = "";
-                _context.Session.SetString("text", text);
-                _context.Session.CommitAsync();
+                InitSessionVariables();
             }
 
             ViewBag.matrix = "false";
 
-            FormulaEditViewModel model = new FormulaEditViewModel
+            FormulaEditViewModel model = InitEditModel(id, formula);
+
+            return View(model);
+        }
+
+        private static FormulaEditViewModel InitEditModel(int id, string formula)
+        {
+            return new FormulaEditViewModel
             {
                 NodeID = id,
                 ClearFormula = false,
@@ -89,8 +84,23 @@ namespace Books.Controllers
                 N2 = false,
                 Formula = formula
             };
+        }
 
-            return View(model);
+        private void InitSessionVariables()
+        {
+            int undoptr = 0;
+            _context.Session.SetInt32("undoptr", undoptr);
+            string ident = "";
+            _context.Session.SetString("indent", ident);
+            string oper = "";
+            _context.Session.SetString("oper", oper);
+            string num = "";
+            _context.Session.SetString("num", num);
+            string space = "";
+            _context.Session.SetString("space", space);
+            string text = "";
+            _context.Session.SetString("text", text);
+            _context.Session.CommitAsync();
         }
 
         [HttpPost]
@@ -112,200 +122,7 @@ namespace Books.Controllers
 
             if (form.Algebraic == "None" && form.Calculus == "None" && form.Ellipses == "None" && form.Geometric == "None" && form.GreekLower == "None" && form.GreekUpper == "None" && form.Logic == "None" && form.Set == "None" && form.Vector == "None" && !undo)
             {
-                if (form.Insert1 == "Subscript (Identifier, Identifier)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 == "Superscript (Identifier, Identifier)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 == "Space")
-                {
-                    if (string.IsNullOrEmpty(form.Space))
-                    {
-                        ModelState.AddModelError("Space", "Please enter a Number in the Space Box");
-                    }
-                }
-                else if (form.Insert1 == "Text")
-                {
-                    if (string.IsNullOrEmpty(form.Text))
-                    {
-                        ModelState.AddModelError("Text", "Please enter your Text");
-                    }
-                }
-                else if (form.Insert1 == "Fenced 1")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                }
-                else if (form.Insert1 == "Fenced 2")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 == "Fenced 3")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Identifier in the Number Box");
-                    }
-                }
-                else if (form.Insert1 == "SubSup (Identifier, Number, Number)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                    if (string.IsNullOrEmpty(form.Num2))
-                    {
-                        ModelState.AddModelError("Num2", "Please enter your Number in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 == "SubSup (Identifier, Identifier, Identifier)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Identifier in the Number Box");
-                    }
-                }
-                else if (form.Insert1 == "SubSup (Identifier, Number, Identifier)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 == "SubSup (Identifier, Identifier, Number)")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                }
-                else if (form.Insert1 == "Superscript (Number, Number)")
-                {
-                    if (string.IsNullOrEmpty(form.Num1))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                    if (string.IsNullOrEmpty(form.Num2))
-                    {
-                        ModelState.AddModelError("Num2", "Please enter your Number in the 2nd Box");
-                    }
-                }
-                else if (form.Insert1 != "None")
-                {
-                    if (string.IsNullOrEmpty(form.Ident1) && !form.Id2 && form.Insert1.Contains("Identifier"))
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2) && form.Id2 && form.Insert1.Contains("Identifier"))
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box (Remember to Check the Box again)");
-                    }
-                    if (string.IsNullOrEmpty(form.Oper1) && !form.Op2 && form.Insert1.Contains("Operator"))
-                    {
-                        ModelState.AddModelError("Oper1", "Please enter your Operator");
-                    }
-                    if (string.IsNullOrEmpty(form.Oper2) && form.Op2 && form.Insert1.Contains("Operator"))
-                    {
-                        ModelState.AddModelError("Oper2", "Please enter your Operator in the 2nd Box (Remember to Check the Box again)");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1) && !form.N2 && form.Insert1.Contains("Number"))
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                    if (string.IsNullOrEmpty(form.Num2) && form.N2 && form.Insert1.Contains("Number"))
-                    {
-                        ModelState.AddModelError("Num", "Please enter your Number in the 2nd Box (Remember to Check the Box again)");
-                    }
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(form.Ident1) && !form.Id2 && form.Insert == "Identifier")
-                    {
-                        ModelState.AddModelError("Ident1", "Please enter your Identifier");
-                    }
-                    if (string.IsNullOrEmpty(form.Ident2) && form.Id2 && form.Insert == "Identifier")
-                    {
-                        ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box (Remember to Check the Box again)");
-                    }
-                    if (string.IsNullOrEmpty(form.Oper1) && !form.Op2 && form.Insert == "Operator")
-                    {
-                        ModelState.AddModelError("Oper1", "Please enter your Operator");
-                    }
-                    if (string.IsNullOrEmpty(form.Oper2) && form.Op2 && form.Insert == "Operator")
-                    {
-                        ModelState.AddModelError("Oper2", "Please enter your Operator in the 2nd Box (Remember to Check the Box again)");
-                    }
-                    if (string.IsNullOrEmpty(form.Num1) && !form.N2 && form.Insert == "Number")
-                    {
-                        ModelState.AddModelError("Num1", "Please enter your Number");
-                    }
-                    if (string.IsNullOrEmpty(form.Num2) && form.N2 && form.Insert == "Number")
-                    {
-                        ModelState.AddModelError("Num", "Please enter your Number in the 2nd Box (Remember to Check the Box again)");
-                    }
-                }
+                CheckForMissingFields(form);
             }
 
             if (form.Insert == "Matrix" && !undo)
@@ -388,26 +205,7 @@ namespace Books.Controllers
                 if (_context != null)
                 {
                     _context.Session.SetString("formula", "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>");
-                    //_context.Session.SetString("undo", _context.Session.GetString("formula"));
-                    //_context.Session.SetString("indent", _context.Session.GetString("ident"));
-                    //_context.Session.SetString("oper", _context.Session.GetString("oper"));
-                    //_context.Session.SetString("num", _context.Session.GetString("num"));
-                    //_context.Session.SetString("space", _context.Session.GetString("space"));
-                    //_context.Session.SetString("text", _context.Session.GetString("text"));
-                    //_context.Session.CommitAsync();
-                    int undoptr = 0;
-                    _context.Session.SetInt32("undoptr", undoptr);
-                    string ident = "";
-                    _context.Session.SetString("indent", ident);
-                    string oper = "";
-                    _context.Session.SetString("oper", oper);
-                    string num = "";
-                    _context.Session.SetString("num", num);
-                    string space = "";
-                    _context.Session.SetString("space", space);
-                    string text = "";
-                    _context.Session.SetString("text", text);
-                    _context.Session.CommitAsync();
+                    InitSessionVariables();
                     sb = new StringBuilder(_context.Session.GetString("formula"));
                     ViewBag.formula = sb.ToString();
                 }
@@ -417,55 +215,7 @@ namespace Books.Controllers
                     sb = new StringBuilder(formula);
                     ViewBag.formula = sb.ToString();
                 }
-                form.Reverse = false;
-                form.ClearNumerator = false;
-                form.ClearNumerator = false;
-                form.BothIdent = false;
-                form.BoldIdent = false;
-                form.Ident1 = "";
-                form.Ident2 = "";
-                form.Oper1 = "";
-                form.Oper2 = "";
-                form.BothOper = false;
-                form.Num1 = "";
-                form.Num2 = "";
-                form.BoldNum = false;
-                form.Space = "";
-                form.BoldText = false;
-                form.BothText = false;
-                form.Text = "";
-                form.Matrix = false;
-                form.Row = null;
-                form.Column = null;
-                form.Insert = "Identifier";
-                form.Insert1 = "None";
-                form.Target = "Append";
-                form.Block = "inline";
-                form.Algebraic = "None";
-                form.Calculus = "None";
-                form.Ellipses = "None";
-                form.Logic = "None";
-                form.Vector = "None";
-                form.Set = "None";
-                form.Geometric = "None";
-                form.GreekUpper = "None";
-                form.GreekLower = "None";
-                form.ContainsSupRow1 = false;
-                form.ContainsSupRow2 = false;
-                form.ContainsSubRow1 = false;
-                form.ContainsSubRow2 = false;
-                form.ContainsMatrix = false;
-                form.ContainsNumerator = false;
-                form.ContainsDenominator = false;
-                form.ContainsFenced = false;
-                form.ContainsSquareRootRow = false;
-                form.ContainsRootRow = false;
-                form.ContainsOverRow = false;
-                form.ContainsUnderRow = false;
-                form.ContainsRow = false;
-                form.Id2 = false;
-                form.Op2 = false;
-                form.N2 = false;
+                ClearEditFields(form);
             }
             else
             {
@@ -717,118 +467,19 @@ namespace Books.Controllers
                         switch (form.Insert)
                         {
                             case "Identifier":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    if (form.BothNum)
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + Num + "</mn>");
-                                    }
-                                    if (!form.BothIdent)
-                                    {
-                                        if (form.BoldIdent)
-                                        {
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " <mi mathvariant='bold'>" + Id + "</mi>");
-                                        }
-                                        else
-                                        {
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " <mi>" + Id + "</mi>");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (form.BoldIdent)
-                                        {
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi>");
-                                        }
-                                        else
-                                        {
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi>");
-                                        }
-                                    }
-                                }
+                                InsertIdentifier(form, Id, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Operator":
-                                if (!form.BothOper && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>" + Op + "</mo>");
-                                }
-                                if (form.BothOper && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>" + form.Oper1 + "</mo> <mo>" + form.Oper2 + "</mo>");
-                                }
+                                InsertOperator(form, Op, searchfor, sb);
                                 form.Insert = "Identifier";
                                 break;
                             case "Number":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    if (form.BoldNum)
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mn mathvariant='bold'>" + Num + "</mn>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + Num + "</mn>");
-                                    }
-
-                                }
+                                InsertNumber(form, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Matrix":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    if (form.Oper1 == "(")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>(</mo> <mtable>");
-
-                                    }
-                                    else if (form.Oper1 == "|")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>|</mo> <mtable>");
-
-                                    }
-                                    else if (form.Oper1 == "{")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>{</mo> <mtable>");
-
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>[</mo> <mtable>");
-                                    }
-                                    for (int rows = 0; rows < form.Row; rows++)
-                                    {
-                                        int row = rows + 1;
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mtr>");
-                                        for (int cols = 0; cols < form.Column; cols++)
-                                        {
-                                            int col = cols + 1;
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " <mtd>");
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " #col" + col + "row" + row);
-                                            sb.Insert(sb.ToString().IndexOf(searchfor), " </mtd>");
-                                        }
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtr>");
-                                    }
-                                    if (form.Oper1 == "(")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>)</mo> </mrow> <mspace width=.2em /> ");
-
-                                    }
-                                    else if (form.Oper1 == "|")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>|</mo> </mrow> <mspace width=.2em /> ");
-
-                                    }
-                                    else if (form.Oper1 == "{")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>}</mo> </mrow> <mspace width=.2em /> ");
-
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>]</mo> </mrow> <mspace width=.2em /> ");
-                                    }
-                                }
+                                InsertMatrix(form, searchfor, sb);
                                 form.Target = "Matrix";
                                 form.Insert = "Number";
                                 form.Matrix = true;
@@ -848,499 +499,176 @@ namespace Books.Controllers
                         switch (form.Insert1)
                         {
                             case "Subscript (Identifier, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> </msub>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mn>" + Num + "</mn> </msub>");
-                                }
+                                InsertSubscriptIdentifierNumber(form, Id, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Subscript (Identifier, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                    ViewBag.num = form.Num1;
-                                }
-                                if (form.Reverse)
-                                {
-                                    if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msub>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msub>");
-                                    }
-                                }
-                                else
-                                {
-                                    if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi> </msub>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msub>");
-                                    }
-
-                                }
+                                InsertSubscriptIdentifierIdentifier(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Subscript (Identifier, Operator)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mo>" + Op + "</mo> </msub>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mo>" + Op + "</mo> </msub>");
-                                }
+                                InsertSubscriptIdentifierOperator(form, Id, Op, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Subscript (Identifier, Row)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #subrow1 </mrow> </msub>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mrow> #subrow1 </mrow> </msub>");
-                                }
+                                InsertSubscriptIdentifierRow(form, Id, searchfor, sb);
                                 form.Target = "Subscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Subscript (Row, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mi mathvariant='bold'>" + Id + "</mi> </msub>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mi>" + Id + "</mi> </msub>");
-                                }
+                                InsertSibscriptRowIdentifier(form, Id, searchfor, sb);
                                 form.Target = "Subscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Subscript (Row, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mn>" + Num + "</mn> </msub>");
-                                }
+                                InsertSubscriptRowNumber(form, Num, searchfor, sb);
                                 form.Target = "Subscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Subscript (Row, Row)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mrow> #subrow2 </mrow> </msub>"); }
+                                InsertSubscriptRowRow(form, searchfor, sb);
                                 form.Target = "Subscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Identifier, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> </msup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + Id + "</mi> <mn>" + Num + "</mn> </msup>");
-                                }
+                                InsertSuperscriptIdentifierNumber(form, Id, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Superscript (Operator, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mo mathvariant='bold'>" + Op + "</mo> <mn>" + Num + "</mn> </msup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mo>" + Op + "</mo> <mn>" + Num + "</mn> </msup>");
-                                }
+                                InsertSuperscriptOperatorNumber(form, Op, Num, searchfor, sb);
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Number, Number)":
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn mathvariant='bold'>" + form.Num1 + "</mni> <mn>" + form.Num2 + "</mn> </msup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msup>");
-                                }
+                                InsertSuperscriptNumberNumber(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Superscript (Number, Row)":
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn mathvariant='bold'>" + Num + "</mn> <mrow> #suprow1 </mrow> </msup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn>" + Num + "</mn> <mrow> #suprow1 </mrow> </msup>");
-                                }
+                                InsertSuoperscriptNumberRow(form, Num, searchfor, sb);
                                 form.Target = "Superscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Identifier, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.Reverse)
-                                {
-                                    if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msup>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msup>");
-                                    }
-                                }
-                                else
-                                {
-                                    if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
-                                    }
-                                }
+                                InsertSuperscriptIdentifierIdentifier(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Superscript (Identifier, Row)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #suprow1 </mrow> </msup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + Id + "</mi> <mrow> #suprow1 </mrow> </msup>");
-                                }
+                                InsertSuperscriptIdentifierRow(form, Id, searchfor, sb);
                                 form.Target = "Superscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Row, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mi mathvariant='bold'>" + Id + "</mi>  </msup>");
-                                }
-                                else
-                                {
-                                    if (form.Oper1 == "(")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
-                                    }
-                                    else if (form.Oper1 == "[")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
-                                    }
-                                    else if (form.Oper1 == "|")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mi>" + Id + "</mi>  </msup>");
-                                    }
-                                }
+                                InsertSuperscriptRowIdentifier(form, Id, searchfor, sb);
                                 form.Target = "Superscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Row, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    if (form.Oper1 == "(")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
-                                    }
-                                    else if (form.Oper1 == "[")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
-                                    }
-                                    else if (form.Oper1 == "|")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mn>" + Num + "</mn>  </msup>");
-                                    }
-                                }
+                                InsertSuperscriptRowNumber(form, Num, searchfor, sb);
                                 form.Target = "Superscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Superscript (Row, Row)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    if (form.Oper1 == "(")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
-                                    }
-                                    else if (form.Oper1 == "[")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
-                                    }
-                                    else if (form.Oper1 == "|")
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
-                                    }
-                                    else
-                                    {
-                                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mrow> #suprow2 </mrow> </msup>");
-                                    }
-                                }
+                                InsertSuperscriptRowRow(form, searchfor, sb);
                                 form.Target = "Superscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "SubSup (Identifier, Number, Number)":
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
-                                }
+                                InsertSubSupIdentifierNumberNumber(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "SubSup (Identifier, Number, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
-                                }
+                                InsertSubSupIdentifierNumberIdentifier(form, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "SubSup (Identifier, Identifier, Number)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
-                                }
+                                InsertSubSupIdentifierIdentifierNumber(form, Num, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "SubSup (Identifier, Identifier, Identifier)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
-                                }
+                                InsertSubSupIdentifierIdentifierIdentifier(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "SubSup (Identifier, Row, Row)":
-                                if (form.BothNum && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
-                                }
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #subrow1 </mrow> <mrow> #suprow2 </mrow> </msubsup>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mrow> #subrow1 </mrow> <mrow> #suprow2 </mrow> </msubsup>");
-                                }
+                                InsertSubSupIdentifierRowRow(form, Id, searchfor, sb);
                                 form.Target = "Subscript Row1";
                                 form.Insert = "Identifier";
                                 break;
                             case "Row":
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> #row </mrow>"); }
+                                InsertRow(searchfor, sb);
                                 form.Target = "Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Fraction":
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> #numerator </mrow> <mrow> #denominator </mrow> </mfrac> </mstyle>"); }
+                                InsertFraction(searchfor, sb);
                                 form.Target = "Numerator";
                                 form.Insert = "Identifier";
                                 break;
                             case "Square Root":
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <msqrt> <mrow> #sqrtrow </mrow> </msqrt>"); }
+                                InsertSquareRoot(searchfor, sb);
                                 form.Target = "Square Root Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Root":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mroot> <mrow> #rootrow </mrow> <mn>" + form.Num1 + "</mn></mroot>");
-                                }
+                                InsertRoot(form, searchfor, sb);
                                 form.Target = "Root Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Under Over":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <munderover> <mo>" + Op + "</mo> <mrow> #underrow </mrow> <mrow> #overrow </mrow> </munderover>");
-                                }
+                                InsertUnderOver(Op, searchfor, sb);
                                 form.Target = "Under Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Under":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>" + Op + "</mo> <mrow> #underrow </mrow> </munder>");
-                                }
+                                InsertUnder(Op, searchfor, sb);
                                 form.Target = "Under Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Limit":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>lim</mo> <mrow> #underrow </mrow> </munder>");
-                                }
+                                InsertLimit(searchfor, sb);
                                 form.Target = "Under Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Over":
-                                if (form.BoldIdent && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mi mathvariant='bold'>" + Id + "</mi> <mo>" + Op + "</mo> </mover>");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mi>" + Id + "</mi> <mo>" + Op + "</mo> </mover>");
-                                }
+                                InsertOver(form, Id, Op, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Over Row":
-                                if (sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mrow> #overrow </mrow> <mo>" + form.Oper1 + "</mo> </mover>");
-                                }
+                                InsertOverRow(form, searchfor, sb);
                                 form.Target = "Over Row";
                                 form.Insert = "Identifier";
                                 break;
                             case "Fenced 0":
-                                if (form.Oper1 == "[")
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>[</mo> #fenced <mo>]</mo> ");
-                                }
-                                else if (form.Oper1 == "{")
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>{</mo> #fenced <mo>}</mo> ");
-                                }
-                                else if (form.Oper1 == "|")
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>|</mo> #fenced <mo>|</mo> ");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>(</mo> #fenced <mo>)</mo> ");
-                                }
+                                InsertFenced0(form, searchfor, sb);
                                 form.Target = "Fenced";
                                 form.Insert = "Identifier";
                                 break;
                             case "Fenced 1":
-                                sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + Id + "</mi> <mo>)</mo> </mrow>");
+                                InsertFenced1(Id, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Fenced 2":
-                                sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + form.Ident1 + "</mi> <mo>,</mo> <mi>" + form.Ident2 + "</mi> <mo>)</mo> </mrow>");
+                                InsertFenced2(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Fenced 3":
-                                sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + form.Ident1 + "</mi> <mo>,</mo> <mi>" + form.Ident2 + "</mi> <mo>,</mo> <mi>" + form.Num1 + "</mi> <mo>)</mo> </mrow>");
+                                InsertFenced3(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Space":
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em />"); }
+                                InsertSpace(form, searchfor, sb);
                                 form.Insert = "Operator";
                                 break;
                             case "Text":
-                                if (form.BothText && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em /> <mspace width=.2em /> <mtext mathvariant='bold'>" + form.Text + "</mtext> <mspace width=.2em /> ");
-                                }
-                                else if (form.BoldText && sb.ToString().Contains(searchfor))
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mtext mathvariant='bold'>" + form.Text + "</mtext> <mspace width=.2em /> ");
-                                }
-                                else
-                                {
-                                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mtext>" + form.Text + "</mtext> <mspace width=.2em /> ");
-                                }
+                                InsertText(form, searchfor, sb);
                                 form.Insert = "Identifier";
                                 break;
                             case "Line Break 1":
-                                if (sb.ToString().Contains("</math>")) { sb.Replace("</math>", " </math><br/>"); }
+                                InsertLineBreak1(sb);
                                 break;
                             case "Line Break 2":
-                                if (sb.ToString().Contains("</math>")) { sb.Replace("</math>", " </math><br/><br/>"); }
+                                InsertLineBreak2(sb);
                                 break;
                             case "New Line =":
-                                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), "<mspace width=2em /> <mo>=</mo> "); }
+                                InsertLineBreakForEqual(searchfor, sb);
                                 break;
                             default:
                                 break;
@@ -1370,125 +698,17 @@ namespace Books.Controllers
                         case "Clear Denominator":
                             if (sb.ToString().Contains("#denominator")) { sb.Remove(sb.ToString().IndexOf("#denominator"), 12); };
                             insert = false;
-                            if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow1"))
-                            {
-                                form.Target = "Superscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow2"))
-                            {
-                                form.Target = "Superscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow1"))
-                            {
-                                form.Target = "Subscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow2"))
-                            {
-                                form.Target = "Subscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Subscript Row1":
                             if (sb.ToString().Contains("#subrow1")) { sb.Remove(sb.ToString().IndexOf("#subrow1"), 8); };
                             insert = false;
-                            if (sb.ToString().Contains("#subrow2"))
-                            {
-                                form.Target = "Subscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow1"))
-                            {
-                                form.Target = "Subscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget1(form, sb);
                             break;
                         case "Clear Subscript Row2":
                             if (sb.ToString().Contains("#subrow2")) { sb.Remove(sb.ToString().IndexOf("#subrow2"), 8); };
                             insert = false;
-                            if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget2(form, sb);
                             break;
                         case "Clear Matrix":
                             if (sb.ToString().Contains("#col"))
@@ -1508,177 +728,23 @@ namespace Books.Controllers
                         case "Clear Superscript Row1":
                             if (sb.ToString().Contains("#suprow")) { sb.Remove(sb.ToString().IndexOf("#suprow1"), 8); };
                             insert = false;
-                            if (sb.ToString().Contains("#suprow2"))
-                            {
-                                form.Target = "Superscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow1"))
-                            {
-                                form.Target = "Superscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget3(form, sb);
                             break;
                         case "Clear Superscript Row2":
                             if (sb.ToString().Contains("#suprow2")) { sb.Remove(sb.ToString().IndexOf("#suprow2"), 8); };
                             insert = false;
-                            if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget4(form, sb);
                             break;
                         case "Clear Square Root Row":
                             if (sb.ToString().Contains("#sqrtrow")) { sb.Remove(sb.ToString().IndexOf("#sqrtrow"), 8); };
                             insert = false;
                             form.Insert = "Operator";
-                            if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow1"))
-                            {
-                                form.Target = "Superscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow2"))
-                            {
-                                form.Target = "Superscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow1"))
-                            {
-                                form.Target = "Subscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow2"))
-                            {
-                                form.Target = "Subscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget5(form, sb);
                             break;
                         case "Clear Fenced":
                             if (sb.ToString().Contains("#fenced")) { sb.Remove(sb.ToString().IndexOf("#fenced"), 7); };
                             insert = false;
-                            if (sb.ToString().Contains("#numerator"))
-                            {
-                                form.Target = "Numerator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#denominator"))
-                            {
-                                form.Target = "Denominator";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow1"))
-                            {
-                                form.Target = "Superscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#suprow2"))
-                            {
-                                form.Target = "Superscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow1"))
-                            {
-                                form.Target = "Subscript Row1";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#subrow2"))
-                            {
-                                form.Target = "Subscript Row2";
-                                form.Insert = "Identifier";
-                            }
-                            else if (sb.ToString().Contains("#fenced"))
-                            {
-                                form.Target = "Fenced";
-                                form.Insert = "Operator";
-                            }
-                            else
-                            {
-                                if (!form.Matrix)
-                                {
-                                    form.Target = "Append";
-                                }
-                                else
-                                {
-                                    form.Target = "Matrix";
-                                }
-                                form.Insert = "Operator";
-                            }
+                            MoverTarget6(form, sb);
                             break;
                         case "Clear Root Row":
                             if (sb.ToString().Contains("#rootrow")) { sb.Remove(sb.ToString().IndexOf("#rootrow"), 8); };
@@ -1761,6 +827,1191 @@ namespace Books.Controllers
             // there is something wrong with the data values
             //    return View(form);
             //}
+        }
+
+        private static void MoverTarget6(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow1"))
+            {
+                form.Target = "Superscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow2"))
+            {
+                form.Target = "Superscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow1"))
+            {
+                form.Target = "Subscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow2"))
+            {
+                form.Target = "Subscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoverTarget5(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow1"))
+            {
+                form.Target = "Superscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow2"))
+            {
+                form.Target = "Superscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow1"))
+            {
+                form.Target = "Subscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow2"))
+            {
+                form.Target = "Subscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoverTarget4(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoverTarget3(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#suprow2"))
+            {
+                form.Target = "Superscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow1"))
+            {
+                form.Target = "Superscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoverTarget2(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoverTarget1(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#subrow2"))
+            {
+                form.Target = "Subscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow1"))
+            {
+                form.Target = "Subscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void MoveTarget(FormulaEditViewModel form, StringBuilder sb)
+        {
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow1"))
+            {
+                form.Target = "Superscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow2"))
+            {
+                form.Target = "Superscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow1"))
+            {
+                form.Target = "Subscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow2"))
+            {
+                form.Target = "Subscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
+        }
+
+        private static void InsertLineBreakForEqual(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), "<mspace width=2em /> <mo>=</mo> "); }
+        }
+
+        private static void InsertLineBreak1(StringBuilder sb)
+        {
+            if (sb.ToString().Contains("</math>")) { sb.Replace("</math>", " </math><br/>"); }
+        }
+
+        private static void InsertLineBreak2(StringBuilder sb)
+        {
+            if (sb.ToString().Contains("</math>")) { sb.Replace("</math>", " </math><br/><br/>"); }
+        }
+
+        private static void InsertText(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothText && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em /> <mspace width=.2em /> <mtext mathvariant='bold'>" + form.Text + "</mtext> <mspace width=.2em /> ");
+            }
+            else if (form.BoldText && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mtext mathvariant='bold'>" + form.Text + "</mtext> <mspace width=.2em /> ");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mtext>" + form.Text + "</mtext> <mspace width=.2em /> ");
+            }
+        }
+
+        private static void InsertSpace(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em />"); }
+        }
+
+        private static void InsertFenced3(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + form.Ident1 + "</mi> <mo>,</mo> <mi>" + form.Ident2 + "</mi> <mo>,</mo> <mi>" + form.Num1 + "</mi> <mo>)</mo> </mrow>");
+        }
+
+        private static void InsertFenced2(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + form.Ident1 + "</mi> <mo>,</mo> <mi>" + form.Ident2 + "</mi> <mo>)</mo> </mrow>");
+        }
+
+        private static void InsertFenced1(string Id, string searchfor, StringBuilder sb)
+        {
+            sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> <mo>(</mo> <mi>" + Id + "</mi> <mo>)</mo> </mrow>");
+        }
+
+        private static void InsertFenced0(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.Oper1 == "[")
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>[</mo> #fenced <mo>]</mo> ");
+            }
+            else if (form.Oper1 == "{")
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>{</mo> #fenced <mo>}</mo> ");
+            }
+            else if (form.Oper1 == "|")
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>|</mo> #fenced <mo>|</mo> ");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>(</mo> #fenced <mo>)</mo> ");
+            }
+        }
+
+        private static void InsertOverRow(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mrow> #overrow </mrow> <mo>" + form.Oper1 + "</mo> </mover>");
+            }
+        }
+
+        private static void InsertOver(FormulaEditViewModel form, string Id, string Op, string searchfor, StringBuilder sb)
+        {
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mi mathvariant='bold'>" + Id + "</mi> <mo>" + Op + "</mo> </mover>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mi>" + Id + "</mi> <mo>" + Op + "</mo> </mover>");
+            }
+        }
+
+        private static void InsertLimit(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>lim</mo> <mrow> #underrow </mrow> </munder>");
+            }
+        }
+
+        private static void InsertUnder(string Op, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>" + Op + "</mo> <mrow> #underrow </mrow> </munder>");
+            }
+        }
+
+        private static void InsertUnderOver(string Op, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <munderover> <mo>" + Op + "</mo> <mrow> #underrow </mrow> <mrow> #overrow </mrow> </munderover>");
+            }
+        }
+
+        private static void InsertRoot(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mroot> <mrow> #rootrow </mrow> <mn>" + form.Num1 + "</mn></mroot>");
+            }
+        }
+
+        private static void InsertSquareRoot(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <msqrt> <mrow> #sqrtrow </mrow> </msqrt>"); }
+        }
+
+        private static void InsertFraction(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> #numerator </mrow> <mrow> #denominator </mrow> </mfrac> </mstyle>"); }
+        }
+
+        private static void InsertRow(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> #row </mrow>"); }
+        }
+
+        private static void InsertSubSupIdentifierRowRow(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #subrow1 </mrow> <mrow> #suprow2 </mrow> </msubsup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mrow> #subrow1 </mrow> <mrow> #suprow2 </mrow> </msubsup>");
+            }
+        }
+
+        private static void InsertSubSupIdentifierIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
+            }
+        }
+
+        private static void InsertSubSupIdentifierIdentifierNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
+            }
+        }
+
+        private static void InsertSubSupIdentifierNumberIdentifier(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
+            }
+        }
+
+        private static void InsertSubSupIdentifierNumberNumber(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+            }
+        }
+
+        private static void InsertSuperscriptRowRow(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (sb.ToString().Contains(searchfor))
+            {
+                if (form.Oper1 == "(")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                }
+                else if (form.Oper1 == "[")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                }
+                else if (form.Oper1 == "|")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mrow> #suprow2 </mrow> </msup>");
+                }
+            }
+        }
+
+        private static void InsertSuperscriptRowNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (sb.ToString().Contains(searchfor))
+            {
+                if (form.Oper1 == "(")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                }
+                else if (form.Oper1 == "[")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                }
+                else if (form.Oper1 == "|")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mn>" + Num + "</mn>  </msup>");
+                }
+            }
+        }
+
+        private static void InsertSuperscriptRowIdentifier(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mi mathvariant='bold'>" + Id + "</mi>  </msup>");
+            }
+            else
+            {
+                if (form.Oper1 == "(")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                }
+                else if (form.Oper1 == "[")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                }
+                else if (form.Oper1 == "|")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mi>" + Id + "</mi>  </msup>");
+                }
+            }
+        }
+
+        private static void InsertSuperscriptIdentifierRow(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #suprow1 </mrow> </msup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + Id + "</mi> <mrow> #suprow1 </mrow> </msup>");
+            }
+        }
+
+        private static void InsertSuperscriptIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.Reverse)
+            {
+                if (form.BoldIdent && sb.ToString().Contains(searchfor))
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msup>");
+                }
+            }
+            else
+            {
+                if (form.BoldIdent && sb.ToString().Contains(searchfor))
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
+                }
+            }
+        }
+
+        private static void InsertSuoperscriptNumberRow(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn mathvariant='bold'>" + Num + "</mn> <mrow> #suprow1 </mrow> </msup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn>" + Num + "</mn> <mrow> #suprow1 </mrow> </msup>");
+            }
+        }
+
+        private static void InsertSuperscriptNumberNumber(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn mathvariant='bold'>" + form.Num1 + "</mni> <mn>" + form.Num2 + "</mn> </msup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msup>");
+            }
+        }
+
+        private static void InsertSuperscriptOperatorNumber(FormulaEditViewModel form, string Op, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mo mathvariant='bold'>" + Op + "</mo> <mn>" + Num + "</mn> </msup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mo>" + Op + "</mo> <mn>" + Num + "</mn> </msup>");
+            }
+        }
+
+        private static void InsertSuperscriptIdentifierNumber(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> </msup>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + Id + "</mi> <mn>" + Num + "</mn> </msup>");
+            }
+        }
+
+        private static void InsertSubscriptRowRow(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mrow> #subrow2 </mrow> </msub>"); }
+        }
+
+        private static void InsertSubscriptRowNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mn>" + Num + "</mn> </msub>");
+            }
+        }
+
+        private static void InsertSibscriptRowIdentifier(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mi mathvariant='bold'>" + Id + "</mi> </msub>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mrow> #subrow1 </mrow> <mi>" + Id + "</mi> </msub>");
+            }
+        }
+
+        private static void InsertSubscriptIdentifierRow(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mrow> #subrow1 </mrow> </msub>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mrow> #subrow1 </mrow> </msub>");
+            }
+        }
+
+        private static void InsertSubscriptIdentifierOperator(FormulaEditViewModel form, string Id, string Op, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mo>" + Op + "</mo> </msub>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mo>" + Op + "</mo> </msub>");
+            }
+        }
+
+        private void InsertSubscriptIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num1 + "</mn>");
+                ViewBag.num = form.Num1;
+            }
+            if (form.Reverse)
+            {
+                if (form.BoldIdent && sb.ToString().Contains(searchfor))
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msub>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msub>");
+                }
+            }
+            else
+            {
+                if (form.BoldIdent && sb.ToString().Contains(searchfor))
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi> </msub>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msub>");
+                }
+
+            }
+        }
+
+        private static void InsertSubscriptIdentifierNumber(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.BothNum && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + form.Num2 + "</mn>");
+            }
+            if (form.BoldIdent && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> </msub>");
+            }
+            else
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mn>" + Num + "</mn> </msub>");
+            }
+        }
+
+        private static void InsertMatrix(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                if (form.Oper1 == "(")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>(</mo> <mtable>");
+
+                }
+                else if (form.Oper1 == "|")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>|</mo> <mtable>");
+
+                }
+                else if (form.Oper1 == "{")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>{</mo> <mtable>");
+
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>[</mo> <mtable>");
+                }
+                for (int rows = 0; rows < form.Row; rows++)
+                {
+                    int row = rows + 1;
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mtr>");
+                    for (int cols = 0; cols < form.Column; cols++)
+                    {
+                        int col = cols + 1;
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mtd>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " #col" + col + "row" + row);
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " </mtd>");
+                    }
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " </mtr>");
+                }
+                if (form.Oper1 == "(")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>)</mo> </mrow> <mspace width=.2em /> ");
+
+                }
+                else if (form.Oper1 == "|")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>|</mo> </mrow> <mspace width=.2em /> ");
+
+                }
+                else if (form.Oper1 == "{")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>}</mo> </mrow> <mspace width=.2em /> ");
+
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>]</mo> </mrow> <mspace width=.2em /> ");
+                }
+            }
+        }
+
+        private static void InsertNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                if (form.BoldNum)
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn mathvariant='bold'>" + Num + "</mn>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + Num + "</mn>");
+                }
+
+            }
+        }
+
+        private static void InsertOperator(FormulaEditViewModel form, string Op, string searchfor, StringBuilder sb)
+        {
+            if (!form.BothOper && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>" + Op + "</mo>");
+            }
+            if (form.BothOper && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>" + form.Oper1 + "</mo> <mo>" + form.Oper2 + "</mo>");
+            }
+        }
+
+        private static void InsertIdentifier(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                if (form.BothNum)
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mn>" + Num + "</mn>");
+                }
+                if (!form.BothIdent)
+                {
+                    if (form.BoldIdent)
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mi mathvariant='bold'>" + Id + "</mi>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mi>" + Id + "</mi>");
+                    }
+                }
+                else
+                {
+                    if (form.BoldIdent)
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi>");
+                    }
+                }
+            }
+        }
+
+        private static void ClearEditFields(FormulaEditViewModel form)
+        {
+            form.Reverse = false;
+            form.ClearNumerator = false;
+            form.ClearNumerator = false;
+            form.BothIdent = false;
+            form.BoldIdent = false;
+            form.Ident1 = "";
+            form.Ident2 = "";
+            form.Oper1 = "";
+            form.Oper2 = "";
+            form.BothOper = false;
+            form.Num1 = "";
+            form.Num2 = "";
+            form.BoldNum = false;
+            form.Space = "";
+            form.BoldText = false;
+            form.BothText = false;
+            form.Text = "";
+            form.Matrix = false;
+            form.Row = null;
+            form.Column = null;
+            form.Insert = "Identifier";
+            form.Insert1 = "None";
+            form.Target = "Append";
+            form.Block = "inline";
+            form.Algebraic = "None";
+            form.Calculus = "None";
+            form.Ellipses = "None";
+            form.Logic = "None";
+            form.Vector = "None";
+            form.Set = "None";
+            form.Geometric = "None";
+            form.GreekUpper = "None";
+            form.GreekLower = "None";
+            form.ContainsSupRow1 = false;
+            form.ContainsSupRow2 = false;
+            form.ContainsSubRow1 = false;
+            form.ContainsSubRow2 = false;
+            form.ContainsMatrix = false;
+            form.ContainsNumerator = false;
+            form.ContainsDenominator = false;
+            form.ContainsFenced = false;
+            form.ContainsSquareRootRow = false;
+            form.ContainsRootRow = false;
+            form.ContainsOverRow = false;
+            form.ContainsUnderRow = false;
+            form.ContainsRow = false;
+            form.Id2 = false;
+            form.Op2 = false;
+            form.N2 = false;
+        }
+
+        private void CheckForMissingFields(FormulaEditViewModel form)
+        {
+            if (form.Insert1 == "Subscript (Identifier, Identifier)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 == "Superscript (Identifier, Identifier)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 == "Space")
+            {
+                if (string.IsNullOrEmpty(form.Space))
+                {
+                    ModelState.AddModelError("Space", "Please enter a Number in the Space Box");
+                }
+            }
+            else if (form.Insert1 == "Text")
+            {
+                if (string.IsNullOrEmpty(form.Text))
+                {
+                    ModelState.AddModelError("Text", "Please enter your Text");
+                }
+            }
+            else if (form.Insert1 == "Fenced 1")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+            }
+            else if (form.Insert1 == "Fenced 2")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 == "Fenced 3")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Identifier in the Number Box");
+                }
+            }
+            else if (form.Insert1 == "SubSup (Identifier, Number, Number)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+                if (string.IsNullOrEmpty(form.Num2))
+                {
+                    ModelState.AddModelError("Num2", "Please enter your Number in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 == "SubSup (Identifier, Identifier, Identifier)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Identifier in the Number Box");
+                }
+            }
+            else if (form.Insert1 == "SubSup (Identifier, Number, Identifier)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 == "SubSup (Identifier, Identifier, Number)")
+            {
+                if (string.IsNullOrEmpty(form.Ident1))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box");
+                }
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+            }
+            else if (form.Insert1 == "Superscript (Number, Number)")
+            {
+                if (string.IsNullOrEmpty(form.Num1))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+                if (string.IsNullOrEmpty(form.Num2))
+                {
+                    ModelState.AddModelError("Num2", "Please enter your Number in the 2nd Box");
+                }
+            }
+            else if (form.Insert1 != "None")
+            {
+                if (string.IsNullOrEmpty(form.Ident1) && !form.Id2 && form.Insert1.Contains("Identifier"))
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2) && form.Id2 && form.Insert1.Contains("Identifier"))
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box (Remember to Check the Box again)");
+                }
+                if (string.IsNullOrEmpty(form.Oper1) && !form.Op2 && form.Insert1.Contains("Operator"))
+                {
+                    ModelState.AddModelError("Oper1", "Please enter your Operator");
+                }
+                if (string.IsNullOrEmpty(form.Oper2) && form.Op2 && form.Insert1.Contains("Operator"))
+                {
+                    ModelState.AddModelError("Oper2", "Please enter your Operator in the 2nd Box (Remember to Check the Box again)");
+                }
+                if (string.IsNullOrEmpty(form.Num1) && !form.N2 && form.Insert1.Contains("Number"))
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+                if (string.IsNullOrEmpty(form.Num2) && form.N2 && form.Insert1.Contains("Number"))
+                {
+                    ModelState.AddModelError("Num", "Please enter your Number in the 2nd Box (Remember to Check the Box again)");
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(form.Ident1) && !form.Id2 && form.Insert == "Identifier")
+                {
+                    ModelState.AddModelError("Ident1", "Please enter your Identifier");
+                }
+                if (string.IsNullOrEmpty(form.Ident2) && form.Id2 && form.Insert == "Identifier")
+                {
+                    ModelState.AddModelError("Ident2", "Please enter your Identifier in the 2nd Box (Remember to Check the Box again)");
+                }
+                if (string.IsNullOrEmpty(form.Oper1) && !form.Op2 && form.Insert == "Operator")
+                {
+                    ModelState.AddModelError("Oper1", "Please enter your Operator");
+                }
+                if (string.IsNullOrEmpty(form.Oper2) && form.Op2 && form.Insert == "Operator")
+                {
+                    ModelState.AddModelError("Oper2", "Please enter your Operator in the 2nd Box (Remember to Check the Box again)");
+                }
+                if (string.IsNullOrEmpty(form.Num1) && !form.N2 && form.Insert == "Number")
+                {
+                    ModelState.AddModelError("Num1", "Please enter your Number");
+                }
+                if (string.IsNullOrEmpty(form.Num2) && form.N2 && form.Insert == "Number")
+                {
+                    ModelState.AddModelError("Num", "Please enter your Number in the 2nd Box (Remember to Check the Box again)");
+                }
+            }
         }
     }
 }
