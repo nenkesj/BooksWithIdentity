@@ -857,10 +857,11 @@
                         <td><label>Identifier 2</label></td>
                         <td>@Html.TextBoxFor(m => m.Ident2)</td>
                         <td><input id="Id2" name="Id2" type="checkbox" value="true" /><input name="Id2" type="hidden" value="false" /></td>
-                        <td><input id="BothIdent" name="BothIdent" type="checkbox" value="true" /><input name="BothIdent" type="hidden" value="false" /></td>
-                        <td><label>Both</label></td>
                         <td><input id="BoldIdent" name="BoldIdent" type="checkbox" value="true" /><input name="BoldIdent" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
+                        <td><input id="BothIdent" name="BothIdent" type="checkbox" value="true" /><input name="BothIdent" type="hidden" value="false" /></td>
+                        <td><label>Both (Inserts both Identifiers)</label></td>
+
                     </tr>
                     <tr>
                         <td><label>Operator 1</label></td>
@@ -868,10 +869,10 @@
                         <td><label>Operator 2</label></td>
                         <td>@Html.TextBoxFor(m => m.Oper2)</td>
                         <td><input id="Op2" name="Op2" type="checkbox" value="true" /><input name="Op2" type="hidden" value="false" /></td>
+                        <td></td>
+                        <td></td>
                         <td><input id="BothOper" name="BothOper" type="checkbox" value="true" /><input name="BothOper" type="hidden" value="false" /></td>
-                        <td><label>Both</label></td>
-                        <td></td>
-                        <td></td>
+                        <td><label>Both (Inserts Both Operators)</label></td>
                     </tr>
                     <tr>
                         <td><label>Number 1</label></td>
@@ -879,10 +880,10 @@
                         <td><label>Number 2</label></td>
                         <td>@Html.TextBoxFor(m => m.Num2)</td>
                         <td><input id="N2" name="N2" type="checkbox" value="true" /><input name="N2" type="hidden" value="false" /></td>
-                        <td><input id="BothNum" name="BothNum" type="checkbox" value="true" /><input name="BothNum" type="hidden" value="false" /></td>
-                        <td><label>Both</label></td>
                         <td><input id="BoldNum" name="BoldNum" type="checkbox" value="true" /><input name="BoldNum" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
+                        <td><input id="BothNum" name="BothNum" type="checkbox" value="true" /><input name="BothNum" type="hidden" value="false" /></td>
+                        <td><label>Both (Inserts Number before Identifier)</label></td>
                     </tr>
                     <tr>
                         <td><label>Space</label></td>
@@ -890,10 +891,11 @@
                         <td><label>Text</label></td>
                         <td>@Html.TextBoxFor(m => m.Text)</td>
                         <td></td>
-                        <td><input id="BothText" name="BothText" type="checkbox" value="true" /><input name="BothText" type="hidden" value="false" /></td>
-                        <td><label>Both</label></td>
                         <td><input id="BoldText" name="BoldText" type="checkbox" value="true" /><input name="BoldText" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
+                        <td><input id="BothText" name="BothText" type="checkbox" value="true" /><input name="BothText" type="hidden" value="false" /></td>
+                        <td><label>Both (Inserts Space & Text)</label></td>
+
                     </tr>
                     <tr>
                         <td><label>Row</label></td>

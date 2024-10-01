@@ -17,7 +17,7 @@ namespace Books.Controllers
             if (_context != null)
             {
                 _context.Session.SetString("formula", formula);
-                InitSessionVariables();
+                InitSessionVariables(_context);
             }
 
             ViewBag.matrix = "false";
@@ -25,82 +25,6 @@ namespace Books.Controllers
             FormulaEditViewModel model = InitEditModel(id, formula);
 
             return View(model);
-        }
-
-        private static FormulaEditViewModel InitEditModel(int id, string formula)
-        {
-            return new FormulaEditViewModel
-            {
-                NodeID = id,
-                ClearFormula = false,
-                Reverse = false,
-                ClearNumerator = false,
-                ClearDenominator = false,
-                BothIdent = false,
-                BoldIdent = false,
-                Ident1 = "",
-                Ident2 = "",
-                Oper1 = "",
-                Oper2 = "",
-                BothOper = false,
-                Num1 = "",
-                Num2 = "",
-                BoldNum = false,
-                Space = "",
-                BoldText = false,
-                BothText = false,
-                Text = "",
-                Matrix = false,
-                Row = null,
-                Column = null,
-                Insert = "Identifier",
-                Insert1 = "None",
-                Target = "Append",
-                Block = "inline",
-                Algebraic = "None",
-                Calculus = "None",
-                Ellipses = "None",
-                Logic = "None",
-                Vector = "None",
-                Set = "None",
-                Geometric = "None",
-                GreekUpper = "None",
-                GreekLower = "None",
-                ContainsSupRow1 = false,
-                ContainsSupRow2 = false,
-                ContainsSubRow1 = false,
-                ContainsSubRow2 = false,
-                ContainsMatrix = false,
-                ContainsNumerator = false,
-                ContainsDenominator = false,
-                ContainsFenced = false,
-                ContainsSquareRootRow = false,
-                ContainsRootRow = false,
-                ContainsOverRow = false,
-                ContainsUnderRow = false,
-                ContainsRow = false,
-                Id2 = false,
-                Op2 = false,
-                N2 = false,
-                Formula = formula
-            };
-        }
-
-        private void InitSessionVariables()
-        {
-            int undoptr = 0;
-            _context.Session.SetInt32("undoptr", undoptr);
-            string ident = "";
-            _context.Session.SetString("indent", ident);
-            string oper = "";
-            _context.Session.SetString("oper", oper);
-            string num = "";
-            _context.Session.SetString("num", num);
-            string space = "";
-            _context.Session.SetString("space", space);
-            string text = "";
-            _context.Session.SetString("text", text);
-            _context.Session.CommitAsync();
         }
 
         [HttpPost]
@@ -205,7 +129,7 @@ namespace Books.Controllers
                 if (_context != null)
                 {
                     _context.Session.SetString("formula", "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>");
-                    InitSessionVariables();
+                    InitSessionVariables(_context);
                     sb = new StringBuilder(_context.Session.GetString("formula"));
                     ViewBag.formula = sb.ToString();
                 }
@@ -464,6 +388,34 @@ namespace Books.Controllers
 
                     if (form.Insert1 == "None")
                     {
+                        if (_context != null)
+                        {
+                            if (form.Ident1 != null && form.Ident1 != _context.Session.GetString("ident1"))
+                            {
+                                form.Insert = "Identifier";
+                            }
+                            if (form.Ident2 != null && form.Ident2 != _context.Session.GetString("ident2"))
+                            {
+                                form.Insert = "Identifier";
+                            }
+                            if (form.Oper1 != null && _context.Session.GetString("oper1") != "" && form.Oper1 != _context.Session.GetString("oper1"))
+                            {
+                                form.Insert = "Operator";
+                            }
+                            if (form.Oper2 != null && _context.Session.GetString("oper2") != "" && form.Oper2 != _context.Session.GetString("oper2"))
+                            {
+                                form.Insert = "Operator";
+                            }
+                            if (form.Num1 != null && _context.Session.GetString("num1") != "" && form.Num1 != _context.Session.GetString("num1"))
+                            {
+                                form.Insert = "Number";
+                            }
+                            if (form.Num2 != null && _context.Session.GetString("num2") != "" && form.Num2 != _context.Session.GetString("num2"))
+                            {
+                                form.Insert = "Number";
+                            }
+                            SetSessionVariables(_context, form);
+                        }
                         switch (form.Insert)
                         {
                             case "Identifier":
@@ -492,10 +444,13 @@ namespace Books.Controllers
                             default:
                                 break;
                         }
-
                     }
                     else
                     {
+                        if (_context != null)
+                        {
+                            SetSessionVariables(_context, form);
+                        }
                         switch (form.Insert1)
                         {
                             case "Subscript (Identifier, Number)":
@@ -703,12 +658,12 @@ namespace Books.Controllers
                         case "Clear Subscript Row1":
                             if (sb.ToString().Contains("#subrow1")) { sb.Remove(sb.ToString().IndexOf("#subrow1"), 8); };
                             insert = false;
-                            MoverTarget1(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Subscript Row2":
                             if (sb.ToString().Contains("#subrow2")) { sb.Remove(sb.ToString().IndexOf("#subrow2"), 8); };
                             insert = false;
-                            MoverTarget2(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Matrix":
                             if (sb.ToString().Contains("#col"))
@@ -728,23 +683,23 @@ namespace Books.Controllers
                         case "Clear Superscript Row1":
                             if (sb.ToString().Contains("#suprow")) { sb.Remove(sb.ToString().IndexOf("#suprow1"), 8); };
                             insert = false;
-                            MoverTarget3(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Superscript Row2":
                             if (sb.ToString().Contains("#suprow2")) { sb.Remove(sb.ToString().IndexOf("#suprow2"), 8); };
                             insert = false;
-                            MoverTarget4(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Square Root Row":
                             if (sb.ToString().Contains("#sqrtrow")) { sb.Remove(sb.ToString().IndexOf("#sqrtrow"), 8); };
                             insert = false;
                             form.Insert = "Operator";
-                            MoverTarget5(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Fenced":
                             if (sb.ToString().Contains("#fenced")) { sb.Remove(sb.ToString().IndexOf("#fenced"), 7); };
                             insert = false;
-                            MoverTarget6(form, sb);
+                            MoveTarget(form, sb);
                             break;
                         case "Clear Root Row":
                             if (sb.ToString().Contains("#rootrow")) { sb.Remove(sb.ToString().IndexOf("#rootrow"), 8); };
@@ -827,6 +782,178 @@ namespace Books.Controllers
             // there is something wrong with the data values
             //    return View(form);
             //}
+        }
+
+        private static FormulaEditViewModel InitEditModel(int id, string formula)
+        {
+            return new FormulaEditViewModel
+            {
+                NodeID = id,
+                ClearFormula = false,
+                Reverse = false,
+                ClearNumerator = false,
+                ClearDenominator = false,
+                BothIdent = false,
+                BoldIdent = false,
+                Ident1 = "",
+                Ident2 = "",
+                Oper1 = "",
+                Oper2 = "",
+                BothOper = false,
+                Num1 = "",
+                Num2 = "",
+                BoldNum = false,
+                Space = "",
+                BoldText = false,
+                BothText = false,
+                Text = "",
+                Matrix = false,
+                Row = null,
+                Column = null,
+                Insert = "Identifier",
+                Insert1 = "None",
+                Target = "Append",
+                Block = "inline",
+                Algebraic = "None",
+                Calculus = "None",
+                Ellipses = "None",
+                Logic = "None",
+                Vector = "None",
+                Set = "None",
+                Geometric = "None",
+                GreekUpper = "None",
+                GreekLower = "None",
+                ContainsSupRow1 = false,
+                ContainsSupRow2 = false,
+                ContainsSubRow1 = false,
+                ContainsSubRow2 = false,
+                ContainsMatrix = false,
+                ContainsNumerator = false,
+                ContainsDenominator = false,
+                ContainsFenced = false,
+                ContainsSquareRootRow = false,
+                ContainsRootRow = false,
+                ContainsOverRow = false,
+                ContainsUnderRow = false,
+                ContainsRow = false,
+                Id2 = false,
+                Op2 = false,
+                N2 = false,
+                Formula = formula
+            };
+        }
+
+        private void InitSessionVariables(HttpContext context)
+        {
+            int undoptr = 0;
+            context.Session.SetInt32("undoptr", undoptr);
+            string ident1 = "";
+            context.Session.SetString("ident1", ident1);
+            string ident2 = "";
+            context.Session.SetString("ident2", ident2);
+            string oper1 = "";
+            context.Session.SetString("oper1", oper1);
+            string oper2 = "";
+            context.Session.SetString("oper2", oper2);
+            string num1 = "";
+            context.Session.SetString("num1", num1);
+            string num2 = "";
+            context.Session.SetString("num2", num2);
+            string space = "";
+            context.Session.SetString("space", space);
+            string text = "";
+            context.Session.SetString("text", text);
+            context.Session.CommitAsync();
+        }
+
+        private void SetSessionVariables(HttpContext context, FormulaEditViewModel form)
+        {
+            context.Session.SetString("ident2", form.Ident2 ?? "");
+            context.Session.SetString("ident1", form.Ident1 ?? "");
+            context.Session.SetString("oper2", form.Oper2 ?? "");
+            context.Session.SetString("oper1", form.Oper1 ?? "");
+            context.Session.SetString("num2", form.Num2 ?? "");
+            context.Session.SetString("num1", form.Num1 ?? "");
+            context.Session.SetString("space", form.Space ?? "");
+            context.Session.SetString("text", form.Text ?? "");
+            context.Session.CommitAsync();
+        }
+
+        private static void MoveTarget(FormulaEditViewModel form, StringBuilder sb)
+        {
+
+            if (sb.ToString().Contains("#numerator"))
+            {
+                form.Target = "Numerator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#denominator"))
+            {
+                form.Target = "Denominator";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow1"))
+            {
+                form.Target = "Superscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#suprow2"))
+            {
+                form.Target = "Superscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow1"))
+            {
+                form.Target = "Subscript Row1";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#subrow2"))
+            {
+                form.Target = "Subscript Row2";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#fenced"))
+            {
+                form.Target = "Fenced";
+                form.Insert = "Operator";
+            }
+            else if (sb.ToString().Contains("#sqrtrow"))
+            {
+                form.Target = "Square Root Row";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#rootrow"))
+            {
+                form.Target = "Root Row";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#overrow"))
+            {
+                form.Target = "Over Row";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#underrow"))
+            {
+                form.Target = "Under Row";
+                form.Insert = "Identifier";
+            }
+            else if (sb.ToString().Contains("#row"))
+            {
+                form.Target = "Row";
+                form.Insert = "Identifier";
+            }
+            else
+            {
+                if (!form.Matrix)
+                {
+                    form.Target = "Append";
+                }
+                else
+                {
+                    form.Target = "Matrix";
+                }
+                form.Insert = "Operator";
+            }
         }
 
         private static void MoverTarget6(FormulaEditViewModel form, StringBuilder sb)
@@ -1075,7 +1202,7 @@ namespace Books.Controllers
             }
         }
 
-        private static void MoveTarget(FormulaEditViewModel form, StringBuilder sb)
+        private static void MoveTarget7(FormulaEditViewModel form, StringBuilder sb)
         {
             if (sb.ToString().Contains("#numerator"))
             {
