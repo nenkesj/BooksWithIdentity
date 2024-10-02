@@ -11,11 +11,14 @@
         public bool BoldIdent { get; set; }
         public string Ident1 { get; set; }
         public string Ident2 { get; set; }
+        public string Ident3 { get; set; }
         public string Oper1 { get; set; }
         public string Oper2 { get; set; }
+        public string Oper3 { get; set; }
         public bool BothOper { get; set; }
         public string Num1 { get; set; }
         public string Num2 { get; set; }
+        public string Num3 { get; set; }
         public bool BoldNum { get; set; }
         public bool BothNum { get; set; }
         public string Space { get; set; }

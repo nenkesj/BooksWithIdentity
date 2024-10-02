@@ -41,6 +41,37 @@
             @Html.Hidden("NodeID", @Model.NodeID)
         </form>
 
+        <form asp-action="Edit" asp-controller="Formula" asp-route-restore=true>
+            <input type="submit" value="Restore" class="btn btn-primary" />
+            @Html.Hidden("bothident", @Model.BothIdent)
+            @Html.Hidden("bothoper", @Model.BothOper)
+            @Html.Hidden("bothnum", @Model.BothNum)
+            @Html.Hidden("boldident", @Model.BoldIdent)
+            @Html.Hidden("boldnum", @Model.BoldNum)
+            @Html.Hidden("boldtext", @Model.BoldText)
+            @Html.Hidden("ident1", @Model.Ident1)
+            @Html.Hidden("ident2", @Model.Ident2)
+            @Html.Hidden("oper1", @Model.Oper1)
+            @Html.Hidden("oper2", @Model.Oper2)
+            @Html.Hidden("num1", @Model.Num1)
+            @Html.Hidden("num2", @Model.Num2)
+            @Html.Hidden("space", @Model.Num1)
+            @Html.Hidden("text", @Model.Text)
+            @Html.Hidden("algebraic", @Model.Algebraic)
+            @Html.Hidden("calculus", @Model.Calculus)
+            @Html.Hidden("ellipses", @Model.Ellipses)
+            @Html.Hidden("logic", @Model.Logic)
+            @Html.Hidden("vector", @Model.Vector)
+            @Html.Hidden("greekupper", @Model.GreekUpper)
+            @Html.Hidden("greeklower", @Model.GreekLower)
+            @Html.Hidden("insert", @Model.Insert)
+            @Html.Hidden("insert", @Model.Insert1)
+            @Html.Hidden("target", @Model.Target)
+            @Html.Hidden("block", @Model.Block)
+            @Html.Hidden("clearformula", @Model.ClearFormula)
+            @Html.Hidden("NodeID", @Model.NodeID)
+        </form>
+
         @if (@Model.ContainsSupRow1)
         {
             <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row1">
@@ -853,9 +884,13 @@
                 <table>
                     <tr>
                         <td><label>Identifier 1</label></td>
-                        <td>@Html.TextBoxFor(m => m.Ident1)</td>
+                        <td>
+                            <input asp-for="Ident1" value="@Model.Ident1" class="form-control" />
+                        </td>
                         <td><label>Identifier 2</label></td>
-                        <td>@Html.TextBoxFor(m => m.Ident2)</td>
+                        <td>
+                            <input asp-for="Ident2" value="@Model.Ident2" class="form-control" />
+                        </td>
                         <td><input id="Id2" name="Id2" type="checkbox" value="true" /><input name="Id2" type="hidden" value="false" /></td>
                         <td><input id="BoldIdent" name="BoldIdent" type="checkbox" value="true" /><input name="BoldIdent" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
@@ -864,21 +899,14 @@
 
                     </tr>
                     <tr>
-                        <td><label>Operator 1</label></td>
-                        <td>@Html.TextBoxFor(m => m.Oper1)</td>
-                        <td><label>Operator 2</label></td>
-                        <td>@Html.TextBoxFor(m => m.Oper2)</td>
-                        <td><input id="Op2" name="Op2" type="checkbox" value="true" /><input name="Op2" type="hidden" value="false" /></td>
-                        <td></td>
-                        <td></td>
-                        <td><input id="BothOper" name="BothOper" type="checkbox" value="true" /><input name="BothOper" type="hidden" value="false" /></td>
-                        <td><label>Both (Inserts Both Operators)</label></td>
-                    </tr>
-                    <tr>
                         <td><label>Number 1</label></td>
-                        <td>@Html.TextBoxFor(m => m.Num1)</td>
+                        <td>
+                            <input asp-for="Num1" value="@Model.Num1" class="form-control" />
+                        </td>
                         <td><label>Number 2</label></td>
-                        <td>@Html.TextBoxFor(m => m.Num2)</td>
+                        <td>
+                            <input asp-for="Num2" value="@Model.Num2" class="form-control" />
+                        </td>
                         <td><input id="N2" name="N2" type="checkbox" value="true" /><input name="N2" type="hidden" value="false" /></td>
                         <td><input id="BoldNum" name="BoldNum" type="checkbox" value="true" /><input name="BoldNum" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
@@ -886,10 +914,29 @@
                         <td><label>Both (Inserts Number before Identifier)</label></td>
                     </tr>
                     <tr>
+                        <td><label>Operator 1</label></td>
+                        <td>
+                            <input asp-for="Oper1" value="@Model.Oper1" class="form-control" />
+                        </td>
+                        <td><label>Operator 2</label></td>
+                        <td>
+                            <input asp-for="Oper2" value="@Model.Oper2" class="form-control" />
+                        </td>
+                        <td><input id="Op2" name="Op2" type="checkbox" value="true" /><input name="Op2" type="hidden" value="false" /></td>
+                        <td></td>
+                        <td></td>
+                        <td><input id="BothOper" name="BothOper" type="checkbox" value="true" /><input name="BothOper" type="hidden" value="false" /></td>
+                        <td><label>Both (Inserts Both Operators)</label></td>
+                    </tr>
+                    <tr>
                         <td><label>Space</label></td>
-                        <td>@Html.TextBoxFor(m => m.Space)</td>
+                        <td>
+                            <input asp-for="Space" value="@Model.Space" class="form-control" />
+                        </td>
                         <td><label>Text</label></td>
-                        <td>@Html.TextBoxFor(m => m.Text)</td>
+                        <td>
+                            <input asp-for="Text" value="@Model.Text" class="form-control" />
+                        </td>
                         <td></td>
                         <td><input id="BoldText" name="BoldText" type="checkbox" value="true" /><input name="BoldText" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
@@ -899,9 +946,9 @@
                     </tr>
                     <tr>
                         <td><label>Row</label></td>
-                        <td>@Html.TextBoxFor(m => m.Row)</td>
+                        <td><input asp-for="Row" value="@Model.Row" class="form-control" /></td>
                         <td><label>Column</label></td>
-                        <td>@Html.TextBoxFor(m => m.Column)</td>
+                        <td><input asp-for="Column" value="@Model.Column" class="form-control" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
