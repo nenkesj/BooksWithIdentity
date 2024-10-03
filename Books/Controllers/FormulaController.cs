@@ -109,7 +109,7 @@ namespace Books.Controllers
                     }
                     else
                     {
-
+                        SpecialMathsSymbols(form);
                         FirstOrSecondField(form, out Id, out Op, out Num);
                         InsertObject(form, Id, Op, Num, searchfor, sb);
                         form.Insert1 = "None";
@@ -608,6 +608,18 @@ namespace Books.Controllers
             else
             {
                 Num = form.Num1;
+            }
+            if (form.Ident3 != "")
+            {
+                Id = form.Ident3;
+            }
+            if (form.Oper3 != "")
+            {
+                Op = form.Oper3;
+            }
+            if (form.Num3 != "")
+            {
+                Num = form.Num3;
             }
         }
 
