@@ -9,149 +9,150 @@
 }
 <div class="panel">
     <div class="panel-heading">
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.NodeID }, new { @class = "btn btn-info" })
-            </dt>
-            <dt class="col-sm-1">
-                <form asp-action="Edit" asp-controller="Formula" asp-route-undo=true>
-                    <input type="submit" value="Undo" class="btn btn-primary" />
-                    @Html.Hidden("bothident", @Model.BothIdent)
-                    @Html.Hidden("bothoper", @Model.BothOper)
-                    @Html.Hidden("bothnum", @Model.BothNum)
-                    @Html.Hidden("boldident", @Model.BoldIdent)
-                    @Html.Hidden("boldnum", @Model.BoldNum)
-                    @Html.Hidden("boldtext", @Model.BoldText)
-                    @Html.Hidden("ident1", @Model.Ident1)
-                    @Html.Hidden("ident2", @Model.Ident2)
-                    @Html.Hidden("oper1", @Model.Oper1)
-                    @Html.Hidden("oper2", @Model.Oper2)
-                    @Html.Hidden("num1", @Model.Num1)
-                    @Html.Hidden("num2", @Model.Num2)
-                    @Html.Hidden("space", @Model.Num1)
-                    @Html.Hidden("text", @Model.Text)
-                    @Html.Hidden("algebraic", @Model.Algebraic)
-                    @Html.Hidden("calculus", @Model.Calculus)
-                    @Html.Hidden("ellipses", @Model.Ellipses)
-                    @Html.Hidden("logic", @Model.Logic)
-                    @Html.Hidden("vector", @Model.Vector)
-                    @Html.Hidden("greekupper", @Model.GreekUpper)
-                    @Html.Hidden("greeklower", @Model.GreekLower)
-                    @Html.Hidden("insert", @Model.Insert)
-                    @Html.Hidden("insert", @Model.Insert1)
-                    @Html.Hidden("target", @Model.Target)
-                    @Html.Hidden("block", @Model.Block)
-                    @Html.Hidden("clearformula", @Model.ClearFormula)
-                    @Html.Hidden("NodeID", @Model.NodeID)
-                </form>
-            </dt>
-            <dt class="col-sm-1">
-                <form asp-action="Edit" asp-controller="Formula" asp-route-restore=true>
-                    <input type="submit" value="Restore" class="btn btn-primary" />
-                    @Html.Hidden("bothident", @Model.BothIdent)
-                    @Html.Hidden("bothoper", @Model.BothOper)
-                    @Html.Hidden("bothnum", @Model.BothNum)
-                    @Html.Hidden("boldident", @Model.BoldIdent)
-                    @Html.Hidden("boldnum", @Model.BoldNum)
-                    @Html.Hidden("boldtext", @Model.BoldText)
-                    @Html.Hidden("ident1", @Model.Ident1)
-                    @Html.Hidden("ident2", @Model.Ident2)
-                    @Html.Hidden("oper1", @Model.Oper1)
-                    @Html.Hidden("oper2", @Model.Oper2)
-                    @Html.Hidden("num1", @Model.Num1)
-                    @Html.Hidden("num2", @Model.Num2)
-                    @Html.Hidden("space", @Model.Num1)
-                    @Html.Hidden("text", @Model.Text)
-                    @Html.Hidden("algebraic", @Model.Algebraic)
-                    @Html.Hidden("calculus", @Model.Calculus)
-                    @Html.Hidden("ellipses", @Model.Ellipses)
-                    @Html.Hidden("logic", @Model.Logic)
-                    @Html.Hidden("vector", @Model.Vector)
-                    @Html.Hidden("greekupper", @Model.GreekUpper)
-                    @Html.Hidden("greeklower", @Model.GreekLower)
-                    @Html.Hidden("insert", @Model.Insert)
-                    @Html.Hidden("insert", @Model.Insert1)
-                    @Html.Hidden("target", @Model.Target)
-                    @Html.Hidden("block", @Model.Block)
-                    @Html.Hidden("clearformula", @Model.ClearFormula)
-                    @Html.Hidden("NodeID", @Model.NodeID)
-                </form>
-            </dt>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-1">
+        <nav role="navigation">
+            <ul class="nav-main">
+                <li>
+                    @Html.ActionLink("Return to Book", "Details", "Books", new { id = @Model.NodeID }, new { @class = "btn btn-info" })
+                </li>
+                <li>
+                    <form asp-action="Edit" asp-controller="Formula" asp-route-undo=true>
+                        <input type="submit" value="Undo" class="btn btn-primary" />
+                        @Html.Hidden("bothident", @Model.BothIdent)
+                        @Html.Hidden("bothoper", @Model.BothOper)
+                        @Html.Hidden("bothnum", @Model.BothNum)
+                        @Html.Hidden("boldident", @Model.BoldIdent)
+                        @Html.Hidden("boldnum", @Model.BoldNum)
+                        @Html.Hidden("boldtext", @Model.BoldText)
+                        @Html.Hidden("ident1", @Model.Ident1)
+                        @Html.Hidden("ident2", @Model.Ident2)
+                        @Html.Hidden("oper1", @Model.Oper1)
+                        @Html.Hidden("oper2", @Model.Oper2)
+                        @Html.Hidden("num1", @Model.Num1)
+                        @Html.Hidden("num2", @Model.Num2)
+                        @Html.Hidden("space", @Model.Num1)
+                        @Html.Hidden("text", @Model.Text)
+                        @Html.Hidden("algebraic", @Model.Algebraic)
+                        @Html.Hidden("calculus", @Model.Calculus)
+                        @Html.Hidden("ellipses", @Model.Ellipses)
+                        @Html.Hidden("logic", @Model.Logic)
+                        @Html.Hidden("vector", @Model.Vector)
+                        @Html.Hidden("greekupper", @Model.GreekUpper)
+                        @Html.Hidden("greeklower", @Model.GreekLower)
+                        @Html.Hidden("insert", @Model.Insert)
+                        @Html.Hidden("insert", @Model.Insert1)
+                        @Html.Hidden("target", @Model.Target)
+                        @Html.Hidden("block", @Model.Block)
+                        @Html.Hidden("clearformula", @Model.ClearFormula)
+                        @Html.Hidden("NodeID", @Model.NodeID)
+                    </form>
+                </li>
+                <li>
+                    <form asp-action="Edit" asp-controller="Formula" asp-route-restore=true>
+                        <input type="submit" value="Restore" class="btn btn-primary" />
+                        @Html.Hidden("bothident", @Model.BothIdent)
+                        @Html.Hidden("bothoper", @Model.BothOper)
+                        @Html.Hidden("bothnum", @Model.BothNum)
+                        @Html.Hidden("boldident", @Model.BoldIdent)
+                        @Html.Hidden("boldnum", @Model.BoldNum)
+                        @Html.Hidden("boldtext", @Model.BoldText)
+                        @Html.Hidden("ident1", @Model.Ident1)
+                        @Html.Hidden("ident2", @Model.Ident2)
+                        @Html.Hidden("oper1", @Model.Oper1)
+                        @Html.Hidden("oper2", @Model.Oper2)
+                        @Html.Hidden("num1", @Model.Num1)
+                        @Html.Hidden("num2", @Model.Num2)
+                        @Html.Hidden("space", @Model.Num1)
+                        @Html.Hidden("text", @Model.Text)
+                        @Html.Hidden("algebraic", @Model.Algebraic)
+                        @Html.Hidden("calculus", @Model.Calculus)
+                        @Html.Hidden("ellipses", @Model.Ellipses)
+                        @Html.Hidden("logic", @Model.Logic)
+                        @Html.Hidden("vector", @Model.Vector)
+                        @Html.Hidden("greekupper", @Model.GreekUpper)
+                        @Html.Hidden("greeklower", @Model.GreekLower)
+                        @Html.Hidden("insert", @Model.Insert)
+                        @Html.Hidden("insert", @Model.Insert1)
+                        @Html.Hidden("target", @Model.Target)
+                        @Html.Hidden("block", @Model.Block)
+                        @Html.Hidden("clearformula", @Model.ClearFormula)
+                        @Html.Hidden("NodeID", @Model.NodeID)
+                    </form>
+                </li>
+            </ul>
+            <ul class="nav-main">
                 @if (@Model.ContainsSupRow1)
                 {
-                    <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row1">
-                        @Html.Hidden("bothident", @Model.BothIdent)
-                        @Html.Hidden("bothoper", @Model.BothOper)
-                        @Html.Hidden("bothnum", @Model.BothNum)
-                        @Html.Hidden("boldident", @Model.BoldIdent)
-                        @Html.Hidden("boldnum", @Model.BoldNum)
-                        @Html.Hidden("boldtext", @Model.BoldText)
-                        @Html.Hidden("ident1", @Model.Ident1)
-                        @Html.Hidden("ident2", @Model.Ident2)
-                        @Html.Hidden("oper1", @Model.Oper1)
-                        @Html.Hidden("oper2", @Model.Oper2)
-                        @Html.Hidden("num1", @Model.Num1)
-                        @Html.Hidden("num2", @Model.Num2)
-                        @Html.Hidden("space", @Model.Num1)
-                        @Html.Hidden("text", @Model.Text)
-                        @Html.Hidden("algebraic", @Model.Algebraic)
-                        @Html.Hidden("calculus", @Model.Calculus)
-                        @Html.Hidden("ellipses", @Model.Ellipses)
-                        @Html.Hidden("logic", @Model.Logic)
-                        @Html.Hidden("vector", @Model.Vector)
-                        @Html.Hidden("greekupper", @Model.GreekUpper)
-                        @Html.Hidden("greeklower", @Model.GreekLower)
-                        @Html.Hidden("insert", @Model.Insert)
-                        @Html.Hidden("insert", @Model.Insert1)
-                        @Html.Hidden("target", @Model.Target)
-                        @Html.Hidden("block", @Model.Block)
-                        @Html.Hidden("clearformula", @Model.ClearFormula)
-                        @Html.Hidden("NodeID", @Model.NodeID)
-                        <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row1" />
-                    </form>
+                    <li>
+                        <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row1">
+                            @Html.Hidden("bothident", @Model.BothIdent)
+                            @Html.Hidden("bothoper", @Model.BothOper)
+                            @Html.Hidden("bothnum", @Model.BothNum)
+                            @Html.Hidden("boldident", @Model.BoldIdent)
+                            @Html.Hidden("boldnum", @Model.BoldNum)
+                            @Html.Hidden("boldtext", @Model.BoldText)
+                            @Html.Hidden("ident1", @Model.Ident1)
+                            @Html.Hidden("ident2", @Model.Ident2)
+                            @Html.Hidden("oper1", @Model.Oper1)
+                            @Html.Hidden("oper2", @Model.Oper2)
+                            @Html.Hidden("num1", @Model.Num1)
+                            @Html.Hidden("num2", @Model.Num2)
+                            @Html.Hidden("space", @Model.Num1)
+                            @Html.Hidden("text", @Model.Text)
+                            @Html.Hidden("algebraic", @Model.Algebraic)
+                            @Html.Hidden("calculus", @Model.Calculus)
+                            @Html.Hidden("ellipses", @Model.Ellipses)
+                            @Html.Hidden("logic", @Model.Logic)
+                            @Html.Hidden("vector", @Model.Vector)
+                            @Html.Hidden("greekupper", @Model.GreekUpper)
+                            @Html.Hidden("greeklower", @Model.GreekLower)
+                            @Html.Hidden("insert", @Model.Insert)
+                            @Html.Hidden("insert", @Model.Insert1)
+                            @Html.Hidden("target", @Model.Target)
+                            @Html.Hidden("block", @Model.Block)
+                            @Html.Hidden("clearformula", @Model.ClearFormula)
+                            @Html.Hidden("NodeID", @Model.NodeID)
+                            <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row1" />
+                        </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsSupRow2)
                 {
-                    <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row2">
-                        @Html.Hidden("bothident", @Model.BothIdent)
-                        @Html.Hidden("bothoper", @Model.BothOper)
-                        @Html.Hidden("bothnum", @Model.BothNum)
-                        @Html.Hidden("boldident", @Model.BoldIdent)
-                        @Html.Hidden("boldnum", @Model.BoldNum)
-                        @Html.Hidden("boldtext", @Model.BoldText)
-                        @Html.Hidden("ident1", @Model.Ident1)
-                        @Html.Hidden("ident2", @Model.Ident2)
-                        @Html.Hidden("oper1", @Model.Oper1)
-                        @Html.Hidden("oper2", @Model.Oper2)
-                        @Html.Hidden("num1", @Model.Num1)
-                        @Html.Hidden("num2", @Model.Num2)
-                        @Html.Hidden("space", @Model.Num1)
-                        @Html.Hidden("text", @Model.Text)
-                        @Html.Hidden("algebraic", @Model.Algebraic)
-                        @Html.Hidden("calculus", @Model.Calculus)
-                        @Html.Hidden("ellipses", @Model.Ellipses)
-                        @Html.Hidden("logic", @Model.Logic)
-                        @Html.Hidden("vector", @Model.Vector)
-                        @Html.Hidden("greekupper", @Model.GreekUpper)
-                        @Html.Hidden("greeklower", @Model.GreekLower)
-                        @Html.Hidden("insert", @Model.Insert)
-                        @Html.Hidden("insert", @Model.Insert1)
-                        @Html.Hidden("target", @Model.Target)
-                        @Html.Hidden("block", @Model.Block)
-                        @Html.Hidden("clearformula", @Model.ClearFormula)
-                        @Html.Hidden("NodeID", @Model.NodeID)
-                        <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row2" />
-                    </form>
-                }
-            </dt>
-            <dt class="col-sm-1">
+                    <li>
+                        <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Superscript Row2">
+                            @Html.Hidden("bothident", @Model.BothIdent)
+                            @Html.Hidden("bothoper", @Model.BothOper)
+                            @Html.Hidden("bothnum", @Model.BothNum)
+                            @Html.Hidden("boldident", @Model.BoldIdent)
+                            @Html.Hidden("boldnum", @Model.BoldNum)
+                            @Html.Hidden("boldtext", @Model.BoldText)
+                            @Html.Hidden("ident1", @Model.Ident1)
+                            @Html.Hidden("ident2", @Model.Ident2)
+                            @Html.Hidden("oper1", @Model.Oper1)
+                            @Html.Hidden("oper2", @Model.Oper2)
+                            @Html.Hidden("num1", @Model.Num1)
+                            @Html.Hidden("num2", @Model.Num2)
+                            @Html.Hidden("space", @Model.Num1)
+                            @Html.Hidden("text", @Model.Text)
+                            @Html.Hidden("algebraic", @Model.Algebraic)
+                            @Html.Hidden("calculus", @Model.Calculus)
+                            @Html.Hidden("ellipses", @Model.Ellipses)
+                            @Html.Hidden("logic", @Model.Logic)
+                            @Html.Hidden("vector", @Model.Vector)
+                            @Html.Hidden("greekupper", @Model.GreekUpper)
+                            @Html.Hidden("greeklower", @Model.GreekLower)
+                            @Html.Hidden("insert", @Model.Insert)
+                            @Html.Hidden("insert", @Model.Insert1)
+                            @Html.Hidden("target", @Model.Target)
+                            @Html.Hidden("block", @Model.Block)
+                            @Html.Hidden("clearformula", @Model.ClearFormula)
+                            @Html.Hidden("NodeID", @Model.NodeID)
+                            <input class="navbutton, btn, btn-info" type="submit" value="Clear Superscript Row2" />
+                        </form>
+                    </li>
+                    }
                 @if (@Model.ContainsSubRow1)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Subscript Row1">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -182,11 +183,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Subscript Row1" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsSubRow2)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Subscript Row2">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -217,11 +218,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Subscript Row2" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsMatrix)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Matrix">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -252,11 +253,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Matrix" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsFenced)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Fenced">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -287,11 +288,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Fenced" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsSquareRootRow)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Square Root Row">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -322,11 +323,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Square Root Row" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsRootRow)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Root Row">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -357,11 +358,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Root Row" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsOverRow)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Over Row">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -392,11 +393,11 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Over Row" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsUnderRow)
                 {
+                    <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Under Row">
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
@@ -427,47 +428,45 @@
                         @Html.Hidden("NodeID", @Model.NodeID)
                         <input class="navbutton, btn, btn-info" type="submit" value="Clear Under Row" />
                     </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
                 @if (@Model.ContainsRow)
                 {
-                    <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Row">
-                        @Html.Hidden("bothident", @Model.BothIdent)
-                        @Html.Hidden("bothoper", @Model.BothOper)
-                        @Html.Hidden("bothnum", @Model.BothNum)
-                        @Html.Hidden("boldident", @Model.BoldIdent)
-                        @Html.Hidden("boldnum", @Model.BoldNum)
-                        @Html.Hidden("boldtext", @Model.BoldText)
-                        @Html.Hidden("ident1", @Model.Ident1)
-                        @Html.Hidden("ident2", @Model.Ident2)
-                        @Html.Hidden("oper1", @Model.Oper1)
-                        @Html.Hidden("oper2", @Model.Oper2)
-                        @Html.Hidden("num1", @Model.Num1)
-                        @Html.Hidden("num2", @Model.Num2)
-                        @Html.Hidden("space", @Model.Num1)
-                        @Html.Hidden("text", @Model.Text)
-                        @Html.Hidden("algebraic", @Model.Algebraic)
-                        @Html.Hidden("calculus", @Model.Calculus)
-                        @Html.Hidden("ellipses", @Model.Ellipses)
-                        @Html.Hidden("logic", @Model.Logic)
-                        @Html.Hidden("vector", @Model.Vector)
-                        @Html.Hidden("greekupper", @Model.GreekUpper)
-                        @Html.Hidden("greeklower", @Model.GreekLower)
-                        @Html.Hidden("insert", @Model.Insert)
-                        @Html.Hidden("insert", @Model.Insert1)
-                        @Html.Hidden("target", @Model.Target)
-                        @Html.Hidden("block", @Model.Block)
-                        @Html.Hidden("clearformula", @Model.ClearFormula)
-                        @Html.Hidden("NodeID", @Model.NodeID)
-                        <input class="navbutton, btn, btn-info" type="submit" value="Clear Row" />
-                    </form>
+                    <li>
+                        <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Row">
+                            @Html.Hidden("bothident", @Model.BothIdent)
+                            @Html.Hidden("bothoper", @Model.BothOper)
+                            @Html.Hidden("bothnum", @Model.BothNum)
+                            @Html.Hidden("boldident", @Model.BoldIdent)
+                            @Html.Hidden("boldnum", @Model.BoldNum)
+                            @Html.Hidden("boldtext", @Model.BoldText)
+                            @Html.Hidden("ident1", @Model.Ident1)
+                            @Html.Hidden("ident2", @Model.Ident2)
+                            @Html.Hidden("oper1", @Model.Oper1)
+                            @Html.Hidden("oper2", @Model.Oper2)
+                            @Html.Hidden("num1", @Model.Num1)
+                            @Html.Hidden("num2", @Model.Num2)
+                            @Html.Hidden("space", @Model.Num1)
+                            @Html.Hidden("text", @Model.Text)
+                            @Html.Hidden("algebraic", @Model.Algebraic)
+                            @Html.Hidden("calculus", @Model.Calculus)
+                            @Html.Hidden("ellipses", @Model.Ellipses)
+                            @Html.Hidden("logic", @Model.Logic)
+                            @Html.Hidden("vector", @Model.Vector)
+                            @Html.Hidden("greekupper", @Model.GreekUpper)
+                            @Html.Hidden("greeklower", @Model.GreekLower)
+                            @Html.Hidden("insert", @Model.Insert)
+                            @Html.Hidden("insert", @Model.Insert1)
+                            @Html.Hidden("target", @Model.Target)
+                            @Html.Hidden("block", @Model.Block)
+                            @Html.Hidden("clearformula", @Model.ClearFormula)
+                            @Html.Hidden("NodeID", @Model.NodeID)
+                            <input class="navbutton, btn, btn-info" type="submit" value="Clear Row" />
+                        </form>
+                    </li>
                 }
-            </dt>
-            <dt class="col-sm-1">
-
-            </dt>
-        </dl>
+            </ul>
+        </nav>
         <h3>Formula</h3>
     </div>
 
@@ -731,6 +730,7 @@
                     <option value="Under">Under</option>
                     <option value="Over Row">Over Row</option>
                     <option value="Limit">Limit</option>
+                    <option value="Limit h->0">Limit h->0</option>
                     <option value="Fenced 1">Fenced 1</option>
                     <option value="Fenced 2">Fenced 2</option>
                     <option value="Fenced 3">Fenced 3</option>
@@ -915,6 +915,7 @@
             </div>
             <br />
             <input type="submit" value="Insert" class="btn btn-primary" />
+            <label> (Insert checkboxes not required when you change any of the following fields)</label>
             <br />
             <div class="dataElem">
                 <table>
@@ -977,8 +978,18 @@
                         <td><input id="BoldText" name="BoldText" type="checkbox" value="true" /><input name="BoldText" type="hidden" value="false" /></td>
                         <td><label>Bold</label></td>
                         <td><input id="BothText" name="BothText" type="checkbox" value="true" /><input name="BothText" type="hidden" value="false" /></td>
-                        <td><label>Both (Inserts Space & Text)</label></td>
-
+                        <td><label>Both (Inserts Space, Text (Bold & Block))</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>Matrix: </label></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><input id="EmbedText" name="EmbedText" type="checkbox" value="true" /><input name="EmbedText" type="hidden" value="false" /></td>
+                        <td><label>Embed (Embeds Text between Spaces)</label></td>
                     </tr>
                     <tr>
                         <td><label>Row</label></td>

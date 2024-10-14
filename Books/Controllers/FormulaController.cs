@@ -14,16 +14,23 @@ namespace Books.Controllers
         public ViewResult Edit(int id)
         {
             string formula = "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
+            ViewBag.Formula = formula;
+            FormulaEditViewModel model = InitEditModel(id, formula);
             if (_context != null)
             {
-                _context.Session.SetString("formula", formula);
-                //InitSessionVariables(_context);
+                if (_context.Session.GetString("formula") == null)
+                {
+                    _context.Session.SetString("formula", formula);
+                    InitSessionVariables(_context);
+                    AddFormulaToUnDoList(_context);
+                }
+                else
+                {
+                    _context.Session.SetString("formula", formula);
+                    RestoreFields(_context, model);
+                }
             }
-
             ViewBag.matrix = "false";
-
-            FormulaEditViewModel model = InitEditModel(id, formula);
-
             return View(model);
         }
 
@@ -36,19 +43,17 @@ namespace Books.Controllers
             bool Matrix_Row_Col_In_Range = false;
             bool No_Special_Maths_Symbol_Being_Inserted = form.Algebraic == "None" && form.Calculus == "None" && form.Ellipses == "None" && form.Geometric == "None" && form.GreekLower == "None" && form.GreekUpper == "None" && form.Logic == "None" && form.Set == "None" && form.Vector == "None";
             StringBuilder sb;
-
-            if (ViewBag.matrix == "true")
+            if (_context != null)
             {
-                form.Matrix = true;
-                Matrix_Row_Col_In_Range = form.Column > 0 && form.Row > 0 && form.Column <= Int32.Parse((TempData["cols"] ?? "0").ToString()) && form.Row <= Int32.Parse((TempData["rows"] ?? "0").ToString());
-                if (!undo)
+                if (_context.Session.GetString("matrix") == "true")
                 {
-                    CheckMatrix(form);
+                    form.Matrix = true;
+                    Matrix_Row_Col_In_Range = form.Column > 0 && form.Row > 0 && form.Column <= _context.Session.GetInt32("cols") && form.Row <= _context.Session.GetInt32("rows");
                 }
-            }
-            else
-            {
-                form.Matrix = false;
+                else
+                {
+                    form.Matrix = false;
+                }
             }
 
             if (No_Special_Maths_Symbol_Being_Inserted && !undo)
@@ -99,6 +104,18 @@ namespace Books.Controllers
                 {
                     if (form.Insert1 == "None")
                     {
+                        if (form.Insert == "Matrix")
+                        {
+                            if (!undo && CheckMatrix(form))
+                            {
+                                if (_context != null)
+                                {
+                                    _context.Session.SetString("matrix", "true");
+                                    _context.Session.SetInt32("rows", form.Row ?? 0);
+                                    _context.Session.SetInt32("cols", form.Column ?? 0);
+                                }
+                            }
+                        }
                         if (_context != null)
                         {
                             HasAnyFieldChanged(_context, form);
@@ -115,6 +132,15 @@ namespace Books.Controllers
                         form.Insert1 = "None";
                     }
                     IsClearNumeratorOrClearDenominatorChecked(form);
+                    if (form.Target == "Clear Matrix")
+                    {
+                        if (_context != null)
+                        {
+                            _context.Session.SetString("matrix", "false");
+                            _context.Session.SetInt32("rows", 0);
+                            _context.Session.SetInt32("matrix", 0);
+                        }
+                    }
                     ClearButtonPressedRemoveIndicator(form, sb);
                 }
 
@@ -197,6 +223,7 @@ namespace Books.Controllers
             if (form.BothOper) { form.BothOper = false; }
             if (form.BothNum) { form.BothNum = false; }
             if (form.BothText) { form.BothText = false; }
+            if (form.EmbedText) { form.EmbedText = false; }
             if (form.Id2) { form.Id2 = false; }
             if (form.Op2) { form.Op2 = false; }
             if (form.N2) { form.N2 = false; }
@@ -288,7 +315,8 @@ namespace Books.Controllers
                     form.Insert = "Operator";
                     form.Target = "Append";
                     form.Matrix = false;
-                    TempData["matrix"] = "false";
+                    form.Row = null;
+                    form.Column = null;
                     break;
                 case "Clear Superscript Row1":
                     if (sb.ToString().Contains("#suprow")) { sb.Remove(sb.ToString().IndexOf("#suprow1"), 8); };
@@ -469,6 +497,10 @@ namespace Books.Controllers
                     form.Target = "Under Row";
                     form.Insert = "Identifier";
                     break;
+                case "Limit h->0":
+                    InsertLimith0(searchfor, sb);
+                    form.Insert = "Identifier";
+                    break;
                 case "Over":
                     InsertOver(form, Id, Op, searchfor, sb);
                     form.Insert = "Operator";
@@ -497,7 +529,7 @@ namespace Books.Controllers
                     break;
                 case "Space":
                     InsertSpace(form, searchfor, sb);
-                    form.Insert = "Operator";
+                    form.Insert = "Identifier";
                     break;
                 case "Text":
                     InsertText(form, searchfor, sb);
@@ -533,16 +565,15 @@ namespace Books.Controllers
                     InsertNumber(form, Num, searchfor, sb);
                     form.Insert = "Operator";
                     break;
+                case "Text":
+                    InsertText(form, searchfor, sb);
+                    form.Insert = "Identifier";
+                    break;
                 case "Matrix":
                     InsertMatrix(form, searchfor, sb);
                     form.Target = "Matrix";
                     form.Insert = "Number";
                     form.Matrix = true;
-                    TempData["matrix"] = "true";
-                    TempData["rows"] = form.Row;
-                    TempData["cols"] = form.Column;
-                    TempData["row"] = 0;
-                    TempData["col"] = 0;
                     break;
                 default:
                     break;
@@ -551,6 +582,30 @@ namespace Books.Controllers
 
         private void HasAnyFieldChanged(HttpContext context, FormulaEditViewModel form)
         {
+            if (form.Text != null && form.Text != context.Session.GetString("text"))
+            {
+                form.Insert = "Text";
+            }
+            if (form.Oper2 != null && form.Oper2 != context.Session.GetString("oper2"))
+            {
+                form.Insert = "Operator";
+                form.Op2 = true;
+            }
+            if (form.Oper1 != null && form.Oper1 != context.Session.GetString("oper1") && form.Insert != "Matrix")
+            {
+                form.Insert = "Operator";
+                form.Op2 = false;
+            }
+            if (form.Num2 != null && form.Num2 != context.Session.GetString("num2"))
+            {
+                form.Insert = "Number";
+                form.N2 = true;
+            }
+            if (form.Num1 != null && form.Num1 != context.Session.GetString("num1"))
+            {
+                form.Insert = "Number";
+                form.N2 = false;
+            }
             if (form.Ident2 != null && form.Ident2 != context.Session.GetString("ident2"))
             {
                 form.Insert = "Identifier";
@@ -561,26 +616,6 @@ namespace Books.Controllers
                 form.Insert = "Identifier";
                 form.Id2 = false;
             }
-            if (form.Oper2 != null && (context.Session.GetString("oper2") ?? "") != "" && form.Oper2 != context.Session.GetString("oper2"))
-            {
-                form.Insert = "Operator";
-                form.Op2 = true;
-            }
-            if (form.Oper1 != null && (context.Session.GetString("oper1") ?? "") != "" && form.Oper1 != context.Session.GetString("oper1"))
-            {
-                form.Insert = "Operator";
-                form.Op2 = false;
-            }
-            if (form.Num2 != null && (context.Session.GetString("num2") ?? "") != "" && form.Num2 != context.Session.GetString("num2"))
-            {
-                form.Insert = "Number";
-                form.N2 = true;
-            }
-            if (form.Num1 != null && (context.Session.GetString("num1") ?? "") != "" && form.Num1 != context.Session.GetString("num1"))
-            {
-                form.Insert = "Number";
-                form.N2 = false;
-            }
         }
 
         private static void FirstOrSecondField(FormulaEditViewModel form, out string Id, out string Op, out string Num)
@@ -588,6 +623,7 @@ namespace Books.Controllers
             if (form.Id2)
             {
                 Id = form.Ident2;
+                form.Insert = "Identifier";
             }
             else
             {
@@ -596,6 +632,7 @@ namespace Books.Controllers
             if (form.Op2)
             {
                 Op = form.Oper2;
+                form.Insert = "Operator";
             }
             else
             {
@@ -604,6 +641,7 @@ namespace Books.Controllers
             if (form.N2)
             {
                 Num = form.Num2;
+                form.Insert = "Number";
             }
             else
             {
@@ -761,6 +799,10 @@ namespace Books.Controllers
                     searchfor = " #underrow";
                     insert = true;
                     break;
+                case "Limit h->0":
+                    searchfor = " </math>";
+                    insert = true;
+                    break;
                 case "Fenced":
                     searchfor = " #fenced";
                     insert = true;
@@ -862,17 +904,20 @@ namespace Books.Controllers
             }
         }
 
-        private void CheckMatrix(FormulaEditViewModel form)
+        private bool CheckMatrix(FormulaEditViewModel form)
         {
             if (string.IsNullOrEmpty(form.Row.ToString()))
             {
                 ModelState.AddModelError("Row", "Please enter Matrix Row");
+                return false;
             }
 
             if (string.IsNullOrEmpty(form.Column.ToString()))
             {
                 ModelState.AddModelError("Column", "Please enter Matrix Column");
+                return false;
             }
+            return true;
         }
 
         private static FormulaEditViewModel InitEditModel(int id, string formula)
@@ -886,21 +931,21 @@ namespace Books.Controllers
                 ClearDenominator = false,
                 BothIdent = false,
                 BoldIdent = false,
-                Ident1 = "",
-                Ident2 = "",
+                Ident1 = "x",
+                Ident2 = "y",
                 Ident3 = "",
-                Oper1 = "",
-                Oper2 = "",
+                Oper1 = "+",
+                Oper2 = "=",
                 Oper3 = "",
                 BothOper = false,
-                Num1 = "",
-                Num2 = "",
+                Num1 = "2",
+                Num2 = "1",
                 Num3 = "",
                 BoldNum = false,
-                Space = "",
+                Space = "1",
                 BoldText = false,
                 BothText = false,
-                Text = "",
+                Text = "and",
                 Matrix = false,
                 Row = null,
                 Column = null,
@@ -939,24 +984,26 @@ namespace Books.Controllers
 
         private void InitSessionVariables(HttpContext context)
         {
-            int undoptr = 0;
+            int undoptr = 1;
             context.Session.SetInt32("undoptr", undoptr);
-            string ident1 = "";
+            string ident1 = "x";
             context.Session.SetString("ident1", ident1);
-            string ident2 = "";
+            string ident2 = "y";
             context.Session.SetString("ident2", ident2);
-            string oper1 = "";
+            string oper1 = "+";
             context.Session.SetString("oper1", oper1);
-            string oper2 = "";
+            string oper2 = "=";
             context.Session.SetString("oper2", oper2);
-            string num1 = "";
+            string num1 = "2";
             context.Session.SetString("num1", num1);
-            string num2 = "";
+            string num2 = "1";
             context.Session.SetString("num2", num2);
-            string space = "";
+            string space = "1";
             context.Session.SetString("space", space);
-            string text = "";
+            string text = "and";
             context.Session.SetString("text", text);
+            string matrix = "false";
+            context.Session.SetString("matrix", matrix);
             context.Session.CommitAsync();
         }
 
@@ -1081,7 +1128,11 @@ namespace Books.Controllers
 
         private static void InsertText(FormulaEditViewModel form, string searchfor, StringBuilder sb)
         {
-            if (form.BothText && sb.ToString().Contains(searchfor))
+            if (form.EmbedText && sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em /> <mspace width=.2em />" + form.Text + "</mtext> <mspace width=.2em /> " + " <mspace width=" + form.Space + "em /> <mspace width=.2em />");
+            }
+            else if (form.BothText && sb.ToString().Contains(searchfor))
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em /> <mspace width=.2em /> <mtext mathvariant='bold'>" + form.Text + "</mtext> <mspace width=.2em /> ");
             }
@@ -1160,6 +1211,14 @@ namespace Books.Controllers
             if (sb.ToString().Contains(searchfor))
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>lim</mo> <mrow> #underrow </mrow> </munder>");
+            }
+        }
+
+        private static void InsertLimith0(string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <munder> <mo>lim</mo> <mrow> <mi>h</mi> <mo>&rarr;</mo> <mn>0</mo> </mrow> </munder>");
             }
         }
 
@@ -1756,6 +1815,7 @@ namespace Books.Controllers
             //form.Space = "";
             form.BoldText = false;
             form.BothText = false;
+            form.EmbedText = false;
             //form.Text = "";
             form.Matrix = false;
             //form.Row = null;

@@ -25,6 +25,7 @@
         public string Text { get; set; }
         public bool BoldText { get; set; }
         public bool BothText { get; set; }
+        public bool EmbedText { get; set; }
         public bool Matrix { get; set; }
         public int? Row { get; set; }
         public int? Column { get; set; }
