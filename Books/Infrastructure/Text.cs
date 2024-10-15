@@ -1309,95 +1309,32 @@
             }
         }
 
-        public void DivideText(out int ParagraphsNoOf, ref List<string> Paragraphs, out int SentencesNoOf, ref List<string> Sentences, ref List<int> SentenceInParagraph, out int LinesNoOf, ref List<string> Lines, out string DebugText, int LineWidth, bool Debug, bool EliminateWhiteSpace, bool tabs, bool SplitHeaders, bool SplitOnColon, bool SplitOnLF, bool InsertIndicators)
+        public void DivideText(out int ParagraphsNoOf, ref List<string> Paragraphs, out int SentencesNoOf, ref List<string> Sentences, ref List<int> SentenceInParagraph, out int LinesNoOf, ref List<string> Lines, out string DebugText, bool Debug, bool SplitOnColon, bool InsertIndicators)
         {
-            int txtPtr, txtCtr, noOfLTs, noOfChars, oldLineLength, LineLength, SentenceLength, ParagraphLength, firstWordPtr, secondWordPtr, firstWordLength, secondWordLength, lineEnd, charNo;
+            int txtPtr, txtCtr, noOfLTs, noOfChars, lineEnd, charNo;
+            int firstWordLength = 0, firstWordPtr = 0, LineLength = 0, ParagraphLength = 0, secondWordLength = 0, secondWordPtr = 0, SentenceLength = 0;
             char currChar, lastChar, nextChar, lineCurrChar, lineLastChar, lineNextChar, firstWord1stChr, lastCharInLine;
-            string line, newLine, sentence, paragraph, firstWord, secondWord, txtText;
-            bool endOfSentence, endOfParagraph, endOfLine, ItsAList, ItsAnUnorderedList, ItsAnOrderedList, ItsGotATab, ItsGotHTML, ItsGotAGT, ItsGotALTSlash, ItsGotACapital, ListItemEndsWithFullStop, SplittingOnColon, FirstLine, firstWordHasDelimiter, firstWordAllCapitals, WordEndsWithFullStop, WordIsAInteger, WordIsAHexNumber, Format, FormatBefore, AddASpace, nothingYet, atFirstWord, pastFirstWord, atSecondWord, pastSecondWord, allCapitals;
+            string txtText;
+            string firstWord = "", line = "", newLine = "", secondWord = "", paragraph = "", sentence = "";
+            bool ItsGotATab, ItsGotAGT, ItsGotALTSlash, ItsGotACapital, FormatBefore, AddASpace;
+            bool allCapitals = false, atFirstWord = false, atSecondWord = false, endOfLine = false, endOfParagraph = false, endOfSentence = false, firstWordHasDelimiter = false, ItsAList = false, ItsAnOrderedList = false, ItsAnUnorderedList = false, ItsGotHTML = false, ListItemEndsWithFullStop = false, pastFirstWord = false, pastSecondWord = false, SplittingOnColon = false, WordEndsWithFullStop = false, WordIsAInteger = false, WordIsAHexNumber = false, FirstLine = true, firstWordAllCapitals = true, Format = true, nothingYet = true;
             char[] txtArr;
 
             // Initial values
 
-            FirstLine = true;
-            endOfLine = false;
-            endOfSentence = false;
-            endOfParagraph = false;
-            SplittingOnColon = false;
-            ItsAList = false;
-            ItsAnOrderedList = false;
-            ItsAnUnorderedList = false;
-            ItsGotATab = false;
-            ItsGotHTML = false;
-            ItsGotAGT = false;
-            ItsGotALTSlash = false;
-            ListItemEndsWithFullStop = false;
-            Format = true;
-            FormatBefore = true;
-            lastChar = (Char)10;
-            paragraph = "";
-            sentence = "";
-            line = "";
-            newLine = "";
-            oldLineLength = 0;
-            LineLength = 0;
+            LinesNoOf = 0;
             ParagraphsNoOf = 0;
             SentencesNoOf = 0;
-            LinesNoOf = 0;
-            noOfLTs = 0;
-            firstWordLength = 0;
-            firstWordPtr = 0;
-            firstWord = "";
-            firstWord1stChr = ' ';
-            secondWord = "";
-            secondWordLength = 0;
-            secondWordPtr = 0;
-            firstWordHasDelimiter = false;
-            firstWordAllCapitals = true;
-            nothingYet = true;
-            atFirstWord = false;
-            pastFirstWord = false;
-            atSecondWord = false;
-            pastSecondWord = false;
-            WordEndsWithFullStop = false;
-            WordIsAInteger = false;
-            WordIsAHexNumber = false;
-            SentenceLength = 0;
-            ParagraphLength = 0;
-            lastCharInLine = (Char)10;
             DebugText = "";
-            AddASpace = false;
-            allCapitals = false;
+            firstWord1stChr = ' ';
+            lastChar = (Char)10;
 
             // Get the text that were formatting
 
             txtText = this.TheText;
 
-            // First up ")." is the preferred end of a sentence not ".)" etc not ?} causes problems in MVC Routes
-
-            txtText = txtText.Replace(".)", ").");
-            txtText = txtText.Replace("?)", ")?");
-            txtText = txtText.Replace("!)", ")!");
-            txtText = txtText.Replace(".}", "}.");
-            txtText = txtText.Replace("!}", "}!");
-            txtText = txtText.Replace(".]", "].");
-            txtText = txtText.Replace("?]", "]?");
-            txtText = txtText.Replace("!]", "]!");
-            txtText = txtText.Replace(".”", "”.");
-            txtText = txtText.Replace(",”", "”,");
-            txtText = txtText.Replace("?”", "”?");
-            txtText = txtText.Replace("!”", "”!");
-            // mfenced in MathsML has be deprecated (this saves having to change individual nodes)
-            if (txtText.Contains("<mfenced open='[' close=']' separators=''>"))
-            {
-                txtText = txtText.Replace("<mfenced open='[' close=']' separators=''>", "<mrow> <mo>[</mo>");
-                txtText = txtText.Replace("</mfenced>", "<mo>]</mo> </mrow>");
-            }
-            if (txtText.Contains("<mfenced>"))
-            {
-                txtText = txtText.Replace("<mfenced>", "<mrow> <mo>(</mo>");
-                txtText = txtText.Replace("</mfenced>", "<mo>)</mo> </mrow>");
-            }
+            txtText = DivTxt_MakeSentenceEndingsConsistant(txtText);
+            txtText = DivTxt_FixDepecratedMathsML(txtText);
 
             noOfChars = txtText.Length;
 
@@ -1421,21 +1358,14 @@
                     nextChar = ' ';
                 }
 
-                // Change square list char to circular list char causes problems otherwise
-
-                if (currChar == (Char)61607)
-                {
-                    currChar = '•';
-                }
+                currChar = DivTxt_ChangeOddChars(currChar);
 
                 // Skip the character in the following situations
                 //   Skip Line Feeds and Carriage returns if were formatting 
                 //   Skip whitespace
 
                 if (!(
-                      (currChar == (Char)10 && Format) ||
-                      (currChar == (Char)13 && Format) ||
-                      (currChar == ' ' && lastChar == ' ' && Format)
+                        DivTxt_SkipChar(currChar, lastChar, Format)
                      ))
                 {
 
@@ -1443,33 +1373,31 @@
 
                     if (lastChar == (Char)10)
                     {
+                        atFirstWord = false;
+                        atSecondWord = false;
                         ItsGotATab = false;
                         ItsGotAGT = false;
                         ItsGotALTSlash = false;
                         ItsGotACapital = false;
-                        noOfLTs = 0;
-                        lastCharInLine = (Char)10;
-                        firstWordLength = 0;
-                        firstWordPtr = 0;
-                        secondWordLength = 0;
-                        secondWordPtr = 0;
-                        nothingYet = true;
-                        atFirstWord = false;
-                        pastFirstWord = false;
-                        atSecondWord = false;
-                        pastSecondWord = false;
-                        firstWord = "";
-                        firstWord1stChr = ' ';
-                        secondWord = "";
-                        lineEnd = -1;
-                        txtCtr = txtPtr;
-                        lineCurrChar = ' ';
-                        lineLastChar = ' ';
-                        lineNextChar = ' ';
-                        allCapitals = true;
                         ItsAList = false;
                         ItsAnOrderedList = false;
                         ItsAnUnorderedList = false;
+                        pastFirstWord = false;
+                        pastSecondWord = false;
+                        allCapitals = true;
+                        nothingYet = true;
+                        firstWord = "";
+                        secondWord = "";
+                        firstWordLength = 0;
+                        firstWordPtr = 0;
+                        noOfLTs = 0;
+                        secondWordLength = 0;
+                        secondWordPtr = 0;
+                        lineEnd = -1;
+                        firstWord1stChr = ' ';
+                        lastCharInLine = (Char)10;
+                        lineLastChar = ' ';
+                        txtCtr = txtPtr;
 
                         // Scan the new line and decide if its to be formatted or not
 
@@ -1484,53 +1412,11 @@
                             {
                                 lineNextChar = ' ';
                             }
-
-                            if (lineCurrChar == (Char)9) { ItsGotATab = true; }
-                            if (lineCurrChar == '<') { noOfLTs++; }
-                            if (lineCurrChar == '>') { ItsGotAGT = true; }
-                            if (lineLastChar == '<' && lineCurrChar == '/') { ItsGotALTSlash = true; }
-                            if (!ItsGotACapital)
-                            {
-                                if ((int)lineCurrChar >= (int)'A' && (int)lineCurrChar <= (int)'Z')
-                                {
-                                    ItsGotACapital = true;
-                                }
-                            }
-                            if (lineCurrChar == (Char)10) { lineEnd = txtCtr; }
-                            if ((int)lineCurrChar > 32) { lastCharInLine = lineCurrChar; }
-                            if (lineCurrChar == (Char)61607) { lineCurrChar = '•'; }
                             if (!pastSecondWord)
                             {
                                 AnalyseNewLine(lineCurrChar, lineNextChar, lineLastChar, ref firstWord1stChr, ref nothingYet, ref atFirstWord, ref pastFirstWord, ref atSecondWord, ref pastSecondWord, ref firstWordAllCapitals, ref firstWordHasDelimiter, ref WordIsAInteger, ref WordIsAHexNumber, ref WordEndsWithFullStop, ref ItsAList, ref ItsAnUnorderedList, ref ItsAnOrderedList, ref ListItemEndsWithFullStop, ref txtCtr, ref firstWordPtr, ref firstWordLength, ref secondWordPtr, ref secondWordLength, ref firstWord, ref secondWord, Format);
-
-                                // In list change tabs to spaces
-
-                                if (lineCurrChar == (Char)9 && ItsAList)
-                                {
-                                    lineCurrChar = ' ';
-                                }
                             }
-                            if (allCapitals)
-                            {
-                                // figure headings are never all Capitals (the actual picture won't go in the right place)
-                                if (firstWord.Length > 2)
-                                {
-                                    if (firstWord.Substring(0, 3).ToLower() == "fig")
-                                    {
-                                        allCapitals = false;
-                                    }
-                                }
-                                // if it contains a lower case letter its not all Capitals
-                                if ((int)lineCurrChar >= (int)'a' && (int)lineCurrChar <= (int)'z')
-                                {
-                                    allCapitals = false;
-                                }
-                                if (ItsAList)
-                                {
-                                    allCapitals = false;
-                                }
-                            }
-
+                            DivTxt_NewLine_AnySpecialChars(txtCtr, ref lineCurrChar, lineLastChar, ref lastCharInLine, ref lineEnd, firstWord, ref noOfLTs, ref ItsGotATab, ref ItsGotAGT, ref ItsGotALTSlash, ref ItsGotACapital, ref allCapitals, ItsAList);
                             lineLastChar = lineCurrChar;
                             txtCtr += 1;
                         }
@@ -1538,236 +1424,59 @@
 
                         newLine = txtText.Substring(txtPtr, txtCtr - txtPtr);
 
+                        // No Horizontal Rules in Lists
+
                         if (firstWord == "<hr>") { ItsAList = false; ItsAnOrderedList = false; ItsAnUnorderedList = false; }
+
+                        // Has this line got any HTML in it
 
                         if (noOfLTs > 1 && ItsGotAGT && ItsGotALTSlash) { ItsGotHTML = true; } else { ItsGotHTML = false; }
 
-                        if (allCapitals && !ItsGotACapital)
-                        {
-                            allCapitals = false;
-                        }
+                        //if (allCapitals && !ItsGotACapital)
+                        //{
+                        //    allCapitals = false;
+                        //}
 
-                        // Decide whether were formatting this line or treating it as preformatted code
+                        // Decide whether were formatting this line or treating it as preformatted code. First Line
+                        // of the entire text special processing. Are we starting a new paragraph?
 
                         FormatBefore = Format;
                         Format = Formatting(ref Format, firstWord, firstWord1stChr, secondWord, lastCharInLine, ItsAList, ref SplittingOnColon, newLine, allCapitals);
-
-                        // Next LF wont be on the First Line and becuase lastChar was LF this is the end of a line
-
-                        if (FirstLine && (ParagraphLength == 0))
-                        {
-                            // Insert List indicator prior to adding 1st char to the paragraph 
-                            // (otherwise it ignores list items starting on 1st line)
-                            if (ItsAnOrderedList && InsertIndicators)
-                            {
-                                paragraph = "¤";
-                                ParagraphLength = 1;
-                            }
-                            if (ItsAnUnorderedList && InsertIndicators)
-                            {
-                                paragraph = "¥";
-                                ParagraphLength = 1;
-                            }
-                            if (allCapitals && InsertIndicators)
-                            {
-                                paragraph = "Ÿ";
-                                ParagraphLength = 1;
-                            }
-                        }
-
-                        // if this is the first line and last char is LF and paragraph isnt empty were not at the
-                        // beginning of the very first line (very 1st lastChar is set to LF) were at the end of the first line
-
-                        if (FirstLine && (ParagraphLength > 1))
-                        {
-                            FirstLine = false;
-                        }
-
-                        // if lastChar is LF (except on very 1st char) were at the beginning of a new line
-
-                        if (!FirstLine)
-                        {
-                            endOfLine = true;
-                            oldLineLength = LineLength;
-                        }
-
-                        // Is this new line a new paragraph (and hence a new sentence)
-                        //
-                        // This is the logic:-
-                        // First line isnt a new paragraph (the logic assumes their was a preceding paragraph)
-                        // If weve just gone from normal paragraphs to code thats pre-formatted or visa versa or
-                        // If were formatting (normal paragraphs) 
-                        // wait till the character pointer is at the 1st non blank character of the new line 
-                        // (i.e. skip over whitespace after the end of the last paragraph) and
-                        // 1st letter of the new paragraph is a capital A through to Z or " or [ ([ for Euclid) or
-                        // its a list item or
-                        // A single word line or
-                        // If were not formatting and the line contains a tab (each row of table needs to be separate)
-                        //
-                        // Then its a new paragraph and hence a new sentence
-
-                        if (!FirstLine &&
-                            (
-                              (FormatBefore != Format) ||
-                              (
-                               (
-                                Format && (int)currChar > 32 &&
-                                (
-                                 ((int)firstWord1stChr >= (int)'A' && (int)firstWord1stChr <= (int)'Z') ||
-                                 firstWord1stChr == '"' ||
-                                 firstWord1stChr == '[' ||
-                                 firstWord1stChr == '(' ||
-                                 ItsAList ||
-                                 (secondWordLength < 1 && !WordEndsWithFullStop)
-                                )
-                               ) ||
-                               (
-                                !Format && ItsGotATab
-                               )
-                              )
-                             )
-                            )
-                        {
-                            endOfParagraph = true;
-                            endOfSentence = true;
-                        }
-
+                        DivTxt_SpecialStuffForFirstLine(InsertIndicators, ref ParagraphLength, ref paragraph, allCapitals, ref endOfLine, ItsAnOrderedList, ItsAnUnorderedList, ref FirstLine);
+                        DivTxt_IsItANewParagraph(secondWordLength, currChar, firstWord1stChr, ItsGotATab, FormatBefore, ref endOfParagraph, ref endOfSentence, ItsAList, WordEndsWithFullStop, FirstLine, Format);
                     }
-                    // End of Last Char was a LF so we do the following for every character 
+                    // End of Last Char was a LF loop, so we do the following for every character 
 
-                    // Turn off Formatting and start a new paragraph if this line terminates with a ":"  
-                    // This allows us to manually turn off formatting for the text that follows
+                    SplittingOnColon = DivTxt_SplitOnColon(SplitOnColon, currChar, nextChar, newLine, SplittingOnColon, Format);
 
-                    if (currChar == ':' && Format && SplitOnColon)
-                    {
-                        if (nextChar == (Char)13 || AllBlanks(newLine.Substring(newLine.IndexOf(":") + 1)))
-                        {
-                            SplittingOnColon = true;
-                        }
-                    }
-
-                    // In list change tabs to spaces
+                    // In list change tabs to spaces 
 
                     if (currChar == (Char)9 && ItsAList)
                     {
                         currChar = ' ';
                     }
 
-                    // There seem to numerous examples where a space needs to be added, so created a function that decides
-                    // if this is necessary, dont do it if were splitting on a colon causes no end of difficulties
+                    // Add Space if required, Add to existing line, sentence and paragraph or create new ones if 
+                    // required. Note if we've reached the end of a sentence (End of sentence occurs on the next
+                    // character, the one that follows the full stop
 
-                    AddASpace = false;
-                    if (Format)
-                    {
-                        if ((currChar != ':' && nextChar == (Char)13) ||
-                            (currChar == ',' || currChar == ';' || currChar == ')' || currChar == '}' || currChar == ']'))
-                        {
-                            AddASpace = AddSpace(lastChar, currChar, nextChar, Debug, ref DebugText);
-                        }
-                    }
+                    AddASpace = DivTxt_AddSpace(ref DebugText, Debug, currChar, lastChar, nextChar, Format);
+                    DivTxt_IsItANewLine(ref LinesNoOf, ref Lines, DebugText, Debug, ref LineLength, currChar, ref line, AddASpace, ref endOfLine);
+                    DivTxt_IsItANewSentence(ParagraphsNoOf, ref SentencesNoOf, ref Sentences, ref SentenceInParagraph, DebugText, Debug, ref SentenceLength, currChar, ref sentence, AddASpace, ref endOfSentence, Format);
+                    DivTxt_IsItANewParagraph(ref ParagraphsNoOf, ref Paragraphs, DebugText, Debug, InsertIndicators, ref ParagraphLength, currChar, ref paragraph, sentence, AddASpace, allCapitals, ref endOfParagraph, ItsAnOrderedList, ItsAnUnorderedList, ItsGotHTML, ref SplittingOnColon, Format);
+                    DivTxt_HaveWeReachedTheEndOfASentence(currChar, lastChar, nextChar, ref endOfSentence, ref ListItemEndsWithFullStop, Format);
 
-                    // Start Newline if (we've reached the end of a line)
-
-                    if (endOfLine)
-                    {
-                        endOfLine = false;
-                        StartNewLine(ref LinesNoOf, ref Lines, ref line, currChar, ref LineLength, Debug, DebugText);
-                    }
-                    else
-                    {
-                        line += currChar;
-                        LineLength += 1;
-                        if (AddASpace)
-                        {
-                            line += " ";
-                            LineLength += 1;
-                        }
-                    }
-
-                    // Start new Sentence if we've hit a fullstop and we've now hit non-blank text following the full stop
-
-                    if (endOfSentence && (int)currChar > 32)
-                    {
-                        endOfSentence = false;
-                        StartNewSentence(ParagraphsNoOf, ref SentencesNoOf, ref Sentences, ref SentenceInParagraph, ref sentence, ref SentenceLength, currChar, Debug, DebugText, Format);
-                    }
-                    else
-                    {
-                        if (!endOfSentence)
-                        {
-                            sentence += currChar;
-                            SentenceLength += 1;
-                            if (AddASpace)
-                            {
-                                sentence += " ";
-                                SentenceLength += 1;
-                            }
-                        }
-                    }
-
-                    // Start New Pragraph if we've reached the 1st printable character after the end of the last paragraph
-
-                    if (endOfParagraph && (int)currChar > 32)
-                    {
-                        endOfParagraph = false;
-                        StartNewParagraph(ref ParagraphsNoOf, ref Paragraphs, sentence, ref paragraph, currChar, ref ParagraphLength, Debug, DebugText, Format, ItsAnOrderedList, ItsAnUnorderedList, ItsGotHTML, SplittingOnColon, InsertIndicators, allCapitals);
-                        // Turn off Splitting On A Colon indicator here as weve now started a new Paragraph
-                        SplittingOnColon = false;
-                    }
-                    else
-                    {
-                        if (!endOfParagraph)
-                        {
-                            paragraph += currChar;
-                            ParagraphLength += 1;
-                            if (AddASpace)
-                            {
-                                paragraph += " ";
-                                ParagraphLength += 1;
-                            }
-                        }
-                    }
-
-                    // Have we reached the end of a sentence
-
-                    // Basically if we've hit a full stop the next char is a space (or non-printable) and the previous char 
-                    // was alphanumeric or a closing bracket weve reached the end of a sentence
-
-                    // The one case where this isnt the end of a sentence is the full-stop follows a list item in a  
-                    // list (i.e. the 1st word in a line is delimited by a fullstop)
-                    // so dont indicate its an end of sentence in this case??
-
-                    // Place here rather than before end of sentence above as we want to include the full stop... so currChar 
-                    // will move onto the next char prior to starting the new sentence
-
-                    if (Format && (currChar == '.' || currChar == '?') && (int)nextChar <= 32 &&
-                       ((int)lastChar >= (int)'a' && (int)lastChar <= (int)'z' ||
-                       (int)lastChar >= (int)'A' && (int)lastChar <= (int)'Z' ||
-                       (int)lastChar >= (int)'0' && (int)lastChar <= (int)'9' ||
-                       lastChar == '>' ||
-                       lastChar == ')' ||
-                       lastChar == '}' ||
-                       lastChar == ']'))
-                    {
-                        if (ListItemEndsWithFullStop)
-                        {
-                            ListItemEndsWithFullStop = false;
-                        }
-                        else
-                        {
-                            endOfSentence = true;
-                        }
-                    }
                     // So that lastChar is correct, for eliminating white space etc.
+
                     if (AddASpace)
                     {
                         currChar = ' ';
                     }
                 }
-                // End of Dont skip this character
+                // End of Dont skip this character loop
                 lastChar = currChar;
             }
-            // End of Character Loop i.e. there are no more characters in the text
+            // End of Character loop i.e. there are no more characters in the text
 
             // Add remaining characters (if text didnt end neatly on the end of a paragraph, sentence or line)
 
@@ -1793,6 +1502,338 @@
                 ParagraphsNoOf += 1;
                 Paragraphs.Add(paragraph);
             }
+        }
+
+        private bool DivTxt_SplitOnColon(bool SplitOnColon, char currChar, char nextChar, string newLine, bool SplittingOnColon, bool Format)
+        {
+            // Turn off Formatting and start a new paragraph if this line terminates with a ":"  
+            // This allows us to manually turn off formatting for the text that follows
+
+            if (currChar == ':' && Format && SplitOnColon)
+            {
+                if (nextChar == (Char)13 || AllBlanks(newLine.Substring(newLine.IndexOf(":") + 1)))
+                {
+                    SplittingOnColon = true;
+                }
+            }
+
+            return SplittingOnColon;
+        }
+
+        private bool DivTxt_AddSpace(ref string DebugText, bool Debug, char currChar, char lastChar, char nextChar, bool Format)
+        {
+            // There seem to numerous examples where a space needs to be added, so created a function that decides
+            // if this is necessary, dont do it if were splitting on a colon causes no end of difficulties
+
+            bool AddASpace = false;
+            if (Format)
+            {
+                if ((currChar != ':' && nextChar == (Char)13) ||
+                    (currChar == ',' || currChar == ';' || currChar == ')' || currChar == '}' || currChar == ']'))
+                {
+                    AddASpace = AddSpace(lastChar, currChar, nextChar, Debug, ref DebugText);
+                }
+            }
+
+            return AddASpace;
+        }
+
+        private static bool DivTxt_SkipChar(char currChar, char lastChar, bool Format)
+        {
+            return (currChar == (Char)10 && Format) ||
+                                  (currChar == (Char)13 && Format) ||
+                                  (currChar == ' ' && lastChar == ' ' && Format);
+        }
+
+        private static void DivTxt_HaveWeReachedTheEndOfASentence(char currChar, char lastChar, char nextChar, ref bool endOfSentence, ref bool ListItemEndsWithFullStop, bool Format)
+        {
+            // Have we reached the end of a sentence
+
+            // Basically if we've hit a full stop the next char is a space (or non-printable) and the previous char 
+            // was alphanumeric or a closing bracket weve reached the end of a sentence
+
+            // The one case where this isnt the end of a sentence is the full-stop follows a list item in a  
+            // list (i.e. the 1st word in a line is delimited by a fullstop)
+            // so dont indicate its an end of sentence in this case??
+
+            // Place here rather than before end of sentence above as we want to include the full stop... so currChar 
+            // will move onto the next char prior to starting the new sentence
+
+            if (Format && (currChar == '.' || currChar == '?') && (int)nextChar <= 32 &&
+               ((int)lastChar >= (int)'a' && (int)lastChar <= (int)'z' ||
+               (int)lastChar >= (int)'A' && (int)lastChar <= (int)'Z' ||
+               (int)lastChar >= (int)'0' && (int)lastChar <= (int)'9' ||
+               lastChar == '>' ||
+               lastChar == ')' ||
+               lastChar == '}' ||
+               lastChar == ']'))
+            {
+                if (ListItemEndsWithFullStop)
+                {
+                    ListItemEndsWithFullStop = false;
+                }
+                else
+                {
+                    endOfSentence = true;
+                }
+            }
+        }
+
+        private void DivTxt_IsItANewParagraph(ref int ParagraphsNoOf, ref List<string> Paragraphs, string DebugText, bool Debug, bool InsertIndicators, ref int ParagraphLength, char currChar, ref string paragraph, string sentence, bool AddASpace, bool allCapitals, ref bool endOfParagraph, bool ItsAnOrderedList, bool ItsAnUnorderedList, bool ItsGotHTML, ref bool SplittingOnColon, bool Format)
+        {
+            // Start New Pragraph if we've reached the 1st printable character after the end of the last paragraph
+
+            if (endOfParagraph && (int)currChar > 32)
+            {
+                endOfParagraph = false;
+                StartNewParagraph(ref ParagraphsNoOf, ref Paragraphs, sentence, ref paragraph, currChar, ref ParagraphLength, Debug, DebugText, Format, ItsAnOrderedList, ItsAnUnorderedList, ItsGotHTML, SplittingOnColon, InsertIndicators, allCapitals);
+                // Turn off Splitting On A Colon indicator here as weve now started a new Paragraph
+                SplittingOnColon = false;
+            }
+            else
+            {
+                if (!endOfParagraph)
+                {
+                    paragraph += currChar;
+                    ParagraphLength += 1;
+                    if (AddASpace)
+                    {
+                        paragraph += " ";
+                        ParagraphLength += 1;
+                    }
+                }
+            }
+        }
+
+        private void DivTxt_IsItANewSentence(int ParagraphsNoOf, ref int SentencesNoOf, ref List<string> Sentences, ref List<int> SentenceInParagraph, string DebugText, bool Debug, ref int SentenceLength, char currChar, ref string sentence, bool AddASpace, ref bool endOfSentence, bool Format)
+        {
+            // Start new Sentence if we've hit a fullstop and we've now hit non-blank text following the full stop
+
+            if (endOfSentence && (int)currChar > 32)
+            {
+                endOfSentence = false;
+                StartNewSentence(ParagraphsNoOf, ref SentencesNoOf, ref Sentences, ref SentenceInParagraph, ref sentence, ref SentenceLength, currChar, Debug, DebugText, Format);
+            }
+            else
+            {
+                if (!endOfSentence)
+                {
+                    sentence += currChar;
+                    SentenceLength += 1;
+                    if (AddASpace)
+                    {
+                        sentence += " ";
+                        SentenceLength += 1;
+                    }
+                }
+            }
+        }
+
+        private void DivTxt_IsItANewLine(ref int LinesNoOf, ref List<string> Lines, string DebugText, bool Debug, ref int LineLength, char currChar, ref string line, bool AddASpace, ref bool endOfLine)
+        {
+            // Start Newline if (we've reached the end of a line)
+
+            if (endOfLine)
+            {
+                endOfLine = false;
+                StartNewLine(ref LinesNoOf, ref Lines, ref line, currChar, ref LineLength, Debug, DebugText);
+            }
+            else
+            {
+                line += currChar;
+                LineLength += 1;
+                if (AddASpace)
+                {
+                    line += " ";
+                    LineLength += 1;
+                }
+            }
+        }
+
+        private static void DivTxt_IsItANewParagraph(int secondWordLength, char currChar, char firstWord1stChr, bool ItsGotATab, bool FormatBefore, ref bool endOfParagraph, ref bool endOfSentence, bool ItsAList, bool WordEndsWithFullStop, bool FirstLine, bool Format)
+        {
+            // Is this new line a new paragraph (and hence a new sentence)
+            //
+            // This is the logic:-
+            // First line isnt a new paragraph (the logic assumes their was a preceding paragraph)
+            // If weve just gone from normal paragraphs to code thats pre-formatted or visa versa or
+            // If were formatting (normal paragraphs) 
+            // wait till the character pointer is at the 1st non blank character of the new line 
+            // (i.e. skip over whitespace after the end of the last paragraph) and
+            // 1st letter of the new paragraph is a capital A through to Z or " or [ ([ for Euclid) or
+            // its a list item or
+            // A single word line or
+            // If were not formatting and the line contains a tab (each row of table needs to be separate)
+            //
+            // Then its a new paragraph and hence a new sentence
+
+            if (!FirstLine &&
+                (
+                  (FormatBefore != Format) ||
+                  (
+                   (
+                    Format && (int)currChar > 32 &&
+                    (
+                     ((int)firstWord1stChr >= (int)'A' && (int)firstWord1stChr <= (int)'Z') ||
+                     firstWord1stChr == '"' ||
+                     firstWord1stChr == '[' ||
+                     firstWord1stChr == '(' ||
+                     ItsAList ||
+                     (secondWordLength < 1 && !WordEndsWithFullStop)
+                    )
+                   ) ||
+                   (
+                    !Format && ItsGotATab
+                   )
+                  )
+                 )
+                )
+            {
+                endOfParagraph = true;
+                endOfSentence = true;
+            }
+        }
+
+        private static void DivTxt_SpecialStuffForFirstLine(bool InsertIndicators, ref int ParagraphLength, ref string paragraph, bool allCapitals, ref bool endOfLine, bool ItsAnOrderedList, bool ItsAnUnorderedList, ref bool FirstLine)
+        {
+            // Next LF wont be on the First Line and becuase lastChar was LF this is the end of a line
+
+            if (FirstLine && (ParagraphLength == 0))
+            {
+                // Insert List indicator prior to adding 1st char to the paragraph 
+                // (otherwise it ignores list items starting on 1st line)
+
+                if (ItsAnOrderedList && InsertIndicators)
+                {
+                    paragraph = "¤";
+                    ParagraphLength = 1;
+                }
+                if (ItsAnUnorderedList && InsertIndicators)
+                {
+                    paragraph = "¥";
+                    ParagraphLength = 1;
+                }
+                if (allCapitals && InsertIndicators)
+                {
+                    paragraph = "Ÿ";
+                    ParagraphLength = 1;
+                }
+            }
+
+            // if this is the first line and last char is LF and paragraph isnt empty were not at the
+            // beginning of the very first line (very 1st lastChar is set to LF) were at the end of the first line
+
+            if (FirstLine && (ParagraphLength > 1))
+            {
+                FirstLine = false;
+            }
+
+            // if lastChar is LF (except on very 1st char) were at the beginning of a new line
+
+            if (!FirstLine)
+            {
+                endOfLine = true;
+            }
+        }
+
+        private static void DivTxt_NewLine_AnySpecialChars(int txtCtr, ref char lineCurrChar, char lineLastChar, ref char lastCharInLine, ref int lineEnd, string firstWord, ref int noOfLTs, ref bool ItsGotATab, ref bool ItsGotAGT, ref bool ItsGotALTSlash, ref bool ItsGotACapital, ref bool allCapitals, bool ItsAList)
+        {
+            if (lineCurrChar == (Char)9) { ItsGotATab = true; }
+            if (lineCurrChar == '<') { noOfLTs++; }
+            if (lineCurrChar == '>') { ItsGotAGT = true; }
+            if (lineLastChar == '<' && lineCurrChar == '/') { ItsGotALTSlash = true; }
+            if (lineCurrChar == (Char)10) { lineEnd = txtCtr; }
+            if ((int)lineCurrChar > 32) { lastCharInLine = lineCurrChar; }
+            // if (lineCurrChar == (Char)61607) { lineCurrChar = '•'; }
+
+            // In lists change tabs to spaces
+
+            if (lineCurrChar == (Char)9 && ItsAList)
+            {
+                lineCurrChar = ' ';
+            }
+            if (!ItsGotACapital)
+            {
+                if ((int)lineCurrChar >= (int)'A' && (int)lineCurrChar <= (int)'Z')
+                {
+                    ItsGotACapital = true;
+                }
+            }
+            if (allCapitals)
+            {
+                // figure headings are never all Capitals (the actual picture won't go in the right place)
+
+                if (firstWord.Length > 2)
+                {
+                    if (firstWord.Substring(0, 3).ToLower() == "fig")
+                    {
+                        allCapitals = false;
+                    }
+                }
+
+                // if it contains a lower case letter its not all Capitals
+
+                if ((int)lineCurrChar >= (int)'a' && (int)lineCurrChar <= (int)'z')
+                {
+                    allCapitals = false;
+                }
+                if (ItsAList)
+                {
+                    allCapitals = false;
+                }
+            }
+        }
+
+        private static char DivTxt_ChangeOddChars(char currChar)
+        {
+            // Change square list char to circular list char causes problems otherwise
+
+            if (currChar == (Char)61607)
+            {
+                currChar = '•';
+            }
+            if (currChar == (Char)8211)
+            {
+                currChar = '-';
+            }
+
+            return currChar;
+        }
+
+        private static string DivTxt_FixDepecratedMathsML(string txtText)
+        {
+            // mfenced in MathsML has be deprecated (this saves having to change individual nodes)
+            if (txtText.Contains("<mfenced open='[' close=']' separators=''>"))
+            {
+                txtText = txtText.Replace("<mfenced open='[' close=']' separators=''>", "<mrow> <mo>[</mo>");
+                txtText = txtText.Replace("</mfenced>", "<mo>]</mo> </mrow>");
+            }
+            if (txtText.Contains("<mfenced>"))
+            {
+                txtText = txtText.Replace("<mfenced>", "<mrow> <mo>(</mo>");
+                txtText = txtText.Replace("</mfenced>", "<mo>)</mo> </mrow>");
+            }
+
+            return txtText;
+        }
+
+        private static string DivTxt_MakeSentenceEndingsConsistant(string txtText)
+        {
+            // First up ")." is the preferred end of a sentence not ".)" etc not ?} causes problems in MVC Routes
+
+            txtText = txtText.Replace(".)", ").");
+            txtText = txtText.Replace("?)", ")?");
+            txtText = txtText.Replace("!)", ")!");
+            txtText = txtText.Replace(".}", "}.");
+            txtText = txtText.Replace("!}", "}!");
+            txtText = txtText.Replace(".]", "].");
+            txtText = txtText.Replace("?]", "]?");
+            txtText = txtText.Replace("!]", "]!");
+            txtText = txtText.Replace(".”", "”.");
+            txtText = txtText.Replace(",”", "”,");
+            txtText = txtText.Replace("?”", "”?");
+            txtText = txtText.Replace("!”", "”!");
+            return txtText;
         }
     }
 }

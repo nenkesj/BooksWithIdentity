@@ -60,7 +60,7 @@
             debugText = "";
             ParagraphsNoOf = 0;
             LinesNoOf = 0;
-            this.DivideText(out ParagraphsNoOf, ref Paragraphs, out SentencesNoOf, ref Sentences, ref SentenceInParagraph, out LinesNoOf, ref Lines, out debugText, LineWidth, Debug, true, true, true, false, SplitOnLF, false);
+            this.DivideText(out ParagraphsNoOf, ref Paragraphs, out SentencesNoOf, ref Sentences, ref SentenceInParagraph, out LinesNoOf, ref Lines, out debugText, Debug, false, false);
             this.TheAlteredText = "There were " + SentencesNoOf.ToString() + " sentences in text these are:-" + (Char)13 + (Char)10;
             this.TheAlteredText = "There were " + Sentences.Count + " Sentences in text" + (Char)13 + (Char)10 + (Char)13 + (Char)10;
             for (int i = 0; i <= SentencesNoOf - 1; i++)
@@ -94,7 +94,7 @@
             //Debug.WriteLine("Elapsed ms Old DivideText: {0}", sw.ElapsedTicks);
             //sw1.Reset();
             //sw1.Start();
-            this.DivideText(out ParagraphsNoOf, ref Paragraphs, out SentencesNoOf, ref Sentences, ref SentenceInParagraph, out LinesNoOf, ref Lines, out debugText, LineWidth, debug, EliminateWhiteSpace, tabs, SplitHeaders, SplitOnColon, SplitOnLF, InsertIndicators);
+            this.DivideText(out ParagraphsNoOf, ref Paragraphs, out SentencesNoOf, ref Sentences, ref SentenceInParagraph, out LinesNoOf, ref Lines, out debugText, debug, SplitOnColon, InsertIndicators);
             //sw1.Stop();
             //Debug.WriteLine("Elapsed ms New DivideText: {0}", sw1.ElapsedTicks);
 

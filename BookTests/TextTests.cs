@@ -411,26 +411,20 @@ namespace Books.Tests
         public void DivideText_Everything_True()
         {
             // Arrange
-            int ParagraphsNoOf, SentencesNoOf, LinesNoOf, WordsNoOf, lineWidth;
-            bool Debug, eliminateWhiteSpace, tabs, splitHeaders, splitOnColon, splitOnLF, InsertIndicators;
+            bool Debug, splitOnColon, InsertIndicators;
             string DebugText;
             List<string> Paragrphs = new List<string>();
             List<string> Sentences = new List<string>();
             List<int> SentenceInParagraph = new List<int>();
             List<string> Lines = new List<string>();
             Paragraphs Paragraphs = new Paragraphs();
-            lineWidth = 0;
             Debug = true;
-            eliminateWhiteSpace = true;
-            tabs = false;
-            splitHeaders = false;
             splitOnColon = false;
-            splitOnLF = false;
             InsertIndicators = true;
             Text txt = new Text();
             txt.TheText = "Paragraph one Sentence one. Paragraph one Sentence two Line one.\r\nParagraph two Sentence three Line two.\r\nParagraph three Sentence four Line three.\r\n";
             // Act
-            txt.DivideText(out ParagraphsNoOf, ref Paragrphs, out SentencesNoOf, ref Sentences, ref SentenceInParagraph, out LinesNoOf, ref Lines, out DebugText, lineWidth, Debug, eliminateWhiteSpace, tabs, splitHeaders, splitOnColon, splitOnLF, InsertIndicators);
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
             //Assert
             Assert.Equal("Paragraph one Sentence one. Paragraph one Sentence two Line one. ", Paragrphs[0]);
             Assert.Equal("Paragraph two Sentence three Line two. ", Paragrphs[1]);
@@ -445,6 +439,146 @@ namespace Books.Tests
             Assert.Equal(3, ParagraphsNoOf);
             Assert.Equal(4, SentencesNoOf);
             Assert.Equal(3, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_Tables_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "In Chapter 22, I describe some of the other features that views support. Table 21-1 puts Razor views in context.\r\nTable 21-1 Putting Razor Views in Context\r\nQuestion\tAnswer\r\nWhat are they?\tViews are files that contain a mix of static HTML content and C# expressions.\r\nWhy are they useful?\tViews are used to create HTML responses for HTTP requests. The C# expressions are evaluated and combined with the HTML content to create a response.\r\nHow are they used?\tThe View method defined by the Controller class creates an action response that uses a view.\r\nAre there any pitfalls or limitations?\tIt can take a little time to get used to the syntax of view files and the way they combine code and content.\r\nAre there any alternatives?\tThere are third-party view engines that can be used in ASP.NET Core MVC, but their use is limited.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal(8, ParagraphsNoOf);
+            Assert.Equal(12, SentencesNoOf);
+            Assert.Equal(8, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_UnorderedList_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "She has asked for these four key features:\r\n\r\n• A home page that shows information about the party\r\n\r\n• A form that can be used to RSVP \r\n\r\n• Validation for the RSVP form, which will display a thank-you page\r\n\r\n• A summary page that shows who is coming to the party \r\n\r\nIn this chapter, I create an ASP.NET Core project and use it to create a simple application that contains these features; once everything works, I’ll apply some styling to improve the appearance of the finished application.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal(6, ParagraphsNoOf);
+            Assert.Equal(6, SentencesNoOf);
+            Assert.Equal(6, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_OrderedList_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "She has asked for these four key features:\r\n\r\n1. A home page that shows information about the party\r\n\r\n2. A form that can be used to RSVP \r\n\r\n3. Validation for the RSVP form, which will display a thank-you page\r\n\r\n4. A summary page that shows who is coming to the party \r\n\r\nIn this chapter, I create an ASP.NET Core project and use it to create a simple application that contains these features; once everything works, I’ll apply some styling to improve the appearance of the finished application.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal(6, ParagraphsNoOf);
+            Assert.Equal(6, SentencesNoOf);
+            Assert.Equal(6, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_Code_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "Listing 3-7 adds a new action method to the Home controller:\r\n\r\nusing Microsoft.AspNetCore.Mvc;\r\nnamespace PartyInvites.Controllers {\r\n    public class HomeController : Controller {\r\n        public IActionResult Index() {\r\n            return View();\r\n        }\r\n        public ViewResult RsvpForm() {\r\n            return View();\r\n        }\r\n    }\r\n}\r\n\r\nListing 3-7 Adding an Action Method in the HomeController.cs File in the Controllers Folder \r\n\r\nBoth action methods invoke the View method without arguments, which may seem odd, but remember that the Razor view engine will use the name of the action method when looking for a view file, as explained in Chapter 2.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal(4, ParagraphsNoOf);
+            Assert.Equal(4, SentencesNoOf);
+            Assert.Equal(15, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_TabsInOrderedList_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "She has asked for these four key features:\r\n\r\n1. A home page that shows information about the party\r\n\r\n2. A form that can be used to RSVP \r\n\r\n3. Validation for the RSVP form, which will display a thank-you page\r\n\r\n4. A summary page\tthat shows who is coming to the party \r\n\r\nIn this chapter, I create an ASP.NET Core project and use it to create a simple application that contains these features; once everything works, I’ll apply some styling to improve the appearance of the finished application.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal("§4. A summary page that shows who is coming to the party \r\n\r\n", Paragrphs[4]);
+            Assert.Equal(6, ParagraphsNoOf);
+            Assert.Equal(6, SentencesNoOf);
+            Assert.Equal(7, LinesNoOf);
+        }
+        [Fact]
+        public void DivideText_OddCharacter_True()
+        {
+            // Arrange
+            bool Debug, splitOnColon, InsertIndicators;
+            string DebugText;
+            List<string> Paragrphs = new List<string>();
+            List<string> Sentences = new List<string>();
+            List<int> SentenceInParagraph = new List<int>();
+            List<string> Lines = new List<string>();
+            Paragraphs Paragraphs = new Paragraphs();
+            Debug = true;
+            splitOnColon = false;
+            InsertIndicators = true;
+            Text txt = new Text();
+            txt.TheText = "Fig. 9–1. A small displacement of an object.\r\n";
+            // Act
+            txt.DivideText(out int ParagraphsNoOf, ref Paragrphs, out int SentencesNoOf, ref Sentences, ref SentenceInParagraph, out int LinesNoOf, ref Lines, out DebugText, Debug, splitOnColon, InsertIndicators);
+            //Assert
+            Assert.Equal("Fig. 9-1. A small displacement of an object. ", Paragrphs[0]);
+            Assert.Equal(1, ParagraphsNoOf);
+            Assert.Equal(3, SentencesNoOf);
+            Assert.Equal(1, LinesNoOf);
         }
     }
 }
