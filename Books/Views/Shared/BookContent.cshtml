@@ -308,7 +308,6 @@
 
                 for (int i = 0; i < @Model.NoOfPictures; i++)
                 {
-                    bool DisplayedPicture = false;
                     Title = Model.Pictures.ToArray()[i].Title;
                     FigType = Title.Substring(0,3);
                     FigNo = Title.Substring(Title.IndexOf(" ") + 1);
@@ -361,9 +360,8 @@
                                     {
                                         <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
                                     }
-                                </figure>
+                                </figure>                                   
                                 Model.PicturePointer = i + 1;
-                                DisplayedPicture = true;
                                 break;
                             }
                         }
@@ -381,14 +379,13 @@
                                 }
                             </figure>
                             Model.PicturePointer = i + 1;
-                            DisplayedPicture = true;
                             break;
                         }
                     }
-                    if (@Model.ShowingSummary && !DisplayedPicture)
-                    {
-                        Model.PicturePointer = i + 1;
-                    }
+                    //if (@Model.ShowingSummary)
+                    //{
+                    //    Model.PicturePointer++;
+                    //}
                 }
             }
         }

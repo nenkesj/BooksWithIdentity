@@ -721,6 +721,7 @@ namespace Books.Controllers
             if (form.GreekUpper != "None")
             {
                 form.Ident3 = "&" + form.GreekUpper;
+                form.Oper3 = "&" + form.GreekUpper;
                 form.Insert = "Identifier";
                 form.GreekUpper = "None";
             }
@@ -1329,11 +1330,25 @@ namespace Books.Controllers
         {
             if (form.BoldIdent && sb.ToString().Contains(searchfor))
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                if (form.Reverse)
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                }
             }
             else
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                if (form.Reverse)
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                }
+                else
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                }
             }
         }
 

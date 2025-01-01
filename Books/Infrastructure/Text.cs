@@ -1360,10 +1360,6 @@
 
                 currChar = DivTxt_ChangeOddChars(currChar);
 
-                // Skip the character in the following situations
-                //   Skip Line Feeds and Carriage returns if were formatting 
-                //   Skip whitespace
-
                 if (!(
                         DivTxt_SkipChar(currChar, lastChar, Format)
                      ))
@@ -1399,8 +1395,7 @@
                         lineLastChar = ' ';
                         txtCtr = txtPtr;
 
-                        // Scan the new line and decide if its to be formatted or not
-
+                        // Scan the new line 
                         do
                         {
                             lineCurrChar = txtArr[txtCtr];
@@ -1438,7 +1433,7 @@
                         //}
 
                         // Decide whether were formatting this line or treating it as preformatted code. First Line
-                        // of the entire text special processing. Are we starting a new paragraph?
+                        // of the entire text special processing. Is this line the start of a new paragraph?
 
                         FormatBefore = Format;
                         Format = Formatting(ref Format, firstWord, firstWord1stChr, secondWord, lastCharInLine, ItsAList, ref SplittingOnColon, newLine, allCapitals);
@@ -1540,6 +1535,10 @@
 
         private static bool DivTxt_SkipChar(char currChar, char lastChar, bool Format)
         {
+            // Skip the character in the following situations
+            //   Skip Line Feeds and Carriage returns if were formatting 
+            //   Skip whitespace
+
             return (currChar == (Char)10 && Format) ||
                                   (currChar == (Char)13 && Format) ||
                                   (currChar == ' ' && lastChar == ' ' && Format);
