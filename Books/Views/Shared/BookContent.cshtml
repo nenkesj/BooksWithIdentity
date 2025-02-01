@@ -354,11 +354,11 @@
                                 <figure>
                                     @if (@Model.Node.TreeLevel == 1)
                                     {
-                                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                                        <img src="\@Model.Pictures.ToArray()[i].Picture1" asp-append-version="true" class="imagelevel1" />
                                     }
                                     else
                                     {
-                                        <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                                        <img src="\@Model.Pictures.ToArray()[i].Picture1" asp-append-version="true" class="image" />
                                     }
                                 </figure>                                   
                                 Model.PicturePointer = i + 1;
@@ -371,11 +371,11 @@
                             <figure>
                                 @if (@Model.Node.TreeLevel == 1)
                                 {
-                                    <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="imagelevel1" />
+                                    <img src="\@Model.Pictures.ToArray()[i].Picture1" asp-append-version="true" class="imagelevel1" />
                                 }
                                 else
                                 {
-                                    <img src="\@Model.Pictures.ToArray()[@Model.PicturePointer].Picture1" asp-append-version="true" class="image" />
+                                    <img src="\@Model.Pictures.ToArray()[i].Picture1" asp-append-version="true" class="image" />
                                 }
                             </figure>
                             Model.PicturePointer = i + 1;
@@ -384,7 +384,10 @@
                     }
                     //if (@Model.ShowingSummary)
                     //{
-                    //    Model.PicturePointer++;
+                    //    if (@Model.NoOfPictures > Model.PicturePointer)
+                    //    {
+                    //        Model.PicturePointer++;
+                    //    }
                     //}
                 }
             }
