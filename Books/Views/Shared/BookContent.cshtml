@@ -288,7 +288,7 @@
         if (Model.HasPicture)
         {
             //if (((itsATableHeading && itsATabPict) || itsAFigureHeading && itsAFigPict) && @Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures)
-            if (((itsATableHeading && itsATabPict) || itsAFigureHeading && itsAFigPict) && @Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures)
+            if (((itsATableHeading && itsATabPict) || itsAFigureHeading && itsAFigPict || @Model.ShowingSummary) && @Model.PicturePointer < @Model.NoOfPictures && !@Model.PictureFixed && @Model.DisplayPictures)
             {
                 // This is to prevent "Fig 1.1 This illustrate ... " being inserted where "Fig 1.10 This illustrates..." should go
                 ParaNo = "  ";
