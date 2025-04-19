@@ -519,7 +519,7 @@ namespace Books.Controllers
                     form.Insert = "Operator";
                     break;
                 case "Over Row":
-                    InsertOverRow(form, searchfor, sb);
+                    InsertOverRow(form, Op, searchfor, sb);
                     form.Target = "Over Row";
                     form.Insert = "Identifier";
                     break;
@@ -1283,11 +1283,11 @@ namespace Books.Controllers
             }
         }
 
-        private static void InsertOverRow(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertOverRow(FormulaEditViewModel form, string Op, string searchfor, StringBuilder sb)
         {
             if (sb.ToString().Contains(searchfor))
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mrow> #overrow </mrow> <mo>" + form.Oper1 + "</mo> </mover>");
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mover> <mrow> #overrow </mrow> <mo>" + Op + "</mo> </mover>");
             }
         }
 
