@@ -1674,6 +1674,7 @@
                     Format && (int)currChar > 32 &&
                     (
                      ((int)firstWord1stChr >= (int)'A' && (int)firstWord1stChr <= (int)'Z') ||
+                     (int)firstWord1stChr >= (int)'0' && (int)firstWord1stChr <= (int)'9' ||
                      firstWord1stChr == '"' ||
                      firstWord1stChr == '[' ||
                      firstWord1stChr == '(' ||

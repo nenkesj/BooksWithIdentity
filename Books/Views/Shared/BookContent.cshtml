@@ -80,6 +80,7 @@
     if (@p.Length > 5)
     {
         if (@p.Substring(0, 6).ToLower() == "script" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
+        if (@p.Substring(0, 6).ToLower() == "remark" && !(tmp == "shows") && !(tmp == "illus") && !(tmp == "summa") && !(tmp == "uses ")) { itsAListingHeading = true; }
     }
     if (@p.Length > 6)
     {

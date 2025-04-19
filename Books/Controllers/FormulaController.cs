@@ -67,7 +67,7 @@ namespace Books.Controllers
             {
                 if (undo && _context.Session.GetInt32("undoptr") > 0)
                 {
-                    sb = UnDoLastInsert(_context);
+                    sb = UnDoLastInsert(_context, form);
                     insert = false;
                 }
                 else
@@ -126,6 +126,10 @@ namespace Books.Controllers
                     }
                     else
                     {
+                        if (_context != null)
+                        {
+                            HasAnyFieldChanged(_context, form);
+                        }
                         SpecialMathsSymbols(form);
                         FirstOrSecondField(form, out Id, out Op, out Num);
                         InsertObject(form, Id, Op, Num, searchfor, sb);
@@ -194,7 +198,7 @@ namespace Books.Controllers
             _context.Session.CommitAsync();
         }
 
-        StringBuilder UnDoLastInsert(HttpContext context)
+        StringBuilder UnDoLastInsert(HttpContext context, FormulaEditViewModel form)
         {
             StringBuilder sb = new StringBuilder(context.Session.GetString("undo" + context.Session.GetInt32("undoptr").ToString()));
             if (Int32.Parse(context.Session.GetInt32("undoptr").ToString()) > 1)
@@ -203,6 +207,7 @@ namespace Books.Controllers
                 sb = new StringBuilder(context.Session.GetString("undo" + context.Session.GetInt32("undoptr").ToString()));
             }
             context.Session.CommitAsync();
+            MoveTarget(form, sb);
             return sb;
         }
 
@@ -475,6 +480,10 @@ namespace Books.Controllers
                     InsertFraction(searchfor, sb);
                     form.Target = "Numerator";
                     form.Insert = "Identifier";
+                    break;
+                case "Fraction#":
+                    InsertFractionNum(form, searchfor, sb);
+                    form.Insert = "Operator";
                     break;
                 case "Square Root":
                     InsertSquareRoot(searchfor, sb);
@@ -1041,68 +1050,144 @@ namespace Books.Controllers
 
         private static void MoveTarget(FormulaEditViewModel form, StringBuilder sb)
         {
+            int indexOfSupRow1, indexOfSupRow2, indexOfSubRow1, indexOfSubRow2, indexOfFenced, indexOfSqrtRow, indexOfRootRow, indexOfOverRow, indexOfUnderRow, indexOfRow, indexOfNumerator, indexOfDenominator, least;
+            bool foundOne;
 
+            foundOne = false;
+            least = sb.ToString().Length;
+
+            if (sb.ToString().Contains("#suprow1"))
+            {
+                foundOne = true;
+                indexOfSupRow1 = sb.ToString().IndexOf("#suprow1");
+                if (indexOfSupRow1 < least)
+                {
+                    least = indexOfSupRow1;
+                    form.Target = "Superscript Row1";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#suprow2"))
+            {
+                foundOne = true;
+                indexOfSupRow2 = sb.ToString().IndexOf("#suprow2");
+                if (indexOfSupRow2 < least)
+                {
+                    least = indexOfSupRow2;
+                    form.Target = "Superscript Row2";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#subrow1"))
+            {
+                foundOne = true;
+                indexOfSubRow1 = sb.ToString().IndexOf("#subrow1");
+                if (indexOfSubRow1 < least)
+                {
+                    least = indexOfSubRow1;
+                    form.Target = "Subscript Row1";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#subrow2"))
+            {
+                foundOne = true;
+                indexOfSubRow2 = sb.ToString().IndexOf("#subrow2");
+                if (indexOfSubRow2 < least)
+                {
+                    least = indexOfSubRow2;
+                    form.Target = "Subscript Row2";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#fenced"))
+            {
+                foundOne = true;
+                indexOfFenced = sb.ToString().IndexOf("#fenced");
+                if (indexOfFenced < least)
+                {
+                    least = indexOfFenced;
+                    form.Target = "Fenced";
+                    form.Insert = "Operator";
+                }
+
+            }
+            if (sb.ToString().Contains("#sqrtrow"))
+            {
+                foundOne = true;
+                indexOfSqrtRow = sb.ToString().IndexOf("#sqrtrow");
+                if (indexOfSqrtRow < least)
+                {
+                    least = indexOfSqrtRow;
+                    form.Target = "Square Root Row";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#rootrow"))
+            {
+                foundOne = true;
+                indexOfRootRow = sb.ToString().IndexOf("#rootrow");
+                if (indexOfRootRow < least)
+                {
+                    least = indexOfRootRow;
+                    form.Target = "Root Row";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#overrow"))
+            {
+                foundOne = true;
+                indexOfOverRow = sb.ToString().IndexOf("#overrow");
+                if (indexOfOverRow < least)
+                {
+                    least = indexOfOverRow;
+                    form.Target = "Over Row";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#underrow"))
+            {
+                foundOne = true;
+                indexOfUnderRow = sb.ToString().IndexOf("#underrow");
+                if (indexOfUnderRow < least)
+                {
+                    least = indexOfUnderRow;
+                    form.Target = "Under Row";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#row"))
+            {
+                indexOfRow = sb.ToString().IndexOf("#row");
+                if (indexOfRow < least)
+                {
+                    least = indexOfRow;
+                    form.Target = "Row";
+                    form.Insert = "Identifier";
+                }
+            }
             if (sb.ToString().Contains("#numerator"))
             {
-                form.Target = "Numerator";
-                form.Insert = "Identifier";
+                indexOfNumerator = sb.ToString().IndexOf("#numerator");
+                if (indexOfNumerator < least)
+                {
+                    least = indexOfNumerator;
+                    form.Target = "Numerator";
+                    form.Insert = "Identifier";
+                }
             }
-            else if (sb.ToString().Contains("#denominator"))
+            if (sb.ToString().Contains("#denominator"))
             {
-                form.Target = "Denominator";
-                form.Insert = "Identifier";
+                foundOne = true;
+                indexOfDenominator = sb.ToString().IndexOf("#denominator");
+                if (indexOfDenominator < least)
+                {
+                    least = indexOfDenominator;
+                    form.Target = "Denominator";
+                    form.Insert = "Identifier";
+                }
             }
-            else if (sb.ToString().Contains("#suprow1"))
-            {
-                form.Target = "Superscript Row1";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#suprow2"))
-            {
-                form.Target = "Superscript Row2";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#subrow1"))
-            {
-                form.Target = "Subscript Row1";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#subrow2"))
-            {
-                form.Target = "Subscript Row2";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#fenced"))
-            {
-                form.Target = "Fenced";
-                form.Insert = "Operator";
-            }
-            else if (sb.ToString().Contains("#sqrtrow"))
-            {
-                form.Target = "Square Root Row";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#rootrow"))
-            {
-                form.Target = "Root Row";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#overrow"))
-            {
-                form.Target = "Over Row";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#underrow"))
-            {
-                form.Target = "Under Row";
-                form.Insert = "Identifier";
-            }
-            else if (sb.ToString().Contains("#row"))
-            {
-                form.Target = "Row";
-                form.Insert = "Identifier";
-            }
-            else
+            if (!foundOne)
             {
                 if (!form.Matrix)
                 {
@@ -1267,6 +1352,17 @@ namespace Books.Controllers
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> #numerator </mrow> <mrow> #denominator </mrow> </mfrac> </mstyle>"); }
         }
+        private static void InsertFractionNum(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + form.Num2 + "</mn> </mrow> <mrow> <mn>" + form.Num1 + "</mn> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + form.Num1 + "</mn> </mrow> <mrow> <mn>" + form.Num2 + "</mn> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
 
         private static void InsertRow(string searchfor, StringBuilder sb)
         {
@@ -1357,22 +1453,50 @@ namespace Books.Controllers
             {
                 if (form.Reverse)
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    if (form.Ident3 != "")
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    }
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    if (form.Ident3 != "")
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    }
                 }
             }
             else
             {
                 if (form.Reverse)
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    if (form.Ident3 != "")
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                    }
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    if (form.Ident3 != "")
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    }
+                    else
+                    {
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                    }
                 }
             }
         }
