@@ -1771,9 +1771,9 @@
                     }
                 }
 
-                // if it contains a lower case letter its not all Capitals
+                // if it contains a lower case letter its not all Capitals or if it contains an equals treat it as a formula
 
-                if ((int)lineCurrChar >= (int)'a' && (int)lineCurrChar <= (int)'z')
+                if (((int)lineCurrChar >= (int)'a' && (int)lineCurrChar <= (int)'z') || (int)lineCurrChar == (int)'=')
                 {
                     allCapitals = false;
                 }
