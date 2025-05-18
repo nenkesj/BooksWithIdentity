@@ -382,7 +382,7 @@ namespace Books.Controllers
                     form.Insert = "Operator";
                     break;
                 case "Subscript (Identifier, Identifier)":
-                    InsertSubscriptIdentifierIdentifier(form, searchfor, sb);
+                    InsertSubscriptIdentifierIdentifier(form, Id, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "Subscript (Identifier, Operator)":
@@ -427,7 +427,7 @@ namespace Books.Controllers
                     form.Insert = "Identifier";
                     break;
                 case "Superscript (Identifier, Identifier)":
-                    InsertSuperscriptIdentifierIdentifier(form, searchfor, sb);
+                    InsertSuperscriptIdentifierIdentifier(form, Id, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "Superscript (Identifier, Row)":
@@ -451,19 +451,19 @@ namespace Books.Controllers
                     form.Insert = "Identifier";
                     break;
                 case "SubSup (Identifier, Number, Number)":
-                    InsertSubSupIdentifierNumberNumber(form, searchfor, sb);
+                    InsertSubSupIdentifierNumberNumber(form, Id, Num, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "SubSup (Identifier, Number, Identifier)":
-                    InsertSubSupIdentifierNumberIdentifier(form, Num, searchfor, sb);
+                    InsertSubSupIdentifierNumberIdentifier(form, Id, Num, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "SubSup (Identifier, Identifier, Number)":
-                    InsertSubSupIdentifierIdentifierNumber(form, Num, searchfor, sb);
+                    InsertSubSupIdentifierIdentifierNumber(form, Id, Num, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "SubSup (Identifier, Identifier, Identifier)":
-                    InsertSubSupIdentifierIdentifierIdentifier(form, searchfor, sb);
+                    InsertSubSupIdentifierIdentifierIdentifier(form, Id, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "SubSup (Identifier, Row, Row)":
@@ -482,7 +482,7 @@ namespace Books.Controllers
                     form.Insert = "Identifier";
                     break;
                 case "Fraction#":
-                    InsertFractionNum(form, searchfor, sb);
+                    InsertFractionNum(form, Num, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "Square Root":
@@ -573,6 +573,10 @@ namespace Books.Controllers
                 case "Operator":
                     InsertOperator(form, Op, searchfor, sb);
                     form.Insert = "Identifier";
+                    if (Op == "&hellip;" || Op == "&ctdot;")
+                    {
+                        form.Insert = "Operator";
+                    }
                     break;
                 case "Number":
                     InsertNumber(form, Num, searchfor, sb);
@@ -735,12 +739,15 @@ namespace Books.Controllers
             {
                 form.Ident3 = "&" + form.GreekUpper;
                 form.Oper3 = "&" + form.GreekUpper;
+                form.Num3 = "&" + form.GreekUpper;
                 form.Insert = "Identifier";
                 form.GreekUpper = "None";
             }
             if (form.GreekLower != "None")
             {
                 form.Ident3 = "&" + form.GreekLower;
+                form.Oper3 = "&" + form.GreekLower;
+                form.Num3 = "&" + form.GreekLower;
                 form.Insert = "Identifier";
                 form.GreekLower = "None";
             }
@@ -1352,15 +1359,15 @@ namespace Books.Controllers
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> #numerator </mrow> <mrow> #denominator </mrow> </mfrac> </mstyle>"); }
         }
-        private static void InsertFractionNum(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertFractionNum(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
         {
             if (form.Reverse)
             {
-                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + form.Num2 + "</mn> </mrow> <mrow> <mn>" + form.Num1 + "</mn> </mrow> </mfrac> </mstyle>"); }
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + form.Num2 + "</mn> </mrow> <mrow> <mn>" + Num + "</mn> </mrow> </mfrac> </mstyle>"); }
             }
             else
             {
-                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + form.Num1 + "</mn> </mrow> <mrow> <mn>" + form.Num2 + "</mn> </mrow> </mfrac> </mstyle>"); }
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + Num + "</mn> </mrow> <mrow> <mn>" + form.Num2 + "</mn> </mrow> </mfrac> </mstyle>"); }
             }
         }
 
@@ -1385,7 +1392,7 @@ namespace Books.Controllers
             }
         }
 
-        private static void InsertSubSupIdentifierIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertSubSupIdentifierIdentifierIdentifier(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
         {
             if (form.BothNum && sb.ToString().Contains(searchfor))
             {
@@ -1395,27 +1402,27 @@ namespace Books.Controllers
             {
                 if (form.Reverse)
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mi>" + form.Num1 + "</mi> </msubsup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> <mi>" + form.Num1 + "</mi> </msubsup>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
                 }
             }
             else
             {
                 if (form.Reverse)
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mi>" + form.Num1 + "</mi> </msubsup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> <mi>" + form.Num1 + "</mi> </msubsup>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mi>" + form.Num1 + "</mi> <mi>" + form.Ident2 + "</mi> </msubsup>");
                 }
             }
         }
 
-        private static void InsertSubSupIdentifierIdentifierNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        private static void InsertSubSupIdentifierIdentifierNumber(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
         {
             if (form.BothNum && sb.ToString().Contains(searchfor))
             {
@@ -1423,15 +1430,15 @@ namespace Books.Controllers
             }
             if (form.BoldIdent && sb.ToString().Contains(searchfor))
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
             }
             else
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> <mn>" + Num + "</mn> </msubsup>");
             }
         }
 
-        private static void InsertSubSupIdentifierNumberIdentifier(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
+        private static void InsertSubSupIdentifierNumberIdentifier(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
         {
             if (form.BothNum && sb.ToString().Contains(searchfor))
             {
@@ -1439,15 +1446,15 @@ namespace Books.Controllers
             }
             if (form.BoldIdent && sb.ToString().Contains(searchfor))
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
             }
             else
             {
-                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mn>" + Num + "</mn> <mi>" + form.Ident2 + "</mi> </msubsup>");
             }
         }
 
-        private static void InsertSubSupIdentifierNumberNumber(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertSubSupIdentifierNumberNumber(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
         {
             if (form.BoldIdent && sb.ToString().Contains(searchfor))
             {
@@ -1455,22 +1462,22 @@ namespace Books.Controllers
                 {
                     if (form.Ident3 != "")
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + Num + "</mn> </msubsup>");
                     }
                     else
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + Num + "</mn> </msubsup>");
                     }
                 }
                 else
                 {
                     if (form.Ident3 != "")
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident3 + "</mi> <mn>" + Num + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
                     }
                     else
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi mathvariant='bold'>" + Id + "</mi> <mn>" + Num + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
                     }
                 }
             }
@@ -1480,22 +1487,22 @@ namespace Books.Controllers
                 {
                     if (form.Ident3 != "")
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + Num + "</mn> </msubsup>");
                     }
                     else
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + form.Num1 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mn>" + form.Num2 + "</mn> <mn>" + Num + "</mn> </msubsup>");
                     }
                 }
                 else
                 {
                     if (form.Ident3 != "")
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident3 + "</mi> <mn>" + Num + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
                     }
                     else
                     {
-                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + form.Ident1 + "</mi> <mn>" + form.Num1 + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
+                        sb.Insert(sb.ToString().IndexOf(searchfor), " <msubsup> <mi>" + Id + "</mi> <mn>" + Num + "</mn> <mn>" + form.Num2 + "</mn> </msubsup>");
                     }
                 }
             }
@@ -1602,7 +1609,7 @@ namespace Books.Controllers
             }
         }
 
-        private static void InsertSuperscriptIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertSuperscriptIdentifierIdentifier(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
         {
             if (form.BothNum && sb.ToString().Contains(searchfor))
             {
@@ -1612,22 +1619,22 @@ namespace Books.Controllers
             {
                 if (form.BoldIdent && sb.ToString().Contains(searchfor))
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + Id + "</mi> </msup>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident2 + "</mi> <mi>" + Id + "</mi> </msup>");
                 }
             }
             else
             {
                 if (form.BoldIdent && sb.ToString().Contains(searchfor))
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi mathvariant='bold'>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mi>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> </msup>");
                 }
             }
         }
@@ -1771,7 +1778,7 @@ namespace Books.Controllers
             }
         }
 
-        private void InsertSubscriptIdentifierIdentifier(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private void InsertSubscriptIdentifierIdentifier(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
         {
             if (form.BothNum && sb.ToString().Contains(searchfor))
             {
@@ -1782,22 +1789,22 @@ namespace Books.Controllers
             {
                 if (form.BoldIdent && sb.ToString().Contains(searchfor))
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + form.Ident1 + "</mi> </msub>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident2 + "</mi> <mi mathvariant='bold'>" + Id + "</mi> </msub>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident2 + "</mi> <mi>" + form.Ident1 + "</mi> </msub>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident2 + "</mi> <mi>" + Id + "</mi> </msub>");
                 }
             }
             else
             {
                 if (form.BoldIdent && sb.ToString().Contains(searchfor))
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + form.Ident1 + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi> </msub>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi mathvariant='bold'>" + Id + "</mi> <mi mathvariant='bold'>" + form.Ident2 + "</mi> </msub>");
                 }
                 else
                 {
-                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + form.Ident1 + "</mi> <mi>" + form.Ident2 + "</mi> </msub>");
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msub> <mi>" + Id + "</mi> <mi>" + form.Ident2 + "</mi> </msub>");
                 }
 
             }
