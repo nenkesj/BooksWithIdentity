@@ -603,6 +603,11 @@ namespace Books.Controllers
             {
                 form.Insert = "Text";
             }
+            if (form.Space != null && form.Space != context.Session.GetString("space"))
+            {
+                form.Insert = "Space";
+            }
+
             if (form.Oper2 != null && form.Oper2 != context.Session.GetString("oper2"))
             {
                 form.Insert = "Operator";
@@ -963,7 +968,7 @@ namespace Books.Controllers
                 Num2 = "1",
                 Num3 = "",
                 BoldNum = false,
-                Space = "1",
+                Space = "2",
                 BoldText = false,
                 BothText = false,
                 Text = "and",
@@ -1021,7 +1026,7 @@ namespace Books.Controllers
             context.Session.SetString("num2", num2);
             string space = "1";
             context.Session.SetString("space", space);
-            string text = "and";
+            string text = ",";
             context.Session.SetString("text", text);
             string matrix = "false";
             context.Session.SetString("matrix", matrix);
@@ -1241,11 +1246,13 @@ namespace Books.Controllers
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mtext>" + form.Text + "</mtext> <mspace width=.2em /> ");
             }
+            form.Text = ",";
         }
 
         private static void InsertSpace(FormulaEditViewModel form, string searchfor, StringBuilder sb)
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em />"); }
+            form.Space = "2";
         }
 
         private static void InsertFenced3(FormulaEditViewModel form, string searchfor, StringBuilder sb)
@@ -1288,6 +1295,7 @@ namespace Books.Controllers
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>(</mo> #fenced <mo>)</mo> ");
             }
+            form.Oper1 = "+";
         }
 
         private static void InsertOverRow(FormulaEditViewModel form, string Op, string searchfor, StringBuilder sb)
@@ -1882,6 +1890,7 @@ namespace Books.Controllers
                     sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>]</mo> </mrow> <mspace width=.2em /> ");
                 }
             }
+            form.Oper1 = "+";
         }
 
         private static void InsertNumber(FormulaEditViewModel form, string Num, string searchfor, StringBuilder sb)
