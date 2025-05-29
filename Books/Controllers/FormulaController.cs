@@ -1282,20 +1282,22 @@ namespace Books.Controllers
             if (form.Oper1 == "[")
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>[</mo> #fenced <mo>]</mo> ");
+                form.Oper1 = "+";
             }
             else if (form.Oper1 == "{")
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>{</mo> #fenced <mo>}</mo> ");
+                form.Oper1 = "+";
             }
             else if (form.Oper1 == "|")
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>|</mo> #fenced <mo>|</mo> ");
+                form.Oper1 = "+";
             }
             else
             {
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>(</mo> #fenced <mo>)</mo> ");
             }
-            form.Oper1 = "+";
         }
 
         private static void InsertOverRow(FormulaEditViewModel form, string Op, string searchfor, StringBuilder sb)
@@ -1527,14 +1529,17 @@ namespace Books.Controllers
                 if (form.Oper1 == "(")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "[")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                    form.Oper1 = "+";
                 }
                 else
                 {
@@ -1554,14 +1559,17 @@ namespace Books.Controllers
                 if (form.Oper1 == "(")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "[")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else
                 {
@@ -1585,14 +1593,17 @@ namespace Books.Controllers
                 if (form.Oper1 == "(")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>(</mo> #suprow1 <mo>)</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "[")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>[</mo> #suprow1 <mo>]</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                    form.Oper1 = "+";
                 }
                 else
                 {
@@ -1841,17 +1852,17 @@ namespace Books.Controllers
                 if (form.Oper1 == "(")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>(</mo> <mtable>");
-
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>|</mo> <mtable>");
-
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "{")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>{</mo> <mtable>");
-
+                    form.Oper1 = "+";
                 }
                 else
                 {
@@ -1873,17 +1884,17 @@ namespace Books.Controllers
                 if (form.Oper1 == "(")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>)</mo> </mrow> <mspace width=.2em /> ");
-
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>|</mo> </mrow> <mspace width=.2em /> ");
-
+                    form.Oper1 = "+";
                 }
                 else if (form.Oper1 == "{")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>}</mo> </mrow> <mspace width=.2em /> ");
-
+                    form.Oper1 = "+";
                 }
                 else
                 {
