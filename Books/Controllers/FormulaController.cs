@@ -249,6 +249,8 @@ namespace Books.Controllers
             if (sb.ToString().Contains("#overrow")) { form.ContainsOverRow = true; } else { form.ContainsOverRow = false; }
             if (sb.ToString().Contains("#underrow")) { form.ContainsUnderRow = true; } else { form.ContainsUnderRow = false; }
             if (sb.ToString().Contains("#row")) { form.ContainsRow = true; } else { form.ContainsRow = false; }
+            if (sb.ToString().Contains("#introw")) { form.ContainsIntergral = true; } else { form.ContainsIntergral = false; }
+
         }
 
         private static void InlineOrBlock(FormulaEditViewModel form, ref StringBuilder sb, ref bool insert)
@@ -318,8 +320,6 @@ namespace Books.Controllers
                         while (sb.ToString().IndexOf("#col") > 0);
                     };
                     MoveTarget(form, sb);
-                    //form.Insert = "Operator";
-                    //form.Target = "Append";
                     form.Matrix = false;
                     form.Row = null;
                     form.Column = null;
@@ -344,13 +344,10 @@ namespace Books.Controllers
                 case "Clear Root Row":
                     if (sb.ToString().Contains("#rootrow")) { sb.Remove(sb.ToString().IndexOf("#rootrow"), 8); };
                     MoveTarget(form, sb);
-                    //form.Insert = "Operator";
                     break;
                 case "Clear Over Row":
                     if (sb.ToString().Contains("#overrow")) { sb.Remove(sb.ToString().IndexOf("#overrow"), 8); };
                     MoveTarget(form, sb);
-                    //form.Target = "Append";
-                    //form.Insert = "Identifier";
                     break;
                 case "Clear Under Row":
                     if (sb.ToString().Contains("#underrow")) { sb.Remove(sb.ToString().IndexOf("#underrow"), 9); };
@@ -368,7 +365,10 @@ namespace Books.Controllers
                 case "Clear Row":
                     if (sb.ToString().Contains("#row")) { sb.Remove(sb.ToString().IndexOf("#row"), 4); };
                     MoveTarget(form, sb);
-                    //form.Insert = "Operator";
+                    break;
+                case "Clear Intergral":
+                    if (sb.ToString().Contains("#introw")) { sb.Remove(sb.ToString().IndexOf("#introw"), 7); };
+                    MoveTarget(form, sb);
                     break;
             }
         }
@@ -476,13 +476,47 @@ namespace Books.Controllers
                     form.Target = "Row";
                     form.Insert = "Identifier";
                     break;
+                case "IntergralDefinite":
+                    InsertIntergralDefinite(Id, searchfor, sb);
+                    form.Target = "Under Row";
+                    form.Insert = "Identifier";
+                    break;
+                case "IntergralInDefinite":
+                    InsertIntergralInDefinite(Id, searchfor, sb);
+                    form.Target = "Intergral";
+                    form.Insert = "Identifier";
+                    break;
                 case "Fraction":
                     InsertFraction(searchfor, sb);
                     form.Target = "Numerator";
                     form.Insert = "Identifier";
                     break;
-                case "Fraction#":
+                case "FractionNum":
                     InsertFractionNum(form, Num, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionVar":
+                    InsertFractionVar(form, Id, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionVarNum":
+                    InsertFractionVarNum(form, Id, Num, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionDiff":
+                    InsertFractionDiff(form, Id, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionDiff2":
+                    InsertFractionDiff2(form, Id, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionPart":
+                    InsertFractionPart(form, Id, searchfor, sb);
+                    form.Insert = "Operator";
+                    break;
+                case "FractionPart2":
+                    InsertFractionPart2(form, Id, searchfor, sb);
                     form.Insert = "Operator";
                     break;
                 case "Square Root":
@@ -586,6 +620,10 @@ namespace Books.Controllers
                     InsertText(form, searchfor, sb);
                     form.Insert = "Identifier";
                     break;
+                case "Space":
+                    InsertSpace(form, searchfor, sb);
+                    form.Insert = "Identifier";
+                    break;
                 case "Matrix":
                     InsertMatrix(form, searchfor, sb);
                     form.Target = "Matrix";
@@ -607,7 +645,6 @@ namespace Books.Controllers
             {
                 form.Insert = "Space";
             }
-
             if (form.Oper2 != null && form.Oper2 != context.Session.GetString("oper2"))
             {
                 form.Insert = "Operator";
@@ -679,7 +716,7 @@ namespace Books.Controllers
             }
             if (form.Num3 != "")
             {
-                Num = form.Num3;
+                Op = form.Num3;
             }
         }
 
@@ -744,7 +781,6 @@ namespace Books.Controllers
             {
                 form.Ident3 = "&" + form.GreekUpper;
                 form.Oper3 = "&" + form.GreekUpper;
-                form.Num3 = "&" + form.GreekUpper;
                 form.Insert = "Identifier";
                 form.GreekUpper = "None";
             }
@@ -752,7 +788,6 @@ namespace Books.Controllers
             {
                 form.Ident3 = "&" + form.GreekLower;
                 form.Oper3 = "&" + form.GreekLower;
-                form.Num3 = "&" + form.GreekLower;
                 form.Insert = "Identifier";
                 form.GreekLower = "None";
             }
@@ -837,6 +872,10 @@ namespace Books.Controllers
                     searchfor = " #row";
                     insert = true;
                     break;
+                case "Intergral":
+                    searchfor = " #introw";
+                    insert = true;
+                    break;
                 case "Clear Subscript Row1":
                     form.Insert = "None";
                     insert = true;
@@ -874,6 +913,10 @@ namespace Books.Controllers
                     insert = true;
                     break;
                 case "Clear Row":
+                    form.Insert = "None";
+                    insert = true;
+                    break;
+                case "Clear Intergral":
                     form.Insert = "None";
                     insert = true;
                     break;
@@ -925,6 +968,9 @@ namespace Books.Controllers
                 case "Clear Row":
                     form.Target = "Clear Row";
                     break;
+                case "Clear Intergral":
+                    form.Target = "Clear Intergral";
+                    break;
                 default:
                     break;
             }
@@ -961,7 +1007,7 @@ namespace Books.Controllers
                 Ident2 = "y",
                 Ident3 = "",
                 Oper1 = "+",
-                Oper2 = "=",
+                Oper2 = "-",
                 Oper3 = "",
                 BothOper = false,
                 Num1 = "2",
@@ -971,7 +1017,7 @@ namespace Books.Controllers
                 Space = "2",
                 BoldText = false,
                 BothText = false,
-                Text = "and",
+                Text = ",",
                 Matrix = false,
                 Row = null,
                 Column = null,
@@ -1018,13 +1064,13 @@ namespace Books.Controllers
             context.Session.SetString("ident2", ident2);
             string oper1 = "+";
             context.Session.SetString("oper1", oper1);
-            string oper2 = "=";
+            string oper2 = "-";
             context.Session.SetString("oper2", oper2);
             string num1 = "2";
             context.Session.SetString("num1", num1);
             string num2 = "1";
             context.Session.SetString("num2", num2);
-            string space = "1";
+            string space = "2";
             context.Session.SetString("space", space);
             string text = ",";
             context.Session.SetString("text", text);
@@ -1062,7 +1108,7 @@ namespace Books.Controllers
 
         private static void MoveTarget(FormulaEditViewModel form, StringBuilder sb)
         {
-            int indexOfSupRow1, indexOfSupRow2, indexOfSubRow1, indexOfSubRow2, indexOfFenced, indexOfSqrtRow, indexOfRootRow, indexOfOverRow, indexOfUnderRow, indexOfRow, indexOfNumerator, indexOfDenominator, least;
+            int indexOfSupRow1, indexOfSupRow2, indexOfSubRow1, indexOfSubRow2, indexOfFenced, indexOfSqrtRow, indexOfRootRow, indexOfOverRow, indexOfUnderRow, indexOfIntRow, indexOfRow, indexOfNumerator, indexOfDenominator, least;
             bool foundOne;
 
             foundOne = false;
@@ -1165,6 +1211,17 @@ namespace Books.Controllers
                 {
                     least = indexOfUnderRow;
                     form.Target = "Under Row";
+                    form.Insert = "Identifier";
+                }
+            }
+            if (sb.ToString().Contains("#introw"))
+            {
+                foundOne = true;
+                indexOfIntRow = sb.ToString().IndexOf("#introw");
+                if (indexOfIntRow < least)
+                {
+                    least = indexOfIntRow;
+                    form.Target = "Intergral";
                     form.Insert = "Identifier";
                 }
             }
@@ -1351,6 +1408,20 @@ namespace Books.Controllers
                 sb.Insert(sb.ToString().IndexOf(searchfor), " <munderover> <mo>" + Op + "</mo> <mrow> #underrow </mrow> <mrow> #overrow </mrow> </munderover>");
             }
         }
+        private static void InsertIntergralDefinite(string Id, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <munderover> <mo>&int;</mo> <mrow> #underrow </mrow> <mrow> #overrow </mrow> </munderover> #introw <mspace width=.2em /> <mi>d</mi> <mi>" + Id + "</mi>");
+            }
+        }
+        private static void InsertIntergralInDefinite(string Id, string searchfor, StringBuilder sb)
+        {
+            if (sb.ToString().Contains(searchfor))
+            {
+                sb.Insert(sb.ToString().IndexOf(searchfor), " <mo>&int;</mo> #introw <mspace width=.2em /> <mi>d</mi> <mi>" + Id + "</mi>");
+            }
+        }
 
         private static void InsertRoot(FormulaEditViewModel form, string searchfor, StringBuilder sb)
         {
@@ -1364,7 +1435,6 @@ namespace Books.Controllers
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <msqrt> <mrow> #sqrtrow </mrow> </msqrt>"); }
         }
-
         private static void InsertFraction(string searchfor, StringBuilder sb)
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> #numerator </mrow> <mrow> #denominator </mrow> </mfrac> </mstyle>"); }
@@ -1380,7 +1450,72 @@ namespace Books.Controllers
                 if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + Num + "</mn> </mrow> <mrow> <mn>" + form.Num2 + "</mn> </mrow> </mfrac> </mstyle>"); }
             }
         }
-
+        private static void InsertFractionVar(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mi>" + form.Ident2 + "</mi> </mrow> <mrow> <mi>" + Id + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mi>" + Id + "</mi> </mrow> <mrow> <mi>" + form.Ident2 + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
+        private static void InsertFractionVarNum(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mn>" + Num + "</mn> </mrow> <mrow> <mi>" + Id + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mi>" + Id + "</mi> </mrow> <mrow> <mn>" + Num + "</mn> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
+        private static void InsertFractionDiff(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mi>d</mi> <mi>" + form.Ident2 + "</mi> </mrow> <mrow> <mi>d</mi> <mi>" + Id + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mi>d</mi> <mi>" + Id + "</mi> </mrow> <mrow> <mi>d</mi> <mi>" + form.Ident2 + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
+        private static void InsertFractionDiff2(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <msup> <mi>d</mi> <mn>2</mn> </msup> <mi>" + form.Ident2 + "</mi> </mrow> <mrow> <mi>d</mi> <msup> <mi>" + Id + "</mi> <mn>2</mn> </msup> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <msup> <mi>d</mi> <mn>2</mn> </msup> <mi>" + Id + "</mi> </mrow> <mrow> <mi>d</mi> <msup> <mi>" + form.Ident2 + "</mi> <mn>2</mn> </msup> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
+        private static void InsertFractionPart(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mo>&part;</mo> <mi>" + form.Ident2 + "</mi> </mrow> <mrow> <mo>&part;</mo> <mi>" + Id + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <mo>&part;</mo> <mi>" + Id + "</mi> </mrow> <mrow> <mo>&part;</mo> <mi>" + form.Ident2 + "</mi> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
+        private static void InsertFractionPart2(FormulaEditViewModel form, string Id, string searchfor, StringBuilder sb)
+        {
+            if (form.Reverse)
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <msup> <mo>&part;</mo> <mn>2</mn> </msup> <mi>" + form.Ident2 + "</mi> </mrow> <mrow> <mo>&part;</mo> <msup> <mi>" + Id + "</mi> <mn>2</mn> </msup> </mrow> </mfrac> </mstyle>"); }
+            }
+            else
+            {
+                if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mstyle mathsize='1.2em'> <mfrac> <mrow> <msup> <mo>&part;</mo> <mn>2</mn> </msup> <mi>" + Id + "</mi> </mrow> <mrow> <mo>&part;</mo> <msup> <mi>" + form.Ident2 + "</mi> <mn>2</mn> </msup> </mrow> </mfrac> </mstyle>"); }
+            }
+        }
         private static void InsertRow(string searchfor, StringBuilder sb)
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mrow> #row </mrow>"); }
@@ -1541,6 +1676,11 @@ namespace Books.Controllers
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
                     form.Oper1 = "+";
                 }
+                else if (form.Oper1 == "{")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>{</mo> #suprow1 <mo>}</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
+                    form.Oper1 = "+";
+                }
                 else
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> #suprow1 </mrow> <mrow> #suprow2 </mrow> </msup>");
@@ -1569,6 +1709,11 @@ namespace Books.Controllers
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mn>" + Num + "</mn>  </msup>");
+                    form.Oper1 = "+";
+                }
+                else if (form.Oper1 == "{")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>{</mo> #suprow1 <mo>}</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
                     form.Oper1 = "+";
                 }
                 else
@@ -1603,6 +1748,11 @@ namespace Books.Controllers
                 else if (form.Oper1 == "|")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>|</mo> #suprow1 <mo>|</mo> </mrow> <mi>" + Id + "</mi>  </msup>");
+                    form.Oper1 = "+";
+                }
+                else if (form.Oper1 == "{")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <msup> <mrow> <mo>{</mo> #suprow1 <mo>}</mo> </mrow> <mrow> #suprow2 </mrow> </msup>");
                     form.Oper1 = "+";
                 }
                 else
@@ -1864,6 +2014,11 @@ namespace Books.Controllers
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>{</mo> <mtable>");
                     form.Oper1 = "+";
                 }
+                else if (form.Oper1 == "[")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>[</mo> <mtable>");
+                    form.Oper1 = "+";
+                }
                 else
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>[</mo> <mtable>");
@@ -1894,6 +2049,11 @@ namespace Books.Controllers
                 else if (form.Oper1 == "{")
                 {
                     sb.Insert(sb.ToString().IndexOf(searchfor), " </mtable> <mo>}</mo> </mrow> <mspace width=.2em /> ");
+                    form.Oper1 = "+";
+                }
+                else if (form.Oper1 == "[")
+                {
+                    sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=.2em /> <mrow> <mo>[</mo> <mtable>");
                     form.Oper1 = "+";
                 }
                 else
@@ -1950,6 +2110,7 @@ namespace Books.Controllers
                     }
                 }
             }
+            form.Oper2 = "-";
         }
 
         private static void InsertIdentifier(FormulaEditViewModel form, string Id, string Num, string searchfor, StringBuilder sb)

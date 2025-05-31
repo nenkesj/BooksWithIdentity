@@ -55,6 +55,7 @@
         public bool ContainsOverRow { get; set; }
         public bool ContainsUnderRow { get; set; }
         public bool ContainsRow { get; set; }
+        public bool ContainsIntergral { get; set; }
         public bool Id2 { get; set; }
         public bool Op2 { get; set; }
         public bool N2 { get; set; }

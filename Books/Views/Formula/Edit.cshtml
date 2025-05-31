@@ -430,6 +430,41 @@
                     </form>
                     </li>
                 }
+                @if (@Model.ContainsIntergral)
+                {
+                    <li>
+                        <form asp-action="Edit" asp-controller="Formula" asp-route-clear="Clear Intergral">
+                            @Html.Hidden("bothident", @Model.BothIdent)
+                            @Html.Hidden("bothoper", @Model.BothOper)
+                            @Html.Hidden("bothnum", @Model.BothNum)
+                            @Html.Hidden("boldident", @Model.BoldIdent)
+                            @Html.Hidden("boldnum", @Model.BoldNum)
+                            @Html.Hidden("boldtext", @Model.BoldText)
+                            @Html.Hidden("ident1", @Model.Ident1)
+                            @Html.Hidden("ident2", @Model.Ident2)
+                            @Html.Hidden("oper1", @Model.Oper1)
+                            @Html.Hidden("oper2", @Model.Oper2)
+                            @Html.Hidden("num1", @Model.Num1)
+                            @Html.Hidden("num2", @Model.Num2)
+                            @Html.Hidden("space", @Model.Num1)
+                            @Html.Hidden("text", @Model.Text)
+                            @Html.Hidden("algebraic", @Model.Algebraic)
+                            @Html.Hidden("calculus", @Model.Calculus)
+                            @Html.Hidden("ellipses", @Model.Ellipses)
+                            @Html.Hidden("logic", @Model.Logic)
+                            @Html.Hidden("vector", @Model.Vector)
+                            @Html.Hidden("greekupper", @Model.GreekUpper)
+                            @Html.Hidden("greeklower", @Model.GreekLower)
+                            @Html.Hidden("insert", @Model.Insert)
+                            @Html.Hidden("insert", @Model.Insert1)
+                            @Html.Hidden("target", @Model.Target)
+                            @Html.Hidden("block", @Model.Block)
+                            @Html.Hidden("clearformula", @Model.ClearFormula)
+                            @Html.Hidden("NodeID", @Model.NodeID)
+                            <input class="navbutton, btn, btn-info" type="submit" value="Clear Intergral" />
+                        </form>
+                    </li>
+                }
                 @if (@Model.ContainsRow)
                 {
                     <li>
@@ -722,30 +757,22 @@
                     <option value="Subscript (Identifier, Identifier)">Subscript (Identifier, Identifier)</option>
                     <option value="Subscript (Identifier, Row)">Subscript (Identifier, Row)</option>
                     <option value="Fraction">Fraction</option>
-                    <option value="Fraction#">Fraction#</option>
                     <option value="Fenced 0">Fenced</option>
                     <option value="Text">Text</option>
                     <option value="Space">Space</option>
                     <option value="Square Root">Square Root</option>
-                    <option value="Under Over">Under Over</option>
-                    <option value="Over">Over</option>
-                    <option value="Under">Under</option>
-                    <option value="Over Row">Over Row</option>
-                    <option value="Limit">Limit</option>
-                    <option value="Limit h->0">Limit h->0</option>
                     <option value="Fenced 1">Fenced 1</option>
                     <option value="Fenced 2">Fenced 2</option>
                     <option value="Fenced 3">Fenced 3</option>
-                    <option value="Line Break 1">Line Break 1</option>
-                    <option value="Line Break 2">Line Break 2</option>
-                    <option value="New Line =">New Line =</option>
-                    <option value="Root">Root</option>
-                    <option value="Row">Row</option>
-                    <option value="SubSup (Identifier, Number, Number)">SubSup (Identifier, Number, Number)</option>
-                    <option value="SubSup (Identifier, Identifier, Identifier)">SubSup (Identifier, Identifier, Identifier)</option>
-                    <option value="SubSup (Identifier, Number, Identifier)">SubSup (Identifier, Number, Identifier)</option>
-                    <option value="SubSup (Identifier, Identifier, Number)">SubSup (Identifier, Identifier, Number)</option>
-                    <option value="SubSup (Identifier, Row, Row)">SubSup (Identifier, Row, Row)</option>
+                    <option value="FractionNum">FractionNum</option>
+                    <option value="FractionVar">FractionVar</option>
+                    <option value="FractionVarNum">FractionVarNum</option>
+                    <option value="FractionDiff">FractionDiff</option>
+                    <option value="FractionDiff2">FractionDiff2</option>
+                    <option value="FractionPart">FractionPart</option>
+                    <option value="FractionPart2">FractionPart2</option>
+                    <option value="IntergralDefinite">Intergral Definite</option>
+                    <option value="IntergralInDefinite">Intergral InDefinite</option>
                     <option value="Superscript (Number, Number)">Superscript (Number, Number)</option>
                     <option value="Superscript (Operator, Number)">Superscript (Operator, Number)</option>
                     <option value="Superscript (Row, Identifier)">Superscript (Row, Identifier)</option>
@@ -757,6 +784,22 @@
                     <option value="Subscript (Row, Identifier)">Subscript (Row, Identifier)</option>
                     <option value="Subscript (Row, Number)">Subscript (Row, Number)</option>
                     <option value="Subscript (Row, Row)">Subscript (Row, Row)</option>
+                    <option value="SubSup (Identifier, Number, Number)">SubSup (Identifier, Number, Number)</option>
+                    <option value="SubSup (Identifier, Identifier, Identifier)">SubSup (Identifier, Identifier, Identifier)</option>
+                    <option value="SubSup (Identifier, Number, Identifier)">SubSup (Identifier, Number, Identifier)</option>
+                    <option value="SubSup (Identifier, Identifier, Number)">SubSup (Identifier, Identifier, Number)</option>
+                    <option value="SubSup (Identifier, Row, Row)">SubSup (Identifier, Row, Row)</option>
+                    <option value="New Line =">New Line =</option>
+                    <option value="Under Over">Under Over</option>
+                    <option value="Under">Under</option>
+                    <option value="Over">Over</option>
+                    <option value="Over Row">Over Row</option>
+                    <option value="Limit">Limit</option>
+                    <option value="Limit h->0">Limit h->0</option>
+                    <option value="Line Break 1">Line Break 1</option>
+                    <option value="Line Break 2">Line Break 2</option>
+                    <option value="Root">Root</option>
+                    <option value="Row">Row</option>
                 </select>
                 @Html.Hidden("insert1", @Model.Insert1)
                 <label for="Target">Target:</label>
@@ -817,6 +860,14 @@
                     else
                     {
                         <option value="Row">Row</option>
+                    }
+                    @if (@Model.Target == "Intergral")
+                    {
+                        <option value="Intergral" selected>Intergral</option>
+                    }
+                    else
+                    {
+                        <option value="Intergral">Intergral</option>
                     }
                     @if (@Model.Target == "Append")
                     {
