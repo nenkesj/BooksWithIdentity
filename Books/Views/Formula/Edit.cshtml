@@ -16,7 +16,43 @@
                 </li>
                 <li>
                     <form asp-action="Edit" asp-controller="Formula" asp-route-undo=true>
-                        <input type="submit" value="Undo" class="btn btn-primary" />
+                        <input type="submit" value="Undo" class="btn btn-info" />
+                        @Html.Hidden("bothident", @Model.BothIdent)
+                        @Html.Hidden("bothoper", @Model.BothOper)
+                        @Html.Hidden("bothnum", @Model.BothNum)
+                        @Html.Hidden("boldident", @Model.BoldIdent)
+                        @Html.Hidden("boldnum", @Model.BoldNum)
+                        @Html.Hidden("boldtext", @Model.BoldText)
+                        @Html.Hidden("ident1", @Model.Ident1)
+                        @Html.Hidden("ident2", @Model.Ident2)
+                        @Html.Hidden("oper1", @Model.Oper1)
+                        @Html.Hidden("oper2", @Model.Oper2)
+                        @Html.Hidden("num1", @Model.Num1)
+                        @Html.Hidden("num2", @Model.Num2)
+                        @Html.Hidden("space", @Model.Num1)
+                        @Html.Hidden("text", @Model.Text)
+                        @Html.Hidden("algebraic", @Model.Algebraic)
+                        @Html.Hidden("calculus", @Model.Calculus)
+                        @Html.Hidden("ellipses", @Model.Ellipses)
+                        @Html.Hidden("logic", @Model.Logic)
+                        @Html.Hidden("vector", @Model.Vector)
+                        @Html.Hidden("greekupper", @Model.GreekUpper)
+                        @Html.Hidden("greeklower", @Model.GreekLower)
+                        @Html.Hidden("insert", @Model.Insert)
+                        @Html.Hidden("insert", @Model.Insert1)
+                        @Html.Hidden("target", @Model.Target)
+                        @Html.Hidden("block", @Model.Block)
+                        @Html.Hidden("clearformula", @Model.ClearFormula)
+                        @Html.Hidden("repeatvar", @Model.RepeatVar)
+                        @Html.Hidden("repeatvar", @Model.RepeatKeep)
+                        @Html.Hidden("repeatformula", @Model.RepeatFormula)
+                        @Html.Hidden("repeatkeptformula", @Model.RepeatKeptFormula)
+                        @Html.Hidden("NodeID", @Model.NodeID)
+                    </form>
+                </li>
+                <li>
+                    <form asp-action="Edit" asp-controller="Formula" asp-route-restore=true>
+                        <input type="submit" value="Restore" class="btn btn-info" />
                         @Html.Hidden("bothident", @Model.BothIdent)
                         @Html.Hidden("bothoper", @Model.BothOper)
                         @Html.Hidden("bothnum", @Model.BothNum)
@@ -47,36 +83,20 @@
                     </form>
                 </li>
                 <li>
-                    <form asp-action="Edit" asp-controller="Formula" asp-route-restore=true>
-                        <input type="submit" value="Restore" class="btn btn-primary" />
-                        @Html.Hidden("bothident", @Model.BothIdent)
-                        @Html.Hidden("bothoper", @Model.BothOper)
-                        @Html.Hidden("bothnum", @Model.BothNum)
-                        @Html.Hidden("boldident", @Model.BoldIdent)
-                        @Html.Hidden("boldnum", @Model.BoldNum)
-                        @Html.Hidden("boldtext", @Model.BoldText)
-                        @Html.Hidden("ident1", @Model.Ident1)
-                        @Html.Hidden("ident2", @Model.Ident2)
-                        @Html.Hidden("oper1", @Model.Oper1)
-                        @Html.Hidden("oper2", @Model.Oper2)
-                        @Html.Hidden("num1", @Model.Num1)
-                        @Html.Hidden("num2", @Model.Num2)
-                        @Html.Hidden("space", @Model.Num1)
-                        @Html.Hidden("text", @Model.Text)
-                        @Html.Hidden("algebraic", @Model.Algebraic)
-                        @Html.Hidden("calculus", @Model.Calculus)
-                        @Html.Hidden("ellipses", @Model.Ellipses)
-                        @Html.Hidden("logic", @Model.Logic)
-                        @Html.Hidden("vector", @Model.Vector)
-                        @Html.Hidden("greekupper", @Model.GreekUpper)
-                        @Html.Hidden("greeklower", @Model.GreekLower)
-                        @Html.Hidden("insert", @Model.Insert)
-                        @Html.Hidden("insert", @Model.Insert1)
-                        @Html.Hidden("target", @Model.Target)
-                        @Html.Hidden("block", @Model.Block)
-                        @Html.Hidden("clearformula", @Model.ClearFormula)
-                        @Html.Hidden("NodeID", @Model.NodeID)
-                    </form>
+                    <div class="dataElem">
+                        @{
+                            var txt = new HtmlString((String)@ViewBag.repeat);
+                        }
+                        <p>Repeat: @txt</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="dataElem">
+                        @{
+                            var txt2 = new HtmlString((String)@ViewBag.keptrepeat);
+                        }
+                        <p>Kept Repeat: @txt2</p>
+                    </div>
                 </li>
             </ul>
             <ul class="nav-main">
@@ -511,11 +531,10 @@
             @Html.Hidden("NodeID", @Model.NodeID)
             <div class="dataElem">
                 @{
-                    var txt = new HtmlString((String)@ViewBag.formula);
+                    var txt1 = new HtmlString((String)@ViewBag.formula);
                 }
-                <p>@txt</p>
+                <p>@txt1</p>
             </div>
-            <br />
             <div class="dataElem">
                 <label for="Algebraic">Algebraic:</label>
                 <select id="Algebraic" name="Algebraic">
@@ -696,7 +715,6 @@
                     <option value="omega;"><math xmlns="http://www.w3.org/1998/Math/MathML" display='inline'> <mo>&omega;</mo> </math></option>
                 </select>
             </div>
-            <br />
             <div class="dataElem">
                 <fieldset class="radios">
                     <label for="Insert">Insert:</label>
@@ -964,13 +982,21 @@
                 "Block"
                 }))
                 @Html.Hidden("block", @Model.Block)
+                </br>
                 <label>Reverse:</label><input id="Reverse" name="Reverse" type="checkbox" value="true" /><input name="Reverse" type="hidden" value="false" />
                 @Html.Hidden("reverse", @Model.Reverse)
                 <label>Clear Formula:</label><input id="ClearFormula" name="ClearFormula" type="checkbox" value="true" /><input name="ClearFormula" type="hidden" value="false" />
                 @Html.Hidden("clearformula", @Model.ClearFormula)
+                <label>Repeat Variable:</label><input id="RepeatVar" name="RepeatVar" type="checkbox" value="true"/><input name="RepeatVar" type="hidden" value="false" />
+                @Html.Hidden("repeatvar", @Model.RepeatVar)
+                <label>Repeat Keep:</label><input id="RepeatKeep" name="RepeatKeep" type="checkbox" value="true" /><input name="RepeatKeep" type="hidden" value="false" />
+                @Html.Hidden("repeatkeep", @Model.RepeatKeep)
+                <label>Repeat:</label><input id="RepeatFormula" name="RepeatFormula" type="checkbox" value="true" /><input name="repeatFormula" type="hidden" value="false" />
+                @Html.Hidden("repeatformula", @Model.RepeatFormula)
+                <label>Repeat Kept:</label><input id="RepeatKeptFormula" name="RepeatKeptFormula" type="checkbox" value="true" /><input name="RepeatKeptFormula" type="hidden" value="false" />
+                @Html.Hidden("repeatkeptformula", @Model.RepeatKeptFormula)
             </div>
-            <br />
-            <input type="submit" value="Insert" class="btn btn-primary" />
+            <input type="submit" value="Insert" class="btn btn-info" />
             <label> (Insert checkboxes not required when you change any of the following fields)</label>
             <br />
             <div class="dataElem">
