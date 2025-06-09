@@ -17,7 +17,7 @@ namespace Books.Controllers
             ViewBag.Formula = formula;
             string repeat = "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
             ViewBag.Repeat = repeat;
-            string keptrepeat = "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
+            string keptrepeat = _context.Session.GetString("keptrepeat") ?? "<math xmlns=" + '"' + "http://www.w3.org/1998/Math/MathML" + '"' + " display='inline'> </math>";
             ViewBag.KeptRepeat = keptrepeat;
 
             FormulaEditViewModel model = InitEditModel(id, formula, repeat);
@@ -204,10 +204,10 @@ namespace Books.Controllers
             ResetCheckboxes(form);
             ViewBag.repeat = repeat.ToString();
             form.Repeat = repeat.ToString();
-            ViewBag.keptrepeat = keptrepeat.ToString();
-            form.KeptRepeat = keptrepeat.ToString();
             ViewBag.formula = sb.ToString();
             form.Formula = sb.ToString();
+            ViewBag.keptrepeat = keptrepeat.ToString();
+            form.KeptRepeat = keptrepeat.ToString();
             if (_context.Session.GetString("resetrepeat") == "true")
             {
                 _context.Session.SetString("prevrepeat", repeat.ToString());
@@ -517,7 +517,7 @@ namespace Books.Controllers
                     form.Insert = "Identifier";
                     break;
                 case "Space":
-                    InsertSpace(form, searchfor, sb);
+                    InsertSpace(context, form, searchfor, sb);
                     form.Insert = "Identifier";
                     break;
                 case "Matrix":
@@ -745,7 +745,7 @@ namespace Books.Controllers
                     form.Insert = "Operator";
                     break;
                 case "Space":
-                    InsertSpace(form, searchfor, sb);
+                    InsertSpace(context, form, searchfor, sb);
                     form.Insert = "Identifier";
                     break;
                 case "Text":
@@ -759,7 +759,7 @@ namespace Books.Controllers
                     InsertLineBreak2(sb);
                     break;
                 case "New Line =":
-                    InsertLineBreakForEqual(searchfor, sb);
+                    InsertLineBreakForEqual(context, form, searchfor, sb);
                     break;
                 default:
                     break;
@@ -1207,6 +1207,7 @@ namespace Books.Controllers
 
         private void InitSessionVariables(HttpContext context)
         {
+            string keptrepeat;
             int undoptr = 1;
             context.Session.SetInt32("undoptr", undoptr);
             int repeatundoptr = 1;
@@ -1455,9 +1456,15 @@ namespace Books.Controllers
             repeat.Insert(repeat.ToString().IndexOf(searchfor), repeatstr);
         }
 
-        private static void InsertLineBreakForEqual(string searchfor, StringBuilder sb)
+        private static void InsertLineBreakForEqual(HttpContext context, FormulaEditViewModel form, string searchfor, StringBuilder sb)
         {
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), "<mspace width=2em /> <mo>=</mo> "); }
+            form.Oper2 = "-";
+            string oper2 = "-";
+            context.Session.SetString("oper2", oper2);
+            string firstequalyet = "true";
+            context.Session.SetString("firstequalyet", firstequalyet);
+            context.Session.CommitAsync();
         }
 
         private static void InsertLineBreak1(StringBuilder sb)
@@ -1472,6 +1479,9 @@ namespace Books.Controllers
 
         private static void InsertText(HttpContext context, FormulaEditViewModel form, string searchfor, StringBuilder sb, StringBuilder repeat)
         {
+            // As well as inserting text we also reset the + or - indicator as it's likely an = will be entered before a -
+            // in the case of embedded text e.g.
+            // y = x + 1    and   z = 2
             string sbtext, repeattext;
             if (form.EmbedText && sb.ToString().Contains(searchfor))
             {
@@ -1506,10 +1516,20 @@ namespace Books.Controllers
             form.Text = ",";
         }
 
-        private static void InsertSpace(FormulaEditViewModel form, string searchfor, StringBuilder sb)
+        private static void InsertSpace(HttpContext context, FormulaEditViewModel form, string searchfor, StringBuilder sb)
         {
+            // As well as inserting a space we also reset the + or - indicator as it's likely an = will be entered before
+            // a - e.g.
+            // y = x + 1    z = 2
+
             if (sb.ToString().Contains(searchfor)) { sb.Insert(sb.ToString().IndexOf(searchfor), " <mspace width=" + form.Space + "em />"); }
             form.Space = "2";
+            form.Oper2 = "=";
+            string oper2 = "=";
+            context.Session.SetString("oper2", oper2);
+            string plusorminusyet = "false";
+            context.Session.SetString("plusorminusyet", plusorminusyet);
+            context.Session.CommitAsync();
         }
 
         private static void InsertFenced3(HttpContext context, FormulaEditViewModel form, string searchfor, StringBuilder sb, StringBuilder repeat)
@@ -2745,6 +2765,14 @@ namespace Books.Controllers
 
         private static void InsertOperator(HttpContext context, FormulaEditViewModel form, string Op, string searchfor, StringBuilder sb, StringBuilder repeat)
         {
+            // A bit more is going on here other than just inserting an operator
+            // 1.  Prior to the first equal operator being entered we dont reset the repeat text at all, this allows the
+            // repeated part of the formula to be entered including +'s and -'s and allowing the user to clear the formula 
+            // after saving to the "Repeat Keep" field which can then be used to repeat the kept part of the formula
+            // 2. After the first equal is entered the repeat part of the formula is reset after every + or - etc which is
+            // at the </math> level of the formula allowing the insertion of repeating parts of the formula
+            // 3. Once a plus or minus has been entered Oper2 is set to - instead of an = 
+
             string plusorminusyet, firstequalyet, sbtext, repeattext;
             if (Op == "=" || Op == "&ne;" || Op == "&gt;" || Op == "&ge;" || Op == "&lt;" || Op == "&le;")
             {
