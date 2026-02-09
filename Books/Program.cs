@@ -5,6 +5,7 @@ using Books.Services;
 using HowTo_DBLibrary;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 
 IConfigurationRoot _configuration;

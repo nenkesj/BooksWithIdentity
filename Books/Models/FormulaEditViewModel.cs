@@ -62,11 +62,11 @@
         public string Formula { get; set; }
         public string Repeat { get; set; }
         public string KeptRepeat { get; set; }
+        public bool RepeatOn { get; set; }
+        public bool RepeatOff { get; set; }
         public bool RepeatFormula { get; set; }
         public bool RepeatVar { get; set; }
         public bool RepeatKeep { get; set; }
         public bool RepeatKeptFormula { get; set; }
-
-
     }
 }

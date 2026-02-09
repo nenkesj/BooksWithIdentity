@@ -1313,7 +1313,7 @@
         {
             int txtPtr, txtCtr, noOfLTs, noOfChars, lineEnd, charNo;
             int firstWordLength = 0, firstWordPtr = 0, LineLength = 0, ParagraphLength = 0, secondWordLength = 0, secondWordPtr = 0, SentenceLength = 0;
-            char currChar, lastChar, nextChar, lineCurrChar, lineLastChar, lineNextChar, firstWord1stChr, lastCharInLine;
+            char currChar, thirdlastChar, secondlastChar, lastChar, nextChar, lineCurrChar, lineLastChar, lineNextChar, firstWord1stChr, lastCharInLine;
             string txtText;
             string firstWord = "", line = "", newLine = "", secondWord = "", paragraph = "", sentence = "";
             bool ItsGotATab, ItsGotAGT, ItsGotALTSlash, ItsGotACapital, FormatBefore, AddASpace;
@@ -1328,6 +1328,8 @@
             DebugText = "";
             firstWord1stChr = ' ';
             lastChar = (Char)10;
+            secondlastChar = ' ';
+            thirdlastChar = ' ';
 
             // Get the text that were formatting
 
@@ -1459,7 +1461,7 @@
                     DivTxt_IsItANewLine(ref LinesNoOf, ref Lines, DebugText, Debug, ref LineLength, currChar, ref line, AddASpace, ref endOfLine);
                     DivTxt_IsItANewSentence(ParagraphsNoOf, ref SentencesNoOf, ref Sentences, ref SentenceInParagraph, DebugText, Debug, ref SentenceLength, currChar, ref sentence, AddASpace, ref endOfSentence, Format);
                     DivTxt_IsItANewParagraph(ref ParagraphsNoOf, ref Paragraphs, DebugText, Debug, InsertIndicators, ref ParagraphLength, currChar, ref paragraph, sentence, AddASpace, allCapitals, ref endOfParagraph, ItsAnOrderedList, ItsAnUnorderedList, ItsGotHTML, ref SplittingOnColon, Format);
-                    DivTxt_HaveWeReachedTheEndOfASentence(currChar, lastChar, nextChar, ref endOfSentence, ref ListItemEndsWithFullStop, Format);
+                    DivTxt_HaveWeReachedTheEndOfASentence(currChar, thirdlastChar, secondlastChar, lastChar, nextChar, ref endOfSentence, ref ListItemEndsWithFullStop, Format);
 
                     // So that lastChar is correct, for eliminating white space etc.
 
@@ -1469,6 +1471,8 @@
                     }
                 }
                 // End of Dont skip this character loop
+                thirdlastChar = secondlastChar;
+                secondlastChar = lastChar;
                 lastChar = currChar;
             }
             // End of Character loop i.e. there are no more characters in the text
@@ -1544,7 +1548,7 @@
                                   (currChar == ' ' && lastChar == ' ' && Format);
         }
 
-        private static void DivTxt_HaveWeReachedTheEndOfASentence(char currChar, char lastChar, char nextChar, ref bool endOfSentence, ref bool ListItemEndsWithFullStop, bool Format)
+        private static void DivTxt_HaveWeReachedTheEndOfASentence(char currChar, char thirdlastChar, char secondlastChar, char lastChar, char nextChar, ref bool endOfSentence, ref bool ListItemEndsWithFullStop, bool Format)
         {
             // Have we reached the end of a sentence
 
@@ -1559,6 +1563,10 @@
             // will move onto the next char prior to starting the new sentence
 
             if (Format && (currChar == '.' || currChar == '?') && (int)nextChar <= 32 &&
+               !(currChar == '.' && lastChar == 'e' && secondlastChar == '.' && thirdlastChar == 'i') &&
+               !(currChar == '.' && lastChar == 'g' && secondlastChar == '.' && thirdlastChar == 'e') &&
+               !(currChar == '.' && lastChar == 'f' && secondlastChar == 'c' && thirdlastChar == '[') &&
+               !(currChar == '.' && lastChar == 'g' && secondlastChar == 'i' && thirdlastChar == 'F') &&
                ((int)lastChar >= (int)'a' && (int)lastChar <= (int)'z' ||
                (int)lastChar >= (int)'A' && (int)lastChar <= (int)'Z' ||
                (int)lastChar >= (int)'0' && (int)lastChar <= (int)'9' ||
